@@ -36,7 +36,7 @@ class Auth():
     def sign_params(self, verb, path, params=None):
         if not params:
             params = {}
-        params.update({'tonce': int(1000*time.time()), 'access_key': self.access_key})
+        params.update({'tonce': int(1000*time.time() + 78000), 'access_key': self.access_key})
         query = self.urlencode(params)
         signature = self.sign(verb, path, params)
         return signature, query

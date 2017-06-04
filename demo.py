@@ -1,9 +1,13 @@
 import time
 import urllib2
+
 from lib.client import Client, get_api_path
+from formula.K import K
+from formula.MACD import MACD
+from formula.Formula import EMA
 
-client = Client(access_key='your access key', secret_key='your secret key')
-
+client = Client(access_key='N1vXgZ0wSrTkLjgzG1oli4aD10DDRQW9gYxkHljW', secret_key='Xgz0QqlvdAx9lBjpiVLlnFOs2IwaPS3lftuw4geS')
+"""
 #demo of GET APIs
 
 #get member info
@@ -18,7 +22,7 @@ print "markets:", markets
 print 
 print "tickers in markets"
 for market in markets:
-    print client.get(get_api_path('tickers') % market['id'])
+    print client.get(get_api_path('tickers') % market['id'], None, False)
 
 #get orders of each market
 #market should be specified in params
@@ -35,10 +39,16 @@ print client.get(get_api_path('trades'), params={'market': 'btccny'})
 
 #get my trades
 print client.get(get_api_path('my_trades'), params={'market': 'btccny'})
-
+"""
 #get k line
-print client.get(get_api_path('k'), params={'market': 'btccny'})
-
+macd = MACD();
+d = client.get(get_api_path('k'), params={'market': 'btscny', 'limit' : '50000', 'period' : '30', 'timestamp' : '1495584000'});
+KS = [];
+for k, v in enumerate(d):
+    print k, v
+    #KS.append(K(v));
+macd.Input(KS);
+print macd;
 
 #demo of POST APIs
 #DANGROUS, you better use test account to debug POST APIs

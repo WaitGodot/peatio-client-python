@@ -3,7 +3,7 @@ import json
 
 from lib.auth import Auth
 
-BASE_URL = 'https://peatio.com'
+BASE_URL = 'https://yunbi.com'
 
 API_BASE_PATH = '/api/v2'
 API_PATH_DICT = {
@@ -52,14 +52,16 @@ class Client():
             from conf import ACCESS_KEY, SECRET_KEY
             self.auth = Auth(ACCESS_KEY, SECRET_KEY)
 
-    def get(self, path, params=None):
+    def get(self, path, params=None, send=True):
         verb = "GET"
         signature, query = self.auth.sign_params(verb, path, params)
         url = "%s%s?%s&signature=%s" % (BASE_URL, path, query, signature)
-        resp = urllib2.urlopen(url)
-        data = resp.readlines()
-        if len(data):
-            return json.loads(data[0])
+        print(url)
+        if send:
+            resp = urllib2.urlopen(url)
+            data = resp.readlines()
+            if len(data):
+                return json.loads(data[0])
 
     def post(self, path, params=None):
         verb = "POST"
