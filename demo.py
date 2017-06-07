@@ -1,49 +1,11 @@
 import time
 import urllib2
-import MySQLdb
 
 from lib.client import Client, get_api_path
 from formula.K import K
 from formula.MACD import MACD
 from formula.Formula import EMA
 
-db = MySQLdb.connect("localhost", "randy", "randy521", "bot");
-cursor = db.cursor();
-cursor.execute("SELECT VERSION()");
-version = cursor.fetchone();
-
-# create table.
-cursor.execute('''CREATE TABLE IF NOT EXISTS kline (
-    id INT NOT NULL AUTO_INCREMENT, 
-    name VARCHAR(25), 
-    PRIMARY KEY (id));''');
-
-cursor.execute('''insert into kline
-	(name)
-	values
-	("randy1");''')
-cursor.execute('''insert into kline
-	(name)
-	values
-	("randy2");''')
-cursor.execute('''insert into kline
-	(name)
-	values
-	("randy3");''')
-cursor.execute('''insert into kline
-	(name)
-	values
-	("randy4");''')
-
-cursor.execute('''select * from kline;''');
-data = cursor.fetchall();
-
-db.commit();
-
-cursor.close();
-db.close();
-print version;
-print data;
 #client = Client(access_key='N1vXgZ0wSrTkLjgzG1oli4aD10DDRQW9gYxkHljW', secret_key='Xgz0QqlvdAx9lBjpiVLlnFOs2IwaPS3lftuw4geS')
 """
 #demo of GET APIs

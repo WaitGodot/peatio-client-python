@@ -6,11 +6,14 @@ class DATA():
         self.diff = 0;
         self.dea = 0;
         self.macd = 0;
+        self.time = 0;
 
-    def Set(self, diff, dea):
+    def Set(self, diff, dea, time):
         self.diff = diff;
         self.dea = dea;
         self.macd = 2 * (self.diff - self.dea);
+        self.time = time;
+
     def __str__(self):
         return 'diff={0},dea={1},macd={2}'.format(self.diff, self.dea, self.macd);
 
@@ -30,7 +33,7 @@ class MACD():
         deas = EMA(diffs, 9);
         for idx, value in enumerate(ema12s):
             d = DATA();
-            d.Set(diffs[idx], deas[idx]);
+            d.Set(diffs[idx], deas[idx], KS[idx].t);
             self.data.append(d);
 
     def __str__(self):

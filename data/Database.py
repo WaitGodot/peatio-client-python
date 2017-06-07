@@ -1,6 +1,78 @@
 
 # database;
 import MySQLdb
+import sys
+
+from BotConfig import BotConfig;
+DATA=['k','macd'];
 
 class Database():
-    def __init__():
+    def __init__(self):
+        db = MySQLdb.connect(BotConfig.mysql_address, BotConfig.mysql_user, BotConfig.mysql_password);
+        if db :
+            self.cursor = db.cursor();
+            self.cursor.execute("use {0}".format(BotConfig.mysql_database));
+            self.db = db;
+            self.data = {};
+
+            self.cursor.execute("select * from markets");
+            markets = self.cursor.fetchall();
+            for k, market in enumerate (markets) : # id name opentime
+                md = {};
+                name = market[1];
+                for i,d in enumerate(DATA):
+                    self.cursor.execute("select * from {0}_{1}".format(name, d));
+                    nd = self.cursor.fetchall();
+                    if nd :
+                        md[d] = nd;
+                    else:
+                    	md[d] = [];
+
+                self.data[name] = md;
+
+            print self.data;
+        else:
+            print "can not connect the mysql, please check 'BotConfig'";
+            sys.exit(1);
+
+
+    def get(self, market, ele):
+        md = self.data[market];
+        if md :
+            return md[ele];
+        else :
+            print "not found market {0}".format(market);
+        return None;
+    
+    def add(self, market, ele, data):
+        md = self.data[market];
+        if md == None :
+            print "not found market {0}".format(market);
+            return False;
+        mde = md[ele];
+        print market, ele, mde
+        if mde == None:
+            print "market {0} not found element {1}".format(market, ele);
+            return False;
+        mde.extend(data);
+        return True;
+
+    def close(self):
+        for name,md in self.data.items():
+            # k
+            dk = md['k'];
+            for k, d in enumerate(dk):
+                self.cursor.execute('''insert into {0}_k 
+            	   	(time,o,h,l,c,increase,amplitude) values
+            		({1},{2},{3},{4},{5},{6},{7})'''.format(name, d.t, d.o, d.h, d.l, d.c, d.increase, d.amplitude));
+
+            # macd
+            dmacd = md['macd'];
+            for k, d in enumerate(dk):
+                self.cursor.execute('''insert into {0}_macd
+            		(time, diff, dea, macd) values
+            		({1}, {2}, {3}, {4})'''.format(name, d.time, d.diff, d.dea, d.macd));
+        self.db.commit();
+        self.cursor.close();
+        self.db.close();
+
