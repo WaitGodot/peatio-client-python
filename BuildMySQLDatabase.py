@@ -34,11 +34,12 @@ for k, cfg in enumerate(markets):
     # market kline
     cursor.execute('''create table {0}_k (
         id INT NOT NULL AUTO_INCREMENT,
-        time timestamp NOT NULL default CURRENT_TIMESTAMP,
+        time INT NOT NULL,
         o FLOAT NOT NULL,
         h FLOAT NOT NULL,
         l FLOAT NOT NULL,
         c FLOAT NOT NULL,
+        vol FLOAT NOT NULL,
         increase FLOAT NOT NULL,
         amplitude FLOAT NOT NULL,
         PRIMARY KEY (id)
@@ -46,7 +47,7 @@ for k, cfg in enumerate(markets):
     #market macd
     cursor.execute('''create table {0}_macd (
         id INT NOT NULL AUTO_INCREMENT,
-        time timestamp NOT NULL default CURRENT_TIMESTAMP,
+        time INT NOT NULL,
         diff FLOAT NOT NULL,
         dea FLOAT NOT NULL,
         macd FlOAT,

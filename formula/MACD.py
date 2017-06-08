@@ -20,7 +20,10 @@ class DATA():
 class MACD():
     def __init__(self):
         self.data = [];
-
+    
+    def Add(self, data):
+        self.data.extend(data);
+        
     def Input(self, KS):
         arr = []
         for idx, value in enumerate(KS):

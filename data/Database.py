@@ -2,6 +2,8 @@
 # database;
 import MySQLdb
 import sys
+import time
+import datetime
 
 from BotConfig import BotConfig;
 DATA=['k','macd'];
@@ -36,7 +38,7 @@ class Database():
             sys.exit(1);
 
 
-    def get(self, market, ele):
+    def Get(self, market, ele):
         md = self.data[market];
         if md :
             return md[ele];
@@ -44,7 +46,7 @@ class Database():
             print "not found market {0}".format(market);
         return None;
     
-    def add(self, market, ele, data):
+    def Add(self, market, ele, data):
         md = self.data[market];
         if md == None :
             print "not found market {0}".format(market);
@@ -57,22 +59,27 @@ class Database():
         mde.extend(data);
         return True;
 
-    def close(self):
+    def Save(self):
         for name,md in self.data.items():
             # k
             dk = md['k'];
             for k, d in enumerate(dk):
+                # timestamp = datetime.datetime.fromtimestamp(d.t).strftime('%Y-%m-%d %H:%M:%S')
                 self.cursor.execute('''insert into {0}_k 
-            	   	(time,o,h,l,c,increase,amplitude) values
-            		({1},{2},{3},{4},{5},{6},{7})'''.format(name, d.t, d.o, d.h, d.l, d.c, d.increase, d.amplitude));
+            	   	(time,o,h,l,c,vol,increase,amplitude) values
+            		({1},{2},{3},{4},{5},{6},{7},{8})'''.format(name, d.t, d.o, d.h, d.l, d.c, d.vol, d.increase, d.amplitude));
 
             # macd
             dmacd = md['macd'];
-            for k, d in enumerate(dk):
+            for k, d in enumerate(dmacd):
                 self.cursor.execute('''insert into {0}_macd
             		(time, diff, dea, macd) values
             		({1}, {2}, {3}, {4})'''.format(name, d.time, d.diff, d.dea, d.macd));
         self.db.commit();
+
+    def Close(self):
+        self.save();
         self.cursor.close();
         self.db.close();
+
 
