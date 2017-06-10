@@ -3,15 +3,20 @@
 
 #EMA
 
-def EMA(arr, N):
-    rtarr = [];
+def EMA(xArr, yArr, N):
     k = (2.0 / (N + 1.0));
-    for idx, value in enumerate(arr):
-        x = 0;
-        if idx - 1 >= 0 & idx - 1 <= len(rtarr):
-            x = rtarr[idx - 1];
+    lenY = len(yArr);
+    count = len(xArr) - lenY;
+    for idx in range(lenY, count):
+        value = xArr[idx];
         if idx != 0:
-            rtarr.append(value * k + (1.0 - k) * x);
+            yArr.append(value * k + (1.0 - k) * lenY[idx - 1]);
         else:
-            rtarr.append(value);
-    return rtarr;
+            yArr.append(value);
+
+
+def High(arr):
+    return sorted(arr)[-1];
+
+def Low(arr):
+    return sorted(arr)[0];

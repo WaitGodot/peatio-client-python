@@ -6,7 +6,7 @@ import time
 import datetime
 
 from BotConfig import BotConfig;
-DATA=['k','macd'];
+DATA=['k'];
 
 class Database():
     def __init__(self):
@@ -31,8 +31,6 @@ class Database():
                     	md[d] = [];
 
                 self.data[name] = md;
-
-            print self.data;
         else:
             print "can not connect the mysql, please check 'BotConfig'";
             sys.exit(1);
@@ -46,7 +44,7 @@ class Database():
             print "not found market {0}".format(market);
         return None;
     
-    def Add(self, market, ele, data):
+    def Add(self, market, ele, period, data):
         md = self.data[market];
         if md == None :
             print "not found market {0}".format(market);
@@ -70,15 +68,17 @@ class Database():
             		({1},{2},{3},{4},{5},{6},{7},{8})'''.format(name, d.t, d.o, d.h, d.l, d.c, d.vol, d.increase, d.amplitude));
 
             # macd
+            '''
             dmacd = md['macd'];
             for k, d in enumerate(dmacd):
                 self.cursor.execute('''insert into {0}_macd
             		(time, diff, dea, macd) values
             		({1}, {2}, {3}, {4})'''.format(name, d.time, d.diff, d.dea, d.macd));
+            '''
         self.db.commit();
 
     def Close(self):
-        self.save();
+        self.Save();
         self.cursor.close();
         self.db.close();
 

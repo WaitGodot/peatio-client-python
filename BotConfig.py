@@ -8,7 +8,7 @@ class BotConfig():
     secret_key = "Xgz0QqlvdAx9lBjpiVLlnFOs2IwaPS3lftuw4geS";
 
     # markets
-    markets = [ ["qtum", "2017-05-24 08:00:00"] ];
+    markets = [ ["qtum", "2017-05-24 08:00:00"], ["bts", "2017-05-24 08:00:00"] ];
 
     # mysql config
     mysql_address = "localhost";

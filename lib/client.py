@@ -58,10 +58,15 @@ class Client():
         url = "%s%s?%s&signature=%s" % (BASE_URL, path, query, signature)
         print(url)
         if send:
-            resp = urllib2.urlopen(url)
-            data = resp.readlines()
-            if len(data):
-                return json.loads(data[0])
+            #try :
+                resp = urllib2.urlopen(url)
+                print resp
+                if resp:
+                    data = resp.readlines()
+                    if len(data):
+                        return json.loads(data[0])
+            #except Exception:
+            #    pass
 
     def post(self, path, params=None):
         verb = "POST"
@@ -69,7 +74,6 @@ class Client():
         signature, query = self.auth.sign_params(verb, path, params)
         url = "%s%s" % (BASE_URL, path)
         data = "%s&signature=%s" % (query, signature)
-        print data
         print url
         resp = urllib2.urlopen(url, data)
         data = resp.readlines()

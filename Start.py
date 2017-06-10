@@ -15,23 +15,29 @@ client = Client(access_key=BotConfig.access_key, secret_key=BotConfig.secret_key
 db = Database();
 KLines = K();
 KMACD = MACD();
-
-KLines.extend(db.Get('qtum', 'k', ));
-KMACD.extend(db.Get('qtum', 'macd'));
+KLines.Add(db.Get('qtum', 'k', ));
+KMACD.Add(db.Get('qtum', 'macd'));
 # 
-while True:
+while False:
     time.sleep(3);
+    d = client.get(get_api_path('k'), params={'market': 'qtumcny', 'period' : '1'});
+    print d;
+
+# last k.
+lastK = None;
+if len(KLines.data) > 0 :
+    lastK = KLines.data[-1];
+d = None;
+if lastK:
+    d = client.get(get_api_path('k'), params={'market': 'qtumcny', 'limit' : '1000', 'period' : '30', 'timestamp' : '{0}'.lastK.t});
+else:
+    d = client.get(get_api_path('k'), params={'market': 'qtumcny', 'limit' : '1000', 'period' : '30'});
+KLines.Input(d);
+KMACD.Input(KLines.data);
+
+print KLines.data[1];
+db.Add("qtum", "k", KLines.data);
+db.Add("qtum", "macd", KMACD.data);
 
 
-d = client.get(get_api_path('k'), params={'market': 'qtumcny', 'limit' : '10000', 'period' : '30', 'timestamp' : '1495584000'});
-KS = [];
-for k, v in enumerate(d):
-    KS.append(K(v));
-macd.Input(KS);
-
-print KS[1];
-db.add("qtum", "k", KS);
-db.add("qtum", "macd", macd.data);
-
-
-db.close();
+db.Close();

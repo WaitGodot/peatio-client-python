@@ -2,45 +2,44 @@ from formula.Formula import EMA
 
 # MACD
 class DATA():
-    def __init__(self):
-        self.diff = 0;
-        self.dea = 0;
-        self.macd = 0;
-        self.time = 0;
+    def __init__(self, diff, dea):
+        self.Set(diff, diff, dea)
 
-    def Set(self, diff, dea, time):
+    def Set(self, diff, dea):
         self.diff = diff;
         self.dea = dea;
         self.macd = 2 * (self.diff - self.dea);
-        self.time = time;
 
     def __str__(self):
         return 'diff={0},dea={1},macd={2}'.format(self.diff, self.dea, self.macd);
 
 class MACD():
-    def __init__(self):
-        self.data = [];
+    def __init__(self, short=12, long=26, diff=9):
+        self.EMAShort = [];
+        self.EMALong = [];
+        self.EMADEA = [];
+        self.DIFFS = [];
+        self.short = short;
+        self.diff = diff;
+        self.long = long;
+
+    def Input(self, klines):
+        prices = klines.prices;
+        EMA(klines.prices, self.EMAShort, self.short);
+        EMA(klines.prices, self.EMALong, self.long);
+         
+        ld = len(self.DIFFS);
+        lr = len(self.EMAShort) - ld;
+        for idx in range(ld, dr - 1):
+            DIFFS.append(self.EMAShort[idx] - self.EMALong[idx]);
+        EMA(self.DIFFS, self.EMADEA, self.diff);
     
-    def Add(self, data):
-        self.data.extend(data);
-        
-    def Input(self, KS):
-        arr = []
-        for idx, value in enumerate(KS):
-            arr.append(value.c);
-        ema12s = EMA(arr, 12);
-        ema26s = EMA(arr, 26);
-        diffs = [];
-        for idx, value in enumerate(ema12s):
-            diffs.append(ema12s[idx] - ema26s[idx]);
-        deas = EMA(diffs, 9);
-        for idx, value in enumerate(ema12s):
-            d = DATA();
-            d.Set(diffs[idx], deas[idx], KS[idx].t);
-            self.data.append(d);
+    def Get(index):
+        return DATA(self.DIFFS[index], self.EMADEA[index])
 
     def __str__(self):
         str = '';
-        for k, v in enumerate(self.data):
-            str = str + v.__str__() + '\n';
+        l = len(self.EMAShort);
+        for k in range(0, l):
+            str = str + self.Get(indx).__str__() + '\n';
         return str;
