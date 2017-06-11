@@ -10,9 +10,12 @@
 from formula.Formula import High;
 from formula.Formula import Low;
 
-class DATA():
-    def __init__(self, data):
-        self.Set(data);
+class K():
+    def __init__(self, data=None):
+        if data:
+            self.Set(data);
+        else:
+            self.Set([0,0,0,0,0,0]);
 
     def Set(self, data):
         self.t = data[0];
@@ -23,7 +26,11 @@ class DATA():
         self.vol = data[5];
         self.increase = (self.c - self.o) / self.o;
         self.amplitude = (self.h - self.l) / self.l;
-    
+    def Contain(self, ohterk):
+        if self.h >= ohterk.h & self.l < self.l :
+            return True;
+        return False;
+
     def __getitem__(self, k):
         if k == 't':
             return self.t;
@@ -45,7 +52,7 @@ class DATA():
     def __str__(self):
         return 't = {0}, o = {1}, h = {2}, l = {3}, c = {4}, vol = {5}, increase = {6}, amplitude = {7}'.format(self.t, self.o, self.h, self.l, self.c, self.vol, self.increase, self.amplitude);
 
-class K():
+class KLine():
     def __init__(self):
         self.data = [];
         self.prices = []; # use close price
@@ -58,7 +65,7 @@ class K():
             if last:
                 if d[0] <= last.t:
                     continue;
-            self.data.append(DATA(d))
+            self.data.append(K(d))
             
     def ToList(self, key, N=None):
         ret = [];
