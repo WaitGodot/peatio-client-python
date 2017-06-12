@@ -24,10 +24,16 @@ class K():
         self.l = data[3];
         self.c = data[4];
         self.vol = data[5];
-        self.increase = (self.c - self.o) / self.o;
-        self.amplitude = (self.h - self.l) / self.l;
+
+        self.increase = 0;
+        if self.o > 0:
+            self.increase = (self.c - self.o) / self.o;
+        self.amplitude = 0;
+        if self.l > 0:
+            self.amplitude = (self.h - self.l) / self.l;
+
     def Contain(self, ohterk):
-        if self.h >= ohterk.h & self.l < self.l :
+        if self.h >= ohterk.h and self.l <= ohterk.l :
             return True;
         return False;
 
@@ -65,7 +71,9 @@ class KLine():
             if last:
                 if d[0] <= last.t:
                     continue;
-            self.data.append(K(d))
+            nk = K(d);
+            self.data.append(nk)
+            self.prices.append(nk.c);
             
     def ToList(self, key, N=None):
         ret = [];
@@ -81,6 +89,12 @@ class KLine():
     
     def High(self, key, N):
         return High(self.ToList(key));
+
+    def __len__(self):
+        return len(self.data);
+
+    def __getitem__(self, k):
+        return self.data[k];
 
     def __str__(self):
         str = '';

@@ -2,9 +2,14 @@ import time
 import urllib2
 
 from lib.client import Client, get_api_path
-from formula.K import K
+from formula.K import KLine
 from formula.MACD import MACD
 from formula.Formula import EMA
+from rule.Rule import Rule
+
+r = Rule('bts', 30);
+r.Run();
+
 
 #client = Client(access_key='N1vXgZ0wSrTkLjgzG1oli4aD10DDRQW9gYxkHljW', secret_key='Xgz0QqlvdAx9lBjpiVLlnFOs2IwaPS3lftuw4geS')
 """
@@ -40,15 +45,6 @@ print client.get(get_api_path('trades'), params={'market': 'btccny'})
 #get my trades
 print client.get(get_api_path('my_trades'), params={'market': 'btccny'})
 """
-#get k line
-macd = MACD();
-d = client.get(get_api_path('k'), params={'market': 'btscny', 'limit' : '10000', 'period' : '30', 'timestamp' : '1495584000'});
-KS = [];
-for k, v in enumerate(d):
-    print k, v
-    #KS.append(K(v));
-macd.Input(KS);
-print macd;
 
 #demo of POST APIs
 #DANGROUS, you better use test account to debug POST APIs

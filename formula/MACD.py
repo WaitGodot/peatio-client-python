@@ -27,11 +27,11 @@ class MACD():
         prices = klines.prices;
         EMA(klines.prices, self.EMAShort, self.short);
         EMA(klines.prices, self.EMALong, self.long);
-         
+
         ld = len(self.DIFFS);
         lr = len(self.EMAShort) - ld;
-        for idx in range(ld, dr - 1):
-            DIFFS.append(self.EMAShort[idx] - self.EMALong[idx]);
+        for idx in range(ld, lr - 1):
+            self.DIFFS.append(self.EMAShort[idx] - self.EMALong[idx]);
         EMA(self.DIFFS, self.EMADEA, self.diff);
     
     def Get(index):
