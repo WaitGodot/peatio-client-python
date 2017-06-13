@@ -32,7 +32,7 @@ def ft():
     return 1,2;
 x,y = ft();
 print x,y
-r = Rule('bts', 30);
+r = Rule('btc', 60);
 r.Run();
 
 

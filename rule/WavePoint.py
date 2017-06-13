@@ -2,6 +2,7 @@
 
 from rule.WaveKline import Direction
 from rule.WaveKline import ToStringDir
+import csv
 
 def CalDir(fd0, fd1, fd2):
     if fd0 < fd1 and fd1 < fd2:
@@ -48,6 +49,9 @@ class Segment():
         else:
             self.fd0 = self.fd1; self.fd1 = self.fd2; self.fd2 = fd;
         
+        # print idx, ndir, self.dir, isContain, fd;
+        if self.dir == Direction.FLAT:
+            self.dir = ndir;
         if isContain:
             return True, -1;
         if self.dir != ndir and ndir != Direction.FLAT: # break
@@ -55,6 +59,10 @@ class Segment():
                 return False, self.highidx;
             if self.dir == Direction.DOWN:
                 return False, self.lowidx;
+        if self.high < fd:
+            self.high = fd; self.highidx = idx;
+        if self.low > fd:
+            self.low = fd; self.lowidx = idx; 
         return True, -1;
 
     def __str__(self):
@@ -73,14 +81,29 @@ class WavePoint():
         for idx in range(self.idx, lk):
             rt, index = ps.InputOneFloat(idx, fds[idx])
             if rt == False :
+                # print 'insert new segment'
                 ps = Segment();
-                for k in range(index, idx - index):
+                for k in range(index, idx+1):
                     ps.InputOneFloat(k, fds[k]);
                 self.segs.append(ps);
         self.idx = lk;
     
     def Export(self, path):
-        print '';
+        f = open(path, 'wb');
+        w = csv.writer(f);
+        l = len(self.segs);
+        for k, v in enumerate(self.segs):
+            if v.dir == Direction.UP:
+                w.writerow([k, v.low]);
+            else:
+                w.writerow([k, v.high]);
+            if k == l - 1:
+                if v.dir == Direction.UP:
+                    w.writerow([k, v.high]);
+                else:
+                    w.writerow([k, v.low]);
+
+        f.close();
 
     def __str__(self):
         str = '';

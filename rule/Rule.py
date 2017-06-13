@@ -22,14 +22,15 @@ class Rule():
         self.client = Client(access_key=BotConfig.access_key, secret_key=BotConfig.secret_key)
 
     def Run(self):
-        d = self.client.get(get_api_path('k'), params={'market': '{0}cny'.format(self.market), 'period' : '{0}'.format(self.period)});
+        d = self.client.get(get_api_path('k'), params={'market': '{0}cny'.format(self.market), 'limit': 60,'period' : '{0}'.format(self.period)});
         print time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(d[0][0]));
         self.KLines.Input(d);
         self.MACD.Input(self.KLines);
         self.KDJ.Input(self.KLines);
-        self.KDJ.Export('D:\\k.csv');
+        # self.KDJ.Export('c:\\Users\\randy\\k.csv');
 
         self.WaveKline.Input(self.KLines);
         self.WavePoint.Input(self.KDJ.K);
+        self.WavePoint.Export('c:\\Users\\randy\\wave.csv');
 
         print self.WavePoint;
