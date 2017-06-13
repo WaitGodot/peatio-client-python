@@ -4,9 +4,34 @@ import urllib2
 from lib.client import Client, get_api_path
 from formula.K import KLine
 from formula.MACD import MACD
+from formula.Formula import SMA
+from formula.Formula import MA
 from formula.Formula import EMA
-from rule.Rule import Rule
+from formula.Formula import HIGH
+from formula.Formula import LOW
 
+from rule.Rule import Rule
+'''
+out = [];
+SMA([1,2,3,4,5,6],out,3,1);
+print out;
+out = [];
+MA([1,2,3,4,5,6], out, 3);
+print out;
+out = [];
+EMA([1,2,3,4,5,6], out, 3);
+print out;
+out = [];
+HIGH([6,5,4,3,2,1], out, 3);
+print out;
+out = [];
+LOW([1,2,3,4,5,6], out, 3);
+print out;
+'''
+def ft():
+    return 1,2;
+x,y = ft();
+print x,y
 r = Rule('bts', 30);
 r.Run();
 
@@ -85,3 +110,4 @@ params = {'market': 'dogcny', 'orders': [{'side': 'buy', 'volume': 12, 'price': 
 res = client.post(get_api_path('multi_orders'), params)
 print res
 """
+

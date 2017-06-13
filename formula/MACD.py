@@ -30,11 +30,11 @@ class MACD():
 
         ld = len(self.DIFFS);
         lr = len(self.EMAShort) - ld;
-        for idx in range(ld, lr - 1):
+        for idx in range(ld, lr):
             self.DIFFS.append(self.EMAShort[idx] - self.EMALong[idx]);
         EMA(self.DIFFS, self.EMADEA, self.diff);
     
-    def Get(index):
+    def Get(self, index):
         return DATA(self.DIFFS[index], self.EMADEA[index])
 
     def __str__(self):

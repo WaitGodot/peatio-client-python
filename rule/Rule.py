@@ -2,6 +2,7 @@
 from lib.client import Client, get_api_path
 from formula.K import KLine
 from formula.MACD import MACD
+from formula.KDJ import KDJ
 from BotConfig import BotConfig
 from rule.WaveKline import WaveKline
 from rule.WavePoint import WavePoint
@@ -14,6 +15,7 @@ class Rule():
         self.period = period;
         self.KLines = KLine();
         self.MACD = MACD();
+        self.KDJ = KDJ();
         self.WaveKline = WaveKline();
         self.WavePoint = WavePoint();
 
@@ -24,7 +26,10 @@ class Rule():
         print time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(d[0][0]));
         self.KLines.Input(d);
         self.MACD.Input(self.KLines);
+        self.KDJ.Input(self.KLines);
+        self.KDJ.Export('D:\\k.csv');
+
         self.WaveKline.Input(self.KLines);
-        self.WavePoint.Input(self.MACD.DIFFS);
+        self.WavePoint.Input(self.KDJ.K);
 
         print self.WavePoint;

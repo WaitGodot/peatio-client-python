@@ -9,9 +9,17 @@ def MA(xArr, yArr, N):
         return 0;
     for idx in range(lenY, count):
         ss = 0;
+        av = 0;
         for k in range(0, N):
-            ss += xArr[idx - k];
-        yArr.append(ss / N);
+            nidx = idx - k;
+            if nidx < 0:
+                av = ss / float(k);
+            else: 
+                ss += xArr[idx - k];
+        if av == 0:
+            yArr.append(ss / float(N));
+        else:
+            yArr.append(av);
 
 #EMA
 def EMA(xArr, yArr, N):
@@ -25,6 +33,17 @@ def EMA(xArr, yArr, N):
         else:
             yArr.append(value);
 
+#SMA(X,N,M) = SMA(N-1) * (N-M)/N + X(N)*M/N
+def SMA(xArr, yArr, N, M):
+    lenX = len(xArr);
+    lenY = len(yArr);
+    count = lenX - lenY;
+    for idx in range(lenY, count):
+        value = xArr[idx];
+        if idx != 0:
+            yArr.append(value*(float)(M)/(float)(N) + yArr[idx - 1] * ((float)(N)-(float)(M))/(float)(N));
+        else:
+            yArr.append(value);
 #HIGH
 def HIGH(xArr, yArr, N):
     lenX = len(xArr);
@@ -34,12 +53,12 @@ def HIGH(xArr, yArr, N):
         high = 0;
         for n in range(0, N):
             nidx = idx - n;
-            if nidx <= 0:
+            if nidx < 0:
                 break;
             value = xArr[nidx];
             if high == 0:
                high = value;
-            if high < value;
+            if high < value:
                high = value;
         yArr.append(high);
 #LOW
@@ -51,7 +70,7 @@ def LOW(xArr, yArr, N):
         low = 0;
         for n in range(0, N):
             nidx = idx - n;
-            if nidx <= 0:
+            if nidx < 0:
                 break;
             value = xArr[nidx];
             if low == 0:
@@ -60,3 +79,4 @@ def LOW(xArr, yArr, N):
                low = value;
         yArr.append(low);
     
+#RSV

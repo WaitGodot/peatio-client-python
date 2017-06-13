@@ -14,6 +14,8 @@ class Segment():
     def __init__(self):
         self.highidx = -1;
         self.lowidx = -1;
+        self.high = 0;
+        self.low = 0;
         self.dir = Direction.FLAT;
 
     def InputOneFloat(self, idx, fd):
@@ -25,25 +27,36 @@ class Segment():
             self.fd0 = fd;
             self.fd1 = fd;
             self.fd2 = fd;
-        else:
-            self.fd0 = self.fd1;
-            self.fd1 = self.fd2;
-            self.fd2 = fd;
             
-        if self.high < fd:
-            self.high = fd;
-            self.highidx = idx;
-        if self.low > fd:
-            self.low = fd;
-            self.lowidx = idx;
-        ndir = CalDir(self.fd0, self.fd1, self.fd2);
-        print idx, fd, ndir, self.dir;
-        if self.dir == ndir or ndir == Direction.FLAT or self.dir == Direction.FLAT:
-            if ndir != Direction.FLAT and self.dir == Direction.FLAT:
-                self.dir = ndir;
-            return True;
+        ndir = CalDir(self.fd1, self.fd2, fd);
+        isContain = False;
+        # point contain
+        if self.dir == Direction.UP:
+            if fd < self.fd2 and fd > self.fd1:
+                self.fd1 = fd; isContain = True;
+            elif fd > self.fd2 and fd < self.fd1:
+                self.fd2 = fd; isContain = True;
+            else:
+                self.fd0 = self.fd1; self.fd1 = self.fd2; self.fd2 = fd;
+        elif self.dir == Direction.DOWN:
+            if fd > self.fd2 and fd < self.fd1:
+                self.fd1 = fd; isContain = True;
+            elif fd < self.fd1 and fd > self.fd1:
+                self.fd2 = fd; isContain = True;
+            else:
+                self.fd0 = self.fd1; self.fd1 = self.fd2; self.fd2 = fd;
         else:
-            return False;
+            self.fd0 = self.fd1; self.fd1 = self.fd2; self.fd2 = fd;
+        
+        if isContain:
+            return True, -1;
+        if self.dir != ndir and ndir != Direction.FLAT: # break
+            if self.dir == Direction.UP:
+                return False, self.highidx;
+            if self.dir == Direction.DOWN:
+                return False, self.lowidx;
+        return True, -1;
+
     def __str__(self):
         return 'dir:{0}, high:{1}, high idx:{2}, low:{3}, low idx:{4}'.format(ToStringDir(self.dir), self.high, self.highidx, self.low, self.lowidx);
 
@@ -56,13 +69,13 @@ class WavePoint():
     def Input(self, fds):
         lk = len(fds);
         ps = self.segs[-1];
-        for idx in range(self.idx, lk - 1):
-            rt = ps.InputOneFloat(idx, fds[idx])
+        print fds;
+        for idx in range(self.idx, lk):
+            rt, index = ps.InputOneFloat(idx, fds[idx])
             if rt == False :
                 ps = Segment();
-                ps.InputOneFloat(idx - 2, fds[idx - 2]);
-                ps.InputOneFloat(idx - 1, fds[idx - 1]);
-                ps.InputOneFloat(idx, fds[idx]);
+                for k in range(index, idx - index):
+                    ps.InputOneFloat(k, fds[k]);
                 self.segs.append(ps);
         self.idx = lk;
     

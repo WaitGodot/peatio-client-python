@@ -7,9 +7,6 @@
 # vol
 # increase
 # amplitude
-from formula.Formula import High;
-from formula.Formula import Low;
-
 class K():
     def __init__(self, data=None):
         if data:
@@ -79,16 +76,13 @@ class KLine():
         ret = [];
         if N == None:
             for k, d in enumerate(self.data):
-                ret.append(d[k]);
+                ret.append(d[key]);
         else:
             for idx in range(1, N):
                 if len(self.data) >= idx:
                     ret.append(self.data[-idx][key]);
 
         return ret;
-    
-    def High(self, key, N):
-        return High(self.ToList(key));
 
     def __len__(self):
         return len(self.data);

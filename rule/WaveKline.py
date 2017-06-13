@@ -95,7 +95,7 @@ class WaveKline():
     def Input(self, klines):
         lk = len(klines);
         ps = self.segs[-1];
-        for idx in range(self.idx, lk - 1):
+        for idx in range(self.idx, lk):
             # print idx, klines[idx];
             rt = ps.InputOneK(idx, klines[idx])
             if rt == False :
