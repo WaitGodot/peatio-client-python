@@ -57,7 +57,6 @@ class Client():
         signature, query = self.auth.sign_params(verb, path, params)
         url = "%s%s?%s&signature=%s" % (BASE_URL, path, query, signature)
         print(url)
-        send = False;
         if send:
             #try :
                 resp = urllib2.urlopen(url)

@@ -24,7 +24,7 @@ class Rule():
         self.begin = 0;
 
     def Run(self):
-        d = self.client.get(get_api_path('k'), params={'market': '{0}cny'.format(self.market), 'limit': 60,'period' : '{0}'.format(self.period)});
+        d = self.client.get(get_api_path('k'), params={'market': '{0}cny'.format(self.market), 'limit':1000,'period' : '{0}'.format(self.period)});
         print time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(d[0][0]));
         self.KLines.Input(d);
         self.MACD.Input(self.KLines);
@@ -41,9 +41,7 @@ class Rule():
             kmacd1 = self.MACD.Get(-1);
             kkdj1 = self.KDJ.Get(-1);
             if kseg1.dir == Direction.DOWN:
-                print 's1'
                 kdseg2 = self.WaveKline.Get(-2, Direction.DOWN);
-                print 's2';
                 if kseg1.lk.l < kdseg2.lk.l: # low low
                     # macd 
                     kmacd2 = self.MACD.Get(kdseg2.lkidx);

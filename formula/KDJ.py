@@ -57,7 +57,6 @@ class KDJ():
             self.J.append(self.K[idx] * 3 - self.D[idx] * 2);
 
     def Get(self, idx):
-        print len(self.K), len(self.D), len(self.J), idx
         return DATA(self.K[idx], self.D[idx], self.J[idx]);
 
     def Export(self, path):
