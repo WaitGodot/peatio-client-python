@@ -84,6 +84,9 @@ class KLine():
 
         return ret;
 
+    def Get(self, idx):
+        return self.data[idx];
+        
     def __len__(self):
         return len(self.data);
 

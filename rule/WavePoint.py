@@ -59,10 +59,11 @@ class Segment():
                 return False, self.highidx;
             if self.dir == Direction.DOWN:
                 return False, self.lowidx;
-        if self.high < fd:
-            self.high = fd; self.highidx = idx;
-        if self.low > fd:
-            self.low = fd; self.lowidx = idx; 
+        if ndir != Direction.FLAT or self.dir == Direction.FLAT:
+            if self.high < fd:
+                self.high = fd; self.highidx = idx;
+            if self.low > fd:
+                self.low = fd; self.lowidx = idx; 
         return True, -1;
 
     def __str__(self):
@@ -77,7 +78,6 @@ class WavePoint():
     def Input(self, fds):
         lk = len(fds);
         ps = self.segs[-1];
-        print fds;
         for idx in range(self.idx, lk):
             rt, index = ps.InputOneFloat(idx, fds[idx])
             if rt == False :
@@ -104,6 +104,19 @@ class WavePoint():
                     w.writerow([k, v.low]);
 
         f.close();
+    def ToPoints(self):
+        l = len(self.segs);
+        rt = []
+        for k, v in enumerate(self.segs):
+            if v.dir == Direction.UP:
+                rt.append(v.low);
+            else:
+                rt.append(v.high);
+            if k == l - 1:
+                if v.dir == Direction.UP:
+                    rt.append(v.high);
+                else:
+                    rt.append(v.low);
 
     def __str__(self):
         str = '';

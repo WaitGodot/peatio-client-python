@@ -27,11 +27,12 @@ print out;
 out = [];
 LOW([1,2,3,4,5,6], out, 3);
 print out;
-'''
 def ft():
     return 1,2;
 x,y = ft();
 print x,y
+'''
+
 r = Rule('btc', 60);
 r.Run();
 

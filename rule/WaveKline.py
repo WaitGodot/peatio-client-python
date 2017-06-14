@@ -49,37 +49,40 @@ class Segment():
             self.k0 = k;
             self.k1 = k;
             self.k2 = k;
+        
+        # k contain
+        isContain = self.k2.Contain(k)
+        if isContain:
+            if self.dir == Direction.UP:
+                self.k2 = K([k.t, 0, self.k2.h, k.l, 0, self.k2.vol + k.vol]);
+            if self.dir == Direction.DOWN:
+                self.k2 = K([k.t, 0, k.h, self.k2.l, 0, 0]);
         else:
-            # k contain
-            isContain = self.k2.Contain(k) or k.Contain(self.k2);
-            if isContain:
-                if self.dir == Direction.UP:
-                    self.k2 = K([k.t, 0, self.k2.h, k.l, 0, self.k2.vol + k.vol]);
-                if self.dir == Direction.DOWN:
-                    self.k2 = K([k.t, 0, k.h, self.k2.l, 0, 0]);
-            else:
-                if self.k2.h <= k.h :
-                    nk = K([k.t, 0, k.h, max(k.l, self.k2.l), 0, 0]);
-                if self.k2.l >= k.l :
-                    nk = K([k.t, 0, min(k.h, self.k2.h), k.l, 0, 0]);
-                self.k0 = self.k1; 
-                self.k1 = self.k2;
-                self.k2 = nk;
-                self.ks.append(nk);
-        if self.lk.l > k.l:
-            self.lkidx = idx;
-            self.lk = k;
-        if self.hk.h < k.h:
-            self.hkidx = idx;
-            self.hk = k;
+            nk = None;
+            if self.k2.h <= k.h :
+                nk = K([k.t, 0, k.h, max(k.l, self.k2.l), 0, 0]);
+            if self.k2.l >= k.l :
+                nk = K([k.t, 0, min(k.h, self.k2.h), k.l, 0, 0]);
+            self.k0 = self.k1; self.k1 = self.k2; self.k2 = nk;
+            self.ks.append(nk);
 
         ndir = CalDir(self.k0, self.k1, self.k2);
-        if self.dir == ndir or ndir == Direction.FLAT or self.dir == Direction.FLAT:
-            if ndir != Direction.FLAT and self.dir == Direction.FLAT:
-                self.dir = ndir;
-            return True;
-        else:
-            return False;
+        # print idx, isContain, self.dir, ndir;
+        if isContain:
+            return True, -1;
+        if self.dir == Direction.FLAT:
+            self.dir = ndir;
+        if self.dir != ndir and ndir != Direction.FLAT: # break
+            if self.dir == Direction.UP:
+                return False, self.hkidx;
+            if self.dir == Direction.DOWN:
+                return False, self.lkidx;
+        if ndir != Direction.FLAT or self.dir == Direction.FLAT:
+            if self.lk.l > k.l:
+                self.lkidx = idx; self.lk = k;
+            if self.hk.h < k.h:
+                self.hkidx = idx; self.hk = k;
+        return True, -1;
 
     def __str__(self):
         return 'dir:{0}, high:{1}, high idx:{2}, low:{3}, low idx:{4}'.format(ToStringDir(self.dir), self.hk.h, self.hkidx, self.lk.l, self.lkidx);
@@ -96,23 +99,40 @@ class WaveKline():
         lk = len(klines);
         ps = self.segs[-1];
         for idx in range(self.idx, lk):
-            # print idx, klines[idx];
-            rt = ps.InputOneK(idx, klines[idx])
+            rt, index = ps.InputOneK(idx, klines[idx])
             if rt == False :
                 ps = Segment();
-                ps.InputOneK(idx - 2, klines[idx - 2]);
-                ps.InputOneK(idx - 1, klines[idx - 1]);
-                ps.InputOneK(idx, klines[idx]);
+                # print 'insert new segment', len(self.segs) + 1; 
+                for k in range(index, idx+1):
+                    ps.InputOneK(k, klines[k]);
                 self.segs.append(ps);
         self.idx = lk;
-    
+    def Get(self, idx, dir=None):
+        if dir == None:
+            return self.segs[idx];
+        else:
+            l = len(self.segs);
+            c = 0;
+            for i in range(0, l):
+                seg = self.segs[i];
+                if seg.dir == dir:
+                        c = c + 1;
+                if idx > 0:
+                    if c == idx + 1:
+                        return seg;
+                else:
+                    if -c == idx:
+                        return seg;
+        return None;
+
+
     def Export(self, path):
         print '';
 
     def __str__(self):
         str = '';
         for k, seg in enumerate(self.segs):
-           str = str + seg.__str__() + '\n';
+           str += 'idx:{0}, '.format(k) + seg.__str__() + '\n';
         return str;
     
 

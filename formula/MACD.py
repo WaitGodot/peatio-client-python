@@ -3,7 +3,7 @@ from formula.Formula import EMA
 # MACD
 class DATA():
     def __init__(self, diff, dea):
-        self.Set(diff, diff, dea)
+        self.Set(diff, dea)
 
     def Set(self, diff, dea):
         self.diff = diff;

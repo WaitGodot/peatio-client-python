@@ -52,11 +52,12 @@ class KDJ():
             SMA(self.K, self.D, self.N3, 1)
        
         l = len(self.J);
-        count = len(self.J) - l;
+        count = len(self.K) - l;
         for idx in range(l, count):
             self.J.append(self.K[idx] * 3 - self.D[idx] * 2);
 
-    def Get(self, index):
+    def Get(self, idx):
+        print len(self.K), len(self.D), len(self.J), idx
         return DATA(self.K[idx], self.D[idx], self.J[idx]);
 
     def Export(self, path):
