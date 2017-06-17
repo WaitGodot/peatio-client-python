@@ -79,4 +79,13 @@ def LOW(xArr, yArr, N):
                low = value;
         yArr.append(low);
     
-#RSV
+#CROSS
+def CROSS(AArr, BArr, N):
+    lena = len(AArr);
+    lenb = len(BArr);
+    if lena < N or lenb < N or N <= 0:
+        return False;
+    if AArr[N-1] < BArr[N-1] and AArr[N] > BArr[N]:
+        return True;
+    return False;
+    

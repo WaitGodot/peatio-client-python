@@ -3,10 +3,12 @@ from lib.client import Client, get_api_path
 from formula.K import KLine
 from formula.MACD import MACD
 from formula.KDJ import KDJ
+from formula.Formula import CROSS
 from BotConfig import BotConfig
 from rule.WaveKline import WaveKline
 from rule.WavePoint import WavePoint
 from rule.WaveKline import Direction
+
 
 import time;
 
