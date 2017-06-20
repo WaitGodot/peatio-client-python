@@ -8,11 +8,12 @@
 # increase
 # amplitude
 class K():
-    def __init__(self, data=None):
+    def __init__(self, data=None, idx=-1):
         if data:
             self.Set(data);
         else:
             self.Set([0,0,0,0,0,0]);
+        self.idx = idx
 
     def Set(self, data):
         self.t = data[0];
@@ -59,16 +60,18 @@ class KLine():
     def __init__(self):
         self.data = [];
         self.prices = []; # use close price
+        self.idx = 0;
 
     def Input(self, data):
         last = None;
-        if len(self.data) > 0:
+        lend = len(self.data);
+        if lend > 0:
             last = self.data[-1];
         for k, d in enumerate(data):
             if last:
                 if d[0] <= last.t:
                     continue;
-            nk = K(d);
+            nk = K(d, self.idx + k);
             self.data.append(nk)
             self.prices.append(nk.c);
             

@@ -9,8 +9,8 @@ from rule.WaveKline import WaveKline
 from rule.WavePoint import WavePoint
 from rule.WaveKline import Direction
 
-
 import time;
+
 
 class Rule():
     def __init__(self, market, period):
@@ -20,7 +20,11 @@ class Rule():
         self.MACD = MACD();
         self.KDJ = KDJ();
         self.WaveKline = WaveKline();
+        self.WaveMACD_DIFF = WavePoint();
+        self.WaveMACD_DEA = WavePoint();
+        self.WaveMACD_MACD = WavePoint();
         self.WaveKDJ_K = WavePoint();
+        self.WaveKDJ_D = WavePoint();
 
         self.client = Client(access_key=BotConfig.access_key, secret_key=BotConfig.secret_key)
         self.begin = 0;
@@ -31,29 +35,23 @@ class Rule():
         self.KLines.Input(d);
         self.MACD.Input(self.KLines);
         self.KDJ.Input(self.KLines);
-        # self.KDJ.Export('c:\\Users\\randy\\k.csv');
 
         self.WaveKline.Input(self.KLines);
+        self.WaveMACD_DIFF.Input(self.MACD.DIFF);
+        self.WaveMACD_DEA.Input(self.MACD.DEA)
         self.WaveKDJ_K.Input(self.KDJ.K);
-        # self.WaveKDJ_K.Export('c:\\Users\\randy\\wave.csv');
+        self.WaveKDJ_D.Input(self.KDJ.D);
         klen = len(self.KLines);
-        for idx in range(self.begin, klen):
-            # buy 
-            kseg1 = self.WaveKline.Get(-1); # k,kd,ku
-            kmacd1 = self.MACD.Get(-1);
-            kkdj1 = self.KDJ.Get(-1);
-            if kseg1.dir == Direction.DOWN:
-                kdseg2 = self.WaveKline.Get(-2, Direction.DOWN);
-                if kseg1.lk.l < kdseg2.lk.l: # low low
-                    # macd 
-                    kmacd2 = self.MACD.Get(kdseg2.lkidx);
-                    # kdj
-                    kkdj2 = self.KDJ.Get(kdseg2.lkidx);
-                    if kmacd2.diff < 0 and kmacd2.dea < 0 and kmacd1 > kmacd2 and kkdj1.k > kkdj2.k:
-                        print 'buy idx :'.format(idx);
-            # sell
-
-
-
         self.begin  = klen;
 
+    def Trend(self): # macd diff, dea 0 de daxiao
+        lmacd = len(self.MACD);
+        if lmacd < 2:
+            return Direction.FLAT;
+        if self.MACD.DIFF[len-1] >= 0 and self.MACD.DIFF[len-2] >= 0 and self.MACD.DEA[len-1] >= 0 and self.MACD.DEA[len-2] >=0:
+            return Direction.UP:
+        return Direction.DOWN;
+    def MACD_DIFF(self):
+        c = self.WaveMACD_DIFF.Get(-1);
+        pc = self.WaveMACD_DIFF.Get(-2, c.dir);
+        

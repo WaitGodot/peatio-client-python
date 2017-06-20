@@ -11,20 +11,34 @@ def CalDir(fd0, fd1, fd2):
         return Direction.DOWN;
     return Direction.FLAT;
 
+class Point():
+    def __init__(self, idx, fd):
+        self.idx = idx;
+        self.value = fd;
+    def __str__(self):
+        return 'idx={0} value={1}'.format(self.idx, self.value);
+
 class Segment():
     def __init__(self):
-        self.highidx = -1;
-        self.lowidx = -1;
-        self.high = 0;
-        self.low = 0;
+        self.ps = [];
         self.dir = Direction.FLAT;
-
+    def TimeInterval(self):
+        i = self.high.idx - self.low.idx;
+        return i > 0 and i or -i;
+    def Amplitude(self):
+        if self.dir == Direction.UP:
+            return (self.high.value - self.low.value) / self.low.value;
+        if self.dir == Direction.DOWN:
+            return (self.high.value - self.low.value) / self.high.value;
+    def Angle(self):# not a real angle
+        if self.dir == Direction.UP:
+            return (self.high - self.low) / (self.high.idx - self.low.idx);
+        if self.dir == Direction.DOWN:
+            return (self.low - self.high) / (self.low.idx - self.high.idx);
     def InputOneFloat(self, idx, fd):
-        if self.highidx == -1:
-            self.high = fd;
-            self.highidx = idx;
-            self.low = fd;
-            self.lowidx = idx;
+        if self.high == None:
+            self.high = Point(idx, fd);
+            self.low = self.high;
             self.fd0 = fd;
             self.fd1 = fd;
             self.fd2 = fd;
@@ -56,18 +70,18 @@ class Segment():
             return True, -1;
         if self.dir != ndir and ndir != Direction.FLAT: # break
             if self.dir == Direction.UP:
-                return False, self.highidx;
+                return False, self.high.idx;
             if self.dir == Direction.DOWN:
-                return False, self.lowidx;
+                return False, self.low.idx;
         if ndir != Direction.FLAT or self.dir == Direction.FLAT:
-            if self.high < fd:
-                self.high = fd; self.highidx = idx;
-            if self.low > fd:
-                self.low = fd; self.lowidx = idx; 
+            if self.high.value < fd:
+                self.high = Point(idx, fd);
+            if self.low.value > fd:
+                self.low = Point(idx, fd);
         return True, -1;
 
     def __str__(self):
-        return 'dir:{0}, high:{1}, high idx:{2}, low:{3}, low idx:{4}'.format(ToStringDir(self.dir), self.high, self.highidx, self.low, self.lowidx);
+        return 'dir:{0}, high:{1}, low:{3}'.format(ToStringDir(self.dir), self.high.__str__(), self.low.__str__());
 
 class WavePoint():
     def __init__(self):
@@ -118,9 +132,29 @@ class WavePoint():
                 else:
                     rt.append(v.low);
 
+    def Get(self, idx, dir=None):
+        if dir == None:
+            return self.segs[idx];
+        else:
+            l = len(self.segs);
+            c = 0;
+            for i in range(0, l):
+                seg = self.segs[i];
+                if seg.dir == dir:
+                        c = c + 1;
+                if idx > 0:
+                    if c == idx + 1:
+                        return seg;
+                else:
+                    if -c == idx:
+                        return seg;
+        return None;
     def __str__(self):
         str = '';
         for k, seg in enumerate(self.segs):
            str = str + seg.__str__() + '\n';
         return str;
+
+    def __getitem__(self, k):
+        return self.segs[k];
     

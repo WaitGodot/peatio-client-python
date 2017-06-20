@@ -40,6 +40,20 @@ class Segment():
         self.lkidx = -1;
         self.dir = Direction.FLAT;
         self.ks = [];
+
+    def TimeInterval(self):
+        i = self.hkidx - self.lkidx;
+        return i > 0 and i or -i;
+    def Amplitude(self):
+        if self.dir == Direction.UP:
+            return (self.hk.h - self.lk.l) / self.lk.l;
+        if self.dir == Direction.DOWN:
+            return (self.hk.h - self.lk.l) / self.hk.h;
+    def Angle(self):# not a real angle
+        if self.dir == Direction.UP:
+            return (self.hk.h - self.lk.l) / (self.hkidx - self.lkidx);
+        if self.dir == Direction.DOWN:
+            return (self.lk.l - self.hk.h) / (self.lkidx - self.hkidx);
     def InputOneK(self, idx, k):
         if self.hkidx == -1:
             self.hk = k;
@@ -85,7 +99,7 @@ class Segment():
         return True, -1;
 
     def __str__(self):
-        return 'dir:{0}, high:{1}, high idx:{2}, low:{3}, low idx:{4}'.format(ToStringDir(self.dir), self.hk.h, self.hkidx, self.lk.l, self.lkidx);
+        return 'dir:{0}, hk.h:{1}, hk.h idx:{2}, lk.l:{3}, lk.l idx:{4}'.format(ToStringDir(self.dir), self.hk.h, self.hkidx, self.lk.l, self.lkidx);
                 
 
 class WaveKline():
@@ -134,6 +148,7 @@ class WaveKline():
         for k, seg in enumerate(self.segs):
            str += 'idx:{0}, '.format(k) + seg.__str__() + '\n';
         return str;
-    
+    def __getitem__(self, k):
+        return self.segs[k];
 
 

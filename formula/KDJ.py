@@ -73,3 +73,5 @@ class KDJ():
         for k in range(0, l):
             str = str + self.Get(indx).__str__() + '\n';
         return str;
+    def __len__(self):
+        return len(self.K);
