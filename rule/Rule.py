@@ -51,7 +51,9 @@ class Rule():
         if self.MACD.DIFF[len-1] >= 0 and self.MACD.DIFF[len-2] >= 0 and self.MACD.DEA[len-1] >= 0 and self.MACD.DEA[len-2] >=0:
             return Direction.UP:
         return Direction.DOWN;
+    #macd diff current value, 
     def MACD_DIFF(self):
         c = self.WaveMACD_DIFF.Get(-1);
         pc = self.WaveMACD_DIFF.Get(-2, c.dir);
+        
         
