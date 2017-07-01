@@ -149,6 +149,13 @@ class WavePoint():
                     if -c == idx:
                         return seg;
         return None;
+    def TrendWeaken(self):
+        c = self.Get(-1);
+        pc = self.Get(-1, c.dir);
+        # 1/3 least
+        if c.TimeInterval() < pc.TimeInterval() * 2/3 and c.Amplitude() < pc.Amplitude() * 2/3:
+            return True;
+            
     def __str__(self):
         str = '';
         for k, seg in enumerate(self.segs):

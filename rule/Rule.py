@@ -44,16 +44,19 @@ class Rule():
         klen = len(self.KLines);
         self.begin  = klen;
 
-    def Trend(self): # macd diff, dea 0 de daxiao
+    # macd diff, dea 0 de daxiao   
+    def Trend(self): 
         lmacd = len(self.MACD);
         if lmacd < 2:
             return Direction.FLAT;
         if self.MACD.DIFF[len-1] >= 0 and self.MACD.DIFF[len-2] >= 0 and self.MACD.DEA[len-1] >= 0 and self.MACD.DEA[len-2] >=0:
             return Direction.UP:
         return Direction.DOWN;
-    #macd diff current value, 
-    def MACD_DIFF(self):
-        c = self.WaveMACD_DIFF.Get(-1);
-        pc = self.WaveMACD_DIFF.Get(-2, c.dir);
-        
+    def Do(self):
+        d = self.Trend();
+        kc = self.WaveKline.Get(-1);
+        kp = self.WaveKline.Get(-2, kc.dir);
+        if d == Direction.UP:
+            if
+        if d == Direction.DOWN:
         
