@@ -4,10 +4,9 @@
 def MA(xArr, yArr, N):
     lenY = len(yArr);
     lenX = len(xArr);
-    count = lenX - lenY;
     if lenX < N:
         return 0;
-    for idx in range(lenY, count):
+    for idx in range(lenY, lenX):
         ss = 0;
         av = 0;
         for k in range(0, N):
@@ -25,8 +24,8 @@ def MA(xArr, yArr, N):
 def EMA(xArr, yArr, N):
     k = (2.0 / (N + 1.0));
     lenY = len(yArr);
-    count = len(xArr) - lenY;
-    for idx in range(lenY, count):
+    lenX = len(xArr);
+    for idx in range(lenY, lenX):
         value = xArr[idx];
         if idx != 0:
             yArr.append(value * k + (1.0 - k) * yArr[idx - 1]);
@@ -37,8 +36,7 @@ def EMA(xArr, yArr, N):
 def SMA(xArr, yArr, N, M):
     lenX = len(xArr);
     lenY = len(yArr);
-    count = lenX - lenY;
-    for idx in range(lenY, count):
+    for idx in range(lenY, lenX):
         value = xArr[idx];
         if idx != 0:
             yArr.append(value*(float)(M)/(float)(N) + yArr[idx - 1] * ((float)(N)-(float)(M))/(float)(N));
@@ -48,8 +46,7 @@ def SMA(xArr, yArr, N, M):
 def HIGH(xArr, yArr, N):
     lenX = len(xArr);
     lenY = len(yArr);
-    count = lenX - lenY;
-    for idx in range(lenY, count):
+    for idx in range(lenY, lenX):
         high = 0;
         for n in range(0, N):
             nidx = idx - n;
@@ -65,8 +62,7 @@ def HIGH(xArr, yArr, N):
 def LOW(xArr, yArr, N):
     lenX = len(xArr);
     lenY = len(yArr);
-    count = lenX - lenY;
-    for idx in range(lenY, count):
+    for idx in range(lenY, lenX):
         low = 0;
         for n in range(0, N):
             nidx = idx - n;

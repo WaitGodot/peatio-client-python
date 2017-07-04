@@ -1,6 +1,7 @@
 # wave from point
 # we can found a set of point
 from formula.K import K;
+import csv
 
 SegmentMinCount = 3;
 
@@ -81,15 +82,17 @@ class Segment():
             self.ks.append(nk);
 
         ndir = CalDir(self.k0, self.k1, self.k2);
-        # print idx, isContain, self.dir, ndir;
+        print idx, isContain, self.dir, ndir;
         if isContain:
             return True, -1;
         if self.dir == Direction.FLAT:
             self.dir = ndir;
         if self.dir != ndir and ndir != Direction.FLAT: # break
             if self.dir == Direction.UP:
+                print "xxxxbreak up"
                 return False, self.hkidx;
             if self.dir == Direction.DOWN:
+                print "xxxxbreak down"
                 return False, self.lkidx;
         if ndir != Direction.FLAT or self.dir == Direction.FLAT:
             if self.lk.l > k.l:
@@ -141,13 +144,34 @@ class WaveKline():
 
 
     def Export(self, path):
-        print '';
+        f = open(path, 'wb');
+        w = csv.writer(f);
+        l = len(self.segs);
+        for k, v in enumerate(self.segs):
+            if v.dir == Direction.UP:
+                w.writerow([k, v.lk.h, v.lk.l, v.hk.h, v.hk.l]);
+            else:
+                w.writerow([k, v.hk.h, v.hk.l, v.lk.h, v.lk.l]);
+            if k == l - 1:
+                if v.dir == Direction.UP:
+                    w.writerow([k, v.hk.h, v.hk.l, v.lk.h, v.lk.l]);
+                else:
+                    w.writerow([k, v.lk.h, v.lk.l, v.hk.h, v.hk.l]);
+        f.close();
 
+    def TrendWeaken(self):
+        c = self.Get(-1);
+        pc = self.Get(-2, c.dir);
+        # 1/3 least
+        if c.TimeInterval() < pc.TimeInterval() and c.Amplitude() < pc.Amplitude():
+            return True;
+        return False;
     def __str__(self):
         str = '';
         for k, seg in enumerate(self.segs):
            str += 'idx:{0}, '.format(k) + seg.__str__() + '\n';
         return str;
+
     def __getitem__(self, k):
         return self.segs[k];
 

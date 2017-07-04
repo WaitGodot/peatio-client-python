@@ -29,7 +29,7 @@ class MACD():
         EMA(klines.prices, self.EMALong, self.long);
 
         ld = len(self.DIFF);
-        lr = len(self.EMAShort) - ld;
+        lr = len(self.EMAShort);
         for idx in range(ld, lr):
             self.DIFF.append(self.EMAShort[idx] - self.EMALong[idx]);
         EMA(self.DIFF, self.DEA, self.diff);

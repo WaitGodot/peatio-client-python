@@ -29,9 +29,9 @@ class Rule():
         self.client = Client(access_key=BotConfig.access_key, secret_key=BotConfig.secret_key)
         self.begin = 0;
 
-    def Run(self):
-        d = self.client.get(get_api_path('k'), params={'market': '{0}cny'.format(self.market), 'limit':1000,'period' : '{0}'.format(self.period)});
-        print time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(d[0][0]));
+    def Run(self, d):
+        # d = self.client.get(get_api_path('k'), params={'market': '{0}cny'.format(self.market), 'limit':100,'period' : '{0}'.format(self.period)});
+        # print time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(d[0][0]));
         self.KLines.Input(d);
         self.MACD.Input(self.KLines);
         self.KDJ.Input(self.KLines);
@@ -44,19 +44,49 @@ class Rule():
         klen = len(self.KLines);
         self.begin  = klen;
 
+        self.WaveKline.Export("C:\\Users\\randy\\k.csv");
+
     # macd diff, dea 0 de daxiao   
     def Trend(self): 
         lmacd = len(self.MACD);
         if lmacd < 2:
             return Direction.FLAT;
-        if self.MACD.DIFF[len-1] >= 0 and self.MACD.DIFF[len-2] >= 0 and self.MACD.DEA[len-1] >= 0 and self.MACD.DEA[len-2] >=0:
-            return Direction.UP:
+        if self.MACD.DIFF[lmacd-1] >= 0 and self.MACD.DIFF[lmacd-2] >= 0 and self.MACD.DEA[lmacd-1] >= 0 and self.MACD.DEA[lmacd-2] >=0:
+            return Direction.UP;
+
         return Direction.DOWN;
     def Do(self):
         d = self.Trend();
         kc = self.WaveKline.Get(-1);
         kp = self.WaveKline.Get(-2, kc.dir);
-        if d == Direction.UP:
-            if
-        if d == Direction.DOWN:
+        k = self.KLines.Get(-1);
+        if kc.hkidx < 0 or kc.lkidx < 0 or kp == None:
+            return None;
+        
+        # print 'kc:',kc,'kp:',kp
+        # print kp.hk.c, kc.hk.c, kp.lk.c, kp.lk.c
+
+        if kp.hk.c < kc.hk.c and kp.hk.c > kc.lk.c:
+            # 
+            ktrend = self.WaveKline.TrendWeaken();
+            macdtrend = self.WaveMACD_DIFF.TrendWeaken(kc.dir);
+            kdjkseg = self.WaveKDJ_K.Get(-1);
+            if ktrend:
+                print "sell", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), d, ktrend, macdtrend, kdjkseg.dir
+            # sell
+            if ktrend and macdtrend and kdjkseg.dir == Direction.DOWN:
+                return 'sell';
+        if kp.lk.c > kc.lk.c and kp.lk.c < kc.hk.c:
+            # 
+            ktrend = self.WaveKline.TrendWeaken();
+            macdtrend = self.WaveMACD_DIFF.TrendWeaken(kc.dir);
+            kdjkseg = self.WaveKDJ_K.Get(-1);
+            if ktrend:
+                print "buy", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), ktrend, macdtrend, kdjkseg.dir
+            # buy
+            if ktrend and macdtrend and kdjkseg.dir == Direction.UP:
+                return 'buy';
+        return None
+
+
         

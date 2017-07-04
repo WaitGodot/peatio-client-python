@@ -22,21 +22,23 @@ class Segment():
     def __init__(self):
         self.ps = [];
         self.dir = Direction.FLAT;
+        self.high = Point(-1, 0);
+        self.low = Point(-1, 0);
     def TimeInterval(self):
         i = self.high.idx - self.low.idx;
         return i > 0 and i or -i;
     def Amplitude(self):
         if self.dir == Direction.UP:
-            return (self.high.value - self.low.value) / self.low.value;
+            return (self.high.value - self.low.value);
         if self.dir == Direction.DOWN:
-            return (self.high.value - self.low.value) / self.high.value;
+            return (self.high.value - self.low.value);
     def Angle(self):# not a real angle
         if self.dir == Direction.UP:
             return (self.high - self.low) / (self.high.idx - self.low.idx);
         if self.dir == Direction.DOWN:
             return (self.low - self.high) / (self.low.idx - self.high.idx);
     def InputOneFloat(self, idx, fd):
-        if self.high == None:
+        if self.high.idx == -1:
             self.high = Point(idx, fd);
             self.low = self.high;
             self.fd0 = fd;
@@ -81,7 +83,7 @@ class Segment():
         return True, -1;
 
     def __str__(self):
-        return 'dir:{0}, high:{1}, low:{3}'.format(ToStringDir(self.dir), self.high.__str__(), self.low.__str__());
+        return 'dir:{0}, high:{1}, low:{2}'.format(ToStringDir(self.dir), self.high.__str__(), self.low.__str__());
 
 class WavePoint():
     def __init__(self):
@@ -116,8 +118,8 @@ class WavePoint():
                     w.writerow([k, v.high]);
                 else:
                     w.writerow([k, v.low]);
-
         f.close();
+        
     def ToPoints(self):
         l = len(self.segs);
         rt = []
@@ -149,12 +151,16 @@ class WavePoint():
                     if -c == idx:
                         return seg;
         return None;
-    def TrendWeaken(self):
-        c = self.Get(-1);
-        pc = self.Get(-1, c.dir);
+
+    def TrendWeaken(self, dir):
+        c = self.Get(-1, dir);
+        pc = self.Get(-2, dir);
+        if pc == None:
+            return False;
         # 1/3 least
         if c.TimeInterval() < pc.TimeInterval() * 2/3 and c.Amplitude() < pc.Amplitude() * 2/3:
             return True;
+        return False;
             
     def __str__(self):
         str = '';

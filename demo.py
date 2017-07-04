@@ -9,8 +9,9 @@ from formula.Formula import MA
 from formula.Formula import EMA
 from formula.Formula import HIGH
 from formula.Formula import LOW
-
+from BotConfig import BotConfig
 from rule.Rule import Rule
+from user.User import User
 '''
 out = [];
 SMA([1,2,3,4,5,6],out,3,1);
@@ -32,11 +33,21 @@ def ft():
 x,y = ft();
 print x,y
 '''
+u = User();
 
-r = Rule('btc', 60);
-r.Run();
+r = Rule('btc', 240);
+c = Client(access_key=BotConfig.access_key, secret_key=BotConfig.secret_key)
+d = c.get(get_api_path('k'), params={'market': '{0}cny'.format("btc"), 'limit':100,'period' : '{0}'.format(60)});
 
+print time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(d[0][0]));
+for k,v in enumerate(d):
+	# print [v];
+	r.Run([v]);
+	ret = r.Do();
+	if ret != None:
+	    print k, "  ",r.Do();
 
+print r.WaveKline;
 #client = Client(access_key='N1vXgZ0wSrTkLjgzG1oli4aD10DDRQW9gYxkHljW', secret_key='Xgz0QqlvdAx9lBjpiVLlnFOs2IwaPS3lftuw4geS')
 """
 #demo of GET APIs

@@ -4,9 +4,9 @@
 ORDERID = 0;
 
 class OrderStatus():
-    COMPELETE = 0; # 完成
-    UNCOMPELETE = 1; # 未完成
-    REVOKED = 2; # 撤销
+    COMPELETE = 0; # 
+    UNCOMPELETE = 1; # 
+    REVOKED = 2; # 
 
 class OrderType():
     BUY = 0;
@@ -25,11 +25,9 @@ class Order():
         self.leftcount = count;
         self.status = OrderStatus.UNCOMPELETE;
         self.compeleteprice = 0;
-    def 
+
     def Compelete(self, price, count):
         self.compeleteprice = price;
         self.leftcount = self.leftcount - count;
         if self.leftcount <= 0:
             self.status = OrderStatus.COMPELETE;
-    def Revoked(self):
-        if self.leftcount != self.count:

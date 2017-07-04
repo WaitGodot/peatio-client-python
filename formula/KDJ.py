@@ -32,28 +32,24 @@ class KDJ():
     def Input(self, klines):
         l = len(self.hightArr);
         prices = klines.prices;
-        count = len(prices) - l;
 
         HIGH(klines.ToList('h'), self.hightArr, self.N1);
         LOW(klines.ToList('l'), self.lowArr, self.N1);
         
-        for idx in range(l, count):
+        for idx in range(l, len(prices)):
             rsv = (prices[idx] - self.lowArr[idx]) / (self.hightArr[idx] - self.lowArr[idx]) * 100;
             self.RSV.append(rsv);
        
         l = len(self.K);
-        count = len(self.RSV) - l;
-        for idx in range(l, count):
+        for idx in range(l, len(self.RSV)):
             SMA(self.RSV, self.K, self.N2, 1);
 
         l = len(self.D);
-        count = len(self.K) - l;
-        for idx in range(l, count):
+        for idx in range(l, len(self.K)):
             SMA(self.K, self.D, self.N3, 1)
        
         l = len(self.J);
-        count = len(self.K) - l;
-        for idx in range(l, count):
+        for idx in range(l, len(self.K)):
             self.J.append(self.K[idx] * 3 - self.D[idx] * 2);
 
     def Get(self, idx):
