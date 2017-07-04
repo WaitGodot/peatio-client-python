@@ -140,14 +140,18 @@ class WavePoint():
         else:
             l = len(self.segs);
             c = 0;
-            for i in range(0, l):
-                seg = self.segs[i];
-                if seg.dir == dir:
+            if idx > 0:
+                for i in range(0, l):
+                    seg = self.segs[i];
+                    if seg.dir == dir:
                         c = c + 1;
-                if idx > 0:
                     if c == idx + 1:
                         return seg;
-                else:
+            else:
+                for i in range(0, l):
+                    seg = self.segs[-i-1];
+                    if seg.dir == dir:
+                        c = c + 1;
                     if -c == idx:
                         return seg;
         return None;

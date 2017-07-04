@@ -36,10 +36,11 @@ def CalDir(k0, k1, k2):
     return Direction.FLAT;
 
 class Segment():
-    def __init__(self):
+    def __init__(self, predir=Direction.FLAT):
         self.hkidx = -1;
         self.lkidx = -1;
         self.dir = Direction.FLAT;
+        self.predir = predir;
         self.ks = [];
 
     def TimeInterval(self):
@@ -82,17 +83,20 @@ class Segment():
             self.ks.append(nk);
 
         ndir = CalDir(self.k0, self.k1, self.k2);
-        print idx, isContain, self.dir, ndir;
+        # print idx, isContain, self.dir, ndir;
         if isContain:
             return True, -1;
         if self.dir == Direction.FLAT:
             self.dir = ndir;
+            if ndir == self.predir:
+                if ndir == Direction.UP:
+                    self.hkidx = idx; self.hk = k;
+                if ndir == Direction.DOWN:
+                    self.lkidx = idx; self.lk = k;
         if self.dir != ndir and ndir != Direction.FLAT: # break
             if self.dir == Direction.UP:
-                print "xxxxbreak up"
                 return False, self.hkidx;
             if self.dir == Direction.DOWN:
-                print "xxxxbreak down"
                 return False, self.lkidx;
         if ndir != Direction.FLAT or self.dir == Direction.FLAT:
             if self.lk.l > k.l:
@@ -118,7 +122,7 @@ class WaveKline():
         for idx in range(self.idx, lk):
             rt, index = ps.InputOneK(idx, klines[idx])
             if rt == False :
-                ps = Segment();
+                ps = Segment(ps.dir);
                 # print 'insert new segment', len(self.segs) + 1; 
                 for k in range(index, idx+1):
                     ps.InputOneK(k, klines[k]);
@@ -130,14 +134,18 @@ class WaveKline():
         else:
             l = len(self.segs);
             c = 0;
-            for i in range(0, l):
-                seg = self.segs[i];
-                if seg.dir == dir:
+            if idx > 0:
+                for i in range(0, l):
+                    seg = self.segs[i];
+                    if seg.dir == dir:
                         c = c + 1;
-                if idx > 0:
                     if c == idx + 1:
                         return seg;
-                else:
+            else:
+                for i in range(0, l):
+                    seg = self.segs[-i-1];
+                    if seg.dir == dir:
+                        c = c + 1;
                     if -c == idx:
                         return seg;
         return None;

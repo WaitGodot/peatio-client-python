@@ -44,7 +44,7 @@ class Rule():
         klen = len(self.KLines);
         self.begin  = klen;
 
-        self.WaveKline.Export("C:\\Users\\randy\\k.csv");
+        # self.WaveKline.Export("C:\\Users\\randy\\k.csv");
 
     # macd diff, dea 0 de daxiao   
     def Trend(self): 
@@ -66,13 +66,17 @@ class Rule():
         # print 'kc:',kc,'kp:',kp
         # print kp.hk.c, kc.hk.c, kp.lk.c, kp.lk.c
 
-        if kp.hk.c < kc.hk.c and kp.hk.c > kc.lk.c:
+        if kp.hk.h <= kc.hk.h and kp.hk.c > kc.lk.c:
             # 
+            # print "\n"
+            # print kp.hk.c, kc.hk.c, kc.lk.c
+            # print 'kc:',kc,'kp:',kp
+
             ktrend = self.WaveKline.TrendWeaken();
             macdtrend = self.WaveMACD_DIFF.TrendWeaken(kc.dir);
             kdjkseg = self.WaveKDJ_K.Get(-1);
-            if ktrend:
-                print "sell", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), d, ktrend, macdtrend, kdjkseg.dir
+            # if ktrend:
+            print "sell", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), d, ktrend, macdtrend, kdjkseg.dir
             # sell
             if ktrend and macdtrend and kdjkseg.dir == Direction.DOWN:
                 return 'sell';
@@ -81,8 +85,8 @@ class Rule():
             ktrend = self.WaveKline.TrendWeaken();
             macdtrend = self.WaveMACD_DIFF.TrendWeaken(kc.dir);
             kdjkseg = self.WaveKDJ_K.Get(-1);
-            if ktrend:
-                print "buy", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), ktrend, macdtrend, kdjkseg.dir
+            #if ktrend:
+            print "buy", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), ktrend, macdtrend, kdjkseg.dir
             # buy
             if ktrend and macdtrend and kdjkseg.dir == Direction.UP:
                 return 'buy';
