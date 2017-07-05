@@ -60,6 +60,7 @@ class Rule():
         kc = self.WaveKline.Get(-1);
         kp = self.WaveKline.Get(-2, kc.dir);
         k = self.KLines.Get(-1);
+        klen = len(self.KLines);
         if kc.hkidx < 0 or kc.lkidx < 0 or kp == None:
             return None;
         
@@ -75,8 +76,8 @@ class Rule():
             ktrend = self.WaveKline.TrendWeaken();
             macdtrend = self.WaveMACD_DIFF.TrendWeaken(kc.dir);
             kdjkseg = self.WaveKDJ_K.Get(-1);
-            # if ktrend:
-            print "sell", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), d, ktrend, macdtrend, kdjkseg.dir
+            #if ktrend:
+                # print "sell", klen-1, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), d, ktrend, macdtrend, kdjkseg.dir
             # sell
             if ktrend and macdtrend and kdjkseg.dir == Direction.DOWN:
                 return 'sell';
@@ -86,7 +87,8 @@ class Rule():
             macdtrend = self.WaveMACD_DIFF.TrendWeaken(kc.dir);
             kdjkseg = self.WaveKDJ_K.Get(-1);
             #if ktrend:
-            print "buy", time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), ktrend, macdtrend, kdjkseg.dir
+                # print "buy", klen-1, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), ktrend, macdtrend, kdjkseg.dir
+
             # buy
             if ktrend and macdtrend and kdjkseg.dir == Direction.UP:
                 return 'buy';

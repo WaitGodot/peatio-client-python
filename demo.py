@@ -37,7 +37,7 @@ u = User();
 
 r = Rule('btc', 240);
 c = Client(access_key=BotConfig.access_key, secret_key=BotConfig.secret_key)
-d = c.get(get_api_path('k'), params={'market': '{0}cny'.format("btc"), 'limit':100,'period' : '{0}'.format(60)});
+d = c.get(get_api_path('k'), params={'market': '{0}cny'.format("btc"), 'limit':500,'period' : '{0}'.format(240)});
 
 print time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(d[0][0]));
 for k,v in enumerate(d):
@@ -45,7 +45,7 @@ for k,v in enumerate(d):
 	r.Run([v]);
 	ret = r.Do();
 	if ret != None:
-	    print k, "  ",r.Do();
+	    print k, "  ", ret, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(v[0])), "\n";
 
 print r.WaveKline;
 #client = Client(access_key='N1vXgZ0wSrTkLjgzG1oli4aD10DDRQW9gYxkHljW', secret_key='Xgz0QqlvdAx9lBjpiVLlnFOs2IwaPS3lftuw4geS')

@@ -162,7 +162,7 @@ class WavePoint():
         if pc == None:
             return False;
         # 1/3 least
-        if c.TimeInterval() < pc.TimeInterval() * 2/3 and c.Amplitude() < pc.Amplitude() * 2/3:
+        if c.TimeInterval()*c.Amplitude() < pc.TimeInterval()*pc.Amplitude():
             return True;
         return False;
             

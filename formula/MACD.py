@@ -37,6 +37,11 @@ class MACD():
     def Get(self, index):
         return DATA(self.DIFF[index], self.DEA[index])
 
+    def SumMACD(self, b, e):
+        s = 0;
+        for idx in range(b, e):
+            s += 2 * (self.DIFF[idx] - self.DEA[idx]);
+
     def __str__(self):
         str = '';
         l = len(self.EMAShort);
