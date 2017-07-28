@@ -84,4 +84,14 @@ def CROSS(AArr, BArr, N):
     if AArr[N-1] < BArr[N-1] and AArr[N] > BArr[N]:
         return True;
     return False;
-    
+#Angle
+def ANGLE(Arr):
+    lena = len(Arr);
+    if lena < 2:
+        return 0;
+    rt = Arr[-1] - Arr[-2];
+    if rt > 0:
+        return rt;
+    if rt < 0:
+        return rt;
+    return rt;
