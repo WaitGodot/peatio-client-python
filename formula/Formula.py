@@ -4,8 +4,6 @@
 def MA(xArr, yArr, N):
     lenY = len(yArr);
     lenX = len(xArr);
-    if lenX < N:
-        return 0;
     for idx in range(lenY, lenX):
         ss = 0;
         av = 0;
@@ -76,12 +74,14 @@ def LOW(xArr, yArr, N):
         yArr.append(low);
     
 #CROSS
-def CROSS(AArr, BArr, N):
+def CROSS(AArr, BArr, N=None):
     lena = len(AArr);
     lenb = len(BArr);
-    if lena < N or lenb < N or N <= 0:
+    if N == None:
+        N = lena;
+    if lena < N or lenb < N or N <= 0 or N < 2:
         return False;
-    if AArr[N-1] < BArr[N-1] and AArr[N] > BArr[N]:
+    if AArr[N-2] < BArr[N-2] and AArr[N-1] > BArr[N-1]:
         return True;
     return False;
     

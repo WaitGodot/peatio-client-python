@@ -1,8 +1,6 @@
 
 # order
 # 
-ORDERID = 0;
-
 class OrderStatus():
     COMPELETE = 0; # 
     UNCOMPELETE = 1; # 
@@ -13,10 +11,11 @@ class OrderType():
     SELL = 1;
 
 class Order():
+    ORDERID = 0;
     def __init__(self, type, market, time, price, count):
-        ORDERID += 1;
-        self.id = ORDERID;
-        self.parent = ORDERID;
+        Order.ORDERID += 1;
+        self.id = Order.ORDERID;
+        self.parent = Order.ORDERID;
         self.type = type;
         self.market = market;
         self.time = time;
