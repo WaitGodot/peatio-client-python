@@ -171,7 +171,7 @@ class WaveKline():
         c = self.Get(-1);
         pc = self.Get(-2, c.dir);
         # 1/3 least
-        if c.TimeInterval() < pc.TimeInterval() and c.Amplitude() < pc.Amplitude():
+        if c.TimeInterval() * c.Amplitude() < pc.TimeInterval() * pc.Amplitude():
             return True;
         return False;
     def __str__(self):
