@@ -3,6 +3,7 @@ import urllib2
 
 from exchange.Exchange import Exchange
 from exchange.yunbiEX import yunbiEX
+from exchange.yunbiEX import yunbiEXLocal
 
 from formula.K import KLine
 from formula.MACD import MACD
@@ -21,13 +22,19 @@ class Rebot():
     def __init__(self, period):
         self.period = period;
         self.exchange = Exchange(RebotConfig.access_key, RebotConfig.secret_key);
-        self.exchange.delegate(yunbiEX());
+        # self.exchange.delegate(yunbiEX());
+        self.exchange.delegate(yunbiEXLocal());
         self.user = User();
         # user.
         info = self.exchange.getUser();
+        print info
+        print '-----------------------------------'
         self.user.updatePositions(info['accounts']);
         # markets
+        print '-----------------------------------'
         self.markets = self.exchange.getMarkets();
+        print self.markets
+        print '-----------------------------------'
         # rule.
         self.rules = {}; #MutliMovingAverage();
         # init.

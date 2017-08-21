@@ -22,8 +22,8 @@ class User():
     def updatePositions(self, positions):
         for key, value in enumerate(positions):
             self.positions[value['currency']] = float(value['balance']) - float(value['locked']);
-            if self.positions[value['currency']] > 0:
-                print value;
+            # if self.positions[value['currency']] > 0:
+            #    print value;
     def updateOrder(self, orders):
         # id, type, market, time, price, volume
         for key, value in enumerate(orders):
@@ -55,34 +55,24 @@ class User():
         if amount > self.amount:
             amount = self.amount;
             volume = amount / price;
-        if volume <= 0 :
+        if volume < 1 :
             print "not enough money!";
-        
-        if volume < 1:
-            return ;
-        o = Order("buy", market, time, price, volume);
-        self.orders[o.id] = o;
-
-        self.updateOrderWithID(o.id); # only for test
-        return o;
+            return 0;
+        return volume;
 
     def sell(self, market, time, price, volume=None):
         pc = self.positions.get(market);
         if pc == None:
             print "not enough positions, market : {0}".format(market);
-            return ;
+            return 0;
         if volume==None:
             volume = pc;
         if pc < volume:
             volume = pc;
 
         if volume < 1:
-            return ;
-        o = Order("sell", market, time, price, volume);
-        self.orders[o.id] = o;
-
-        self.updateOrderWithID(o.id); # only for test
-        return o;
+            return 0;
+        return volume;
 
     def updateOrderWithID(self, id):
         o = self.orders[id]

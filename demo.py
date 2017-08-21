@@ -16,10 +16,21 @@ from rule.Rule import Rule
 from rule.MutliMovingAverage import MutliMovingAverage
 from user.User import User
 from Rebot import Rebot;
+from exchange.yunbi.client import Client, get_api_path
+
+
+'''
+# k test
+c = Client(access_key=RebotConfig.access_key, secret_key=RebotConfig.secret_key)
+while True:
+    time.sleep(1);
+    d = c.get(get_api_path('k'), params={'market': 'eoscny', 'limit':1,'period':5});
+    t = c.get(get_api_path('tickers'), params={'market':'eoscny'});
+    print d, t;
+
+'''
 
 r = Rebot(60);
-
-#r.run();
 t = 0;
 while True:
     t+=1;
