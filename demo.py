@@ -1,7 +1,9 @@
 import time
 import urllib2
 
-from lib.client import Client, get_api_path
+from exchange.Exchange import Exchange
+from exchange.yunbiEX import yunbiEX
+
 from formula.K import KLine
 from formula.MACD import MACD
 from formula.Formula import SMA
@@ -9,37 +11,28 @@ from formula.Formula import MA
 from formula.Formula import EMA
 from formula.Formula import HIGH
 from formula.Formula import LOW
-from BotConfig import BotConfig
+from RebotConfig import RebotConfig
 from rule.Rule import Rule
 from rule.MutliMovingAverage import MutliMovingAverage
 from user.User import User
-'''
-out = [];
-SMA([1,2,3,4,5,6],out,3,1);
-print out;
-out = [];
-MA([1,2,3,4,5,6], out, 3);
-print out;
-out = [];
-EMA([1,2,3,4,5,6], out, 3);
-print out;
-out = [];
-HIGH([6,5,4,3,2,1], out, 3);
-print out;
-out = [];
-LOW([1,2,3,4,5,6], out, 3);
-print out;
-def ft():
-    return 1,2;
-x,y = ft();
-print x,y
-'''
+from Rebot import Rebot;
 
+r = Rebot(60);
+
+#r.run();
+t = 0;
+while True:
+    t+=1;
+    print "do", t;
+    time.sleep(1);
+    r.run();
+
+'''
 market = 'ans';
 u = User();
 # def buy(self, market, time, price, count=None):
 r = MutliMovingAverage(market, 240);
-c = Client(access_key=BotConfig.access_key, secret_key=BotConfig.secret_key)
+c = Client(access_key=RebotConfig.access_key, secret_key=RebotConfig.secret_key)
 d = c.get(get_api_path('k'), params={'market': '{0}cny'.format(market), 'limit':500,'period':'{0}'.format(60)});
 
 print time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(d[0][0]));
@@ -60,15 +53,32 @@ for key,value in enumerate(d):
             print "sell zhi sun"
             u.sell(market, k.t, ((sun + -0.02) * u.preamount + u.preamount - u.amount)/count);
 
+'''
 
 #print r.WaveKline;
 #client = Client(access_key='N1vXgZ0wSrTkLjgzG1oli4aD10DDRQW9gYxkHljW', secret_key='Xgz0QqlvdAx9lBjpiVLlnFOs2IwaPS3lftuw4geS')
-"""
+'''
 #demo of GET APIs
+exchange = Exchange(RebotConfig.access_key, RebotConfig.secret_key);
+exchange.delegate(yunbiEX());
+u = User();
+# markets
+markets = exchange.getMarkets();
+#get user info
+# do while
+info = exchange.getUser();
+u.updatePositions(info['accounts']);
+for key,value in enumerate(markets):
+    market = value['id'];
+    u.updateOrder(exchange.getOrder(market));
+'''
+#print '-------------------------------------------------------'
+#print exchange.doOrder('snt', 'sell', '1.0', 10);
+#print exchange.doOrderCancel(485916175);
+#print '-------------------------------------------------------'
+#print exchange.getOrder('snt');
 
-#get member info
-print client.get(get_api_path('members'))
-
+'''
 #get markets
 markets =  client.get(get_api_path('markets'))
 print "markets:", markets
@@ -135,5 +145,5 @@ print res
 params = {'market': 'dogcny', 'orders': [{'side': 'buy', 'volume': 12, 'price': 0.0002}, {'side': 'sell', 'volume': 11, 'price': 0.01}]}
 res = client.post(get_api_path('multi_orders'), params)
 print res
-"""
+'''
 

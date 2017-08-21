@@ -1,13 +1,12 @@
 # rule
 # 
 #
-from lib.client import Client, get_api_path
 from formula.K import KLine
 from formula.MACD import MACD
 from formula.KDJ import KDJ
 from formula.Formula import CROSS
 from formula.Formula import MA
-from BotConfig import BotConfig
+from RebotConfig import RebotConfig
 from rule.WaveKline import WaveKline
 from rule.WavePoint import WavePoint
 from rule.WaveKline import Direction
@@ -17,9 +16,7 @@ import math
 import csv
 
 class MutliMovingAverage():
-    def __init__(self, market, period, N1=5, N2=10, N3=31):
-        self.market = market;
-        self.period = period;
+    def __init__(self, N1=5, N2=10, N3=31):
         self.KLines = KLine();
         self.MA1 = [];
         self.MA2 = [];
@@ -27,7 +24,7 @@ class MutliMovingAverage():
         self.N1 = N1;
         self.N2 = N2;
         self.N3 = N3;
-        self.client = Client(access_key=BotConfig.access_key, secret_key=BotConfig.secret_key)
+        # self.client = Client(access_key=RebotConfig.access_key, secret_key=RebotConfig.secret_key)
 
     def Run(self, d):
         # d = self.client.get(get_api_path('k'), params={'market': '{0}cny'.format(self.market), 'limit':100,'period' : '{0}'.format(self.period)});

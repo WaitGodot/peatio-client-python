@@ -2,9 +2,9 @@ import MySQLdb
 import sys
 import time
 import math
-from BotConfig import BotConfig;
+from RebotConfig import RebotConfig;
 # db
-db = MySQLdb.connect(BotConfig.mysql_address, BotConfig.mysql_user, BotConfig.mysql_password);
+db = MySQLdb.connect(RebotConfig.mysql_address, RebotConfig.mysql_user, RebotConfig.mysql_password);
 cursor=None
 if db:
     cursor = db.cursor();
@@ -13,9 +13,9 @@ else:
     sys.exit(1);
 
 # create database bot;
-cursor.execute("drop database {0};".format(BotConfig.mysql_database))
-cursor.execute("create database {0} default charset utf8 collate utf8_general_ci;".format(BotConfig.mysql_database))
-cursor.execute("use {0};".format(BotConfig.mysql_database))
+cursor.execute("drop database {0};".format(RebotConfig.mysql_database))
+cursor.execute("create database {0} default charset utf8 collate utf8_general_ci;".format(RebotConfig.mysql_database))
+cursor.execute("use {0};".format(RebotConfig.mysql_database))
 
 # build market tables; 
 # unix time like 2017-06-06 19:52:00
@@ -26,7 +26,7 @@ cursor.execute('''create table markets (
 	PRIMARY KEY (id)
 	) ENGINE=InnoDB DEFAULT CHARSET=utf8;''');
 
-markets = BotConfig.markets;
+markets = RebotConfig.markets;
 for k, cfg in enumerate(markets):
     name = cfg[0];
     # market info

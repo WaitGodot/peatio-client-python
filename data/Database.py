@@ -5,15 +5,15 @@ import sys
 import time
 import datetime
 
-from BotConfig import BotConfig;
+from RebotConfig import RebotConfig;
 DATA=['k'];
 
 class Database():
     def __init__(self):
-        db = MySQLdb.connect(BotConfig.mysql_address, BotConfig.mysql_user, BotConfig.mysql_password);
+        db = MySQLdb.connect(RebotConfig.mysql_address, RebotConfig.mysql_user, RebotConfig.mysql_password);
         if db :
             self.cursor = db.cursor();
-            self.cursor.execute("use {0}".format(BotConfig.mysql_database));
+            self.cursor.execute("use {0}".format(RebotConfig.mysql_database));
             self.db = db;
             self.data = {};
 
@@ -32,7 +32,7 @@ class Database():
 
                 self.data[name] = md;
         else:
-            print "can not connect the mysql, please check 'BotConfig'";
+            print "can not connect the mysql, please check 'RebotConfig'";
             sys.exit(1);
 
 

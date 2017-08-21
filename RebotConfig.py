@@ -1,7 +1,7 @@
 # bot config.
 
 # yunbi user config
-class BotConfig():
+class RebotConfig():
     # access key
     access_key = "N1vXgZ0wSrTkLjgzG1oli4aD10DDRQW9gYxkHljW";
     # secret key

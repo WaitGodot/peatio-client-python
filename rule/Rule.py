@@ -1,10 +1,9 @@
 # rule
-from lib.client import Client, get_api_path
 from formula.K import KLine
 from formula.MACD import MACD
 from formula.KDJ import KDJ
 from formula.Formula import CROSS
-from BotConfig import BotConfig
+from RebotConfig import RebotConfig
 from rule.WaveKline import WaveKline
 from rule.WavePoint import WavePoint
 from rule.WaveKline import Direction
@@ -26,7 +25,7 @@ class Rule():
         self.WaveKDJ_K = WavePoint();
         self.WaveKDJ_D = WavePoint();
 
-        self.client = Client(access_key=BotConfig.access_key, secret_key=BotConfig.secret_key)
+        # self.client = Client(access_key=RebotConfig.access_key, secret_key=RebotConfig.secret_key)
         self.begin = 0;
 
     def Run(self, d):

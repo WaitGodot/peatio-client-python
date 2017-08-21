@@ -2,7 +2,7 @@ from lib.client import Client, get_api_path
 from formula.K import K
 from formula.MACD import MACD
 from formula.Formula import EMA
-from BotConfig import BotConfig
+from RebotConfig import RebotConfig
 from data.Database import Database
 
 import MySQLdb
@@ -10,7 +10,7 @@ import sys
 import time;
 
 # this is your access key and secret key
-client = Client(access_key=BotConfig.access_key, secret_key=BotConfig.secret_key)
+client = Client(access_key=RebotConfig.access_key, secret_key=RebotConfig.secret_key)
 # first update data .db
 db = Database();
 KLines = K();
