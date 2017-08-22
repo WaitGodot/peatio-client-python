@@ -18,22 +18,37 @@ import csv
 class MutliMovingAverage():
     def __init__(self, N1=5, N2=10, N3=31):
         self.KLines = KLine();
+        # price
         self.MA1 = [];
         self.MA2 = [];
         self.MA3 = [];
         self.N1 = N1;
         self.N2 = N2;
         self.N3 = N3;
+        # volume
+        self.VMA1 = [];
+        self.VMA2 = [];
         # self.client = Client(access_key=RebotConfig.access_key, secret_key=RebotConfig.secret_key)
 
-    def Run(self, d):
+    def Run(self, d, period=None, servertimestamp=None):
         # d = self.client.get(get_api_path('k'), params={'market': '{0}cny'.format(self.market), 'limit':100,'period' : '{0}'.format(self.period)});
         # print time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(d[0][0]));
+        if period and servertimestamp:
+            data = d[-1];
+            x = servertimestamp - data[0];
+            if x < period:
+                data[5] /= x; # virtual volume
         self.KLines.Input(d);
+        # price 
         MA(self.KLines.prices, self.MA1, self.N1);
         MA(self.KLines.prices, self.MA2, self.N2);
         MA(self.KLines.prices, self.MA3, self.N3);
-        self.Export("C:\\Users\\randy\\k.csv");
+        # volume
+        MA(self.KLines.volumes, self.VMA1, self.N1);
+        MA(self.KLines.volumes, self.VMA2, self.N2);
+
+        # self.Export("C:\\Users\\randy\\k.csv");
+
     def Export(self, path):
         if len(self.MA1) < 1:
             return ;
@@ -56,7 +71,7 @@ class MutliMovingAverage():
         bc = CROSS(self.MA2, self.MA1);
         a = self.Angle();
         if bc:
-        #    print "sell time:{0}, ma3 angle:{1}, ma3:{2}, c:{3}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), a, self.MA3[-1], k.c)
+            print "sell time:{0}, ma3 angle:{1}, ma3:{2}, c:{3}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), a, self.MA3[-1], k.c)
         #    if a > 0 and self.MA3[-1] < k.c:
         #        print "sell fail"
         #        return None;

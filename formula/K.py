@@ -60,6 +60,7 @@ class KLine():
     def __init__(self):
         self.data = [];
         self.prices = []; # use close price
+        self.volumes = []; # volume
         self.idx = 0;
 
     def Input(self, data):
@@ -69,11 +70,14 @@ class KLine():
             last = self.data[-1];
         for k, d in enumerate(data):
             if last:
-                if d[0] <= last.t:
+                if d[0] < last.t:
                     continue;
+                if d[0] == last.t: # update close 
+                    last.c = d[4];
             nk = K(d, self.idx + k);
             self.data.append(nk)
             self.prices.append(nk.c);
+            self.volumes.append(nk.vol);
             
     def ToList(self, key, N=None):
         ret = [];

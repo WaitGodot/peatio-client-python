@@ -11,21 +11,41 @@ class User():
         return user.instanse;
 
     def __init__(self):
-        self.amount = 10000; # cash
-        self.preamount = self.amount;
-        self.svamount = self.amount;
+        self.amount = 0; # cash
+        self.initamount = 10000;
         self.positions = {}; # [market]=count
         self.orders = {};
         self.tradetimes = 0;
         self.wintimes = 0;
     
+    def getAllCost(self):
+        s = 0
+        for key, value in(self.positions.items()):
+            s += value['volume'] * value['price'];
+        return s;
+
+    def getCost(self, market):
+        pc = self.positions[market];
+        if pc==None:
+            return None;
+        return pc['volume'] * pc['price'];
+
     def updatePositions(self, positions):
         for key, value in enumerate(positions):
-            self.positions[value['currency']] = float(value['balance']) - float(value['locked']);
-            # if self.positions[value['currency']] > 0:
-            #    print value;
+            vol = float(value['balance']) - float(value['locked']);
+            price = value.get('price');
+            currency = value['currency'];
+            pc = self.positions.get(currency);
+            if pc==None:
+                self.positions[currency] = {'volume':0, 'price':1}; # default.
+                pc = self.positions[currency];
+            if price!=None:
+                pc['price'] = price;
+            pc['volume']=vol;
+            if currency=='cny':
+                self.amount = vol;
+
     def updateOrder(self, orders):
-        # id, type, market, time, price, volume
         for key, value in enumerate(orders):
             id   = value['id'];
             type = value['side'];
@@ -47,51 +67,28 @@ class User():
                 o = Order(id, type, market, t, price, volume);
                 self.orders[id] = o;
 
-
-    def buy(self, market, time, price, volume=None):
-        if volume==None:
-            volume = self.amount / price;
-        amount = price * volume;
-        if amount > self.amount:
-            amount = self.amount;
-            volume = amount / price;
-        if volume < 1 :
-            print "not enough money!";
-            return 0;
-        return volume;
-
-    def sell(self, market, time, price, volume=None):
-        pc = self.positions.get(market);
-        if pc == None:
-            print "not enough positions, market : {0}".format(market);
-            return 0;
-        if volume==None:
-            volume = pc;
-        if pc < volume:
-            volume = pc;
-
-        if volume < 1:
-            return 0;
-        return volume;
-
-    def updateOrderWithID(self, id):
-        o = self.orders[id]
-        o.update(o.userprice, 0);
-        self.tradetimes += 1;
-        pc = self.positions.get(o.market);
-        
-        if pc == None:
-            pc = 0;
-        if o.type == "buy":
-            self.positions[o.market] = pc + o.volume;
-            self.preamount = self.amount;
-            self.amount = self.amount - o.averageprice * o.volume;
-            print 'buy complete price:{0}'.format(o.averageprice);
-        if o.type == "sell":
-            self.positions[o.market] = pc - o.volume;
-            self.amount = self.amount + o.averageprice * o.volume;
-            if self.amount > self.preamount:
-                self.wintimes += 1;
-            print 'sell complete price:{0}, amount:{1}, order:{2}%, all:{3}%, win:{4}'.format(o.averageprice, self.amount, 100*(self.amount-self.preamount)/self.preamount, 100*(self.amount-self.svamount)/self.svamount, self.wintimes/float(self.tradetimes));
-            print '--------------------------------------------------------------------------------------------------'
+    def doOrder(self, market, side, price, volume=None):
+        if side == 'buy':
+            if volume==None:
+                volume = self.amount / price;
+            amount = price * volume;
+            if amount > self.amount:
+                amount = self.amount;
+                volume = amount / price;
+            self.amount = self.amount - amount;
+            return volume;
+        if side == 'sell':
+            currency = market[0:len(market)-3];
+            pc = self.positions.get(currency);
+            if pc==None:
+                return;
+            v = pc['volume'];
+            if pc == None or v <= 0:
+                print "not enough positions, market : {0}".format(currency);
+                return 0;
+            if volume==None:
+                volume = v;
+            if v < volume:
+                volume = v;
+            return volume;
 

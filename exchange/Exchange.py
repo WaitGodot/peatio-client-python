@@ -10,6 +10,10 @@ class Exchange():
         self.delegate = delegate;
 
     # function .
+    def getServerTimestamp(self):
+        if self.delegate:
+            return self.delegate.getServerTimestamp();
+        return None;
     def getUser(self):
         if self.delegate:
             return self.delegate.getUser();

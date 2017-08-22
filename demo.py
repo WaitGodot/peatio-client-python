@@ -30,14 +30,60 @@ while True:
 
 '''
 
-r = Rebot(60);
+# 30 60 120 240 360
+# btc 120, 60
+# ans 60, 240
+# eth 120, 360
+# omg 240, 120
+# zec 240, 60
+# qtum 60, 240
+# bts 240, 360
+# gxs 240, 360
+# eos 30, 60
+# sc 60, 360
+# snt 360, 240
+# dgd 360, 240
+# 1st 60, 120
+# rep 60, 120
+# gnt 360, 240
+# etc 120, 240
+
+
+r30 = Rebot(30); # 60, 240
+r60 = Rebot(60); # 60, 240
+r120 = Rebot(120); # 60, 240
+r240 = Rebot(240); # 60, 240
+r360 = Rebot(360); # 60, 240
+
 t = 0;
 while True:
     t+=1;
     print "do", t;
-    time.sleep(1);
-    r.run();
+    # time.sleep(0.1);
+    print 'r30:'
+    r30.run();
+    print 'r60:'
+    r60.run();
+    print 'r120:'
+    r120.run();
+    print 'r240:'
+    r240.run();
+    print 'r360:'
+    r360.run();
+    if t > 4000:
+        break;
 
+'''
+r = Rebot(); # 60, 240
+t = 0;
+while True:
+    t+=1;
+    print "do", t;
+    # time.sleep(0.1);
+    r.run();
+    if t > 4000:
+        break;
+'''
 '''
 market = 'ans';
 u = User();

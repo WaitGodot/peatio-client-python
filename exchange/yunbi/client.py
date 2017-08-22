@@ -37,6 +37,9 @@ API_PATH_DICT = {
 
     #TODO multi orders API
     'multi_orders': '%s/orders/multi.json',
+
+    # server time
+    'timestamp': '%s/timestamp.json',
 }
 
 def get_api_path(name):
@@ -57,8 +60,9 @@ class Client():
         signature, query = self.auth.sign_params(verb, path, params)
         url = "%s%s?%s&signature=%s" % (BASE_URL, path, query, signature)
         #send = False
+        print(url);
         if send:
-            #try :
+            try :
                 resp = urllib2.urlopen(url)
                 # print resp
                 if resp:
@@ -67,8 +71,9 @@ class Client():
                         return json.loads(data[0])
                 else:
                     print(url)
-            #except Exception:
-            #    pass
+            except Exception:
+                print 'http error!!, url:{0}'.format(url);
+                return None;
 
     def post(self, path, params=None):
         verb = "POST"

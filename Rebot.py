@@ -38,35 +38,63 @@ class Rebot():
         # rule.
         self.rules = {}; #MutliMovingAverage();
         # init.
+        # 
+        self.buyTimes = {};
+        self.sellTimes = {};
         for k,v in enumerate(self.markets):
-            m = v['id'];
+            market = v['id'];
             # order.
             # done in right env.
-            self.user.updateOrder(self.exchange.getOrder(m));
+            self.user.updateOrder(self.exchange.getOrder(market));
             # k line.
-            dk = self.exchange.getK(m, 500, self.period);
+            # dk = self.exchange.getK(market, 500, self.period);
+            dk = self.exchange.getK(market, 10, self.period, 1498838400); # 1498838400:2017/7/1 0:0:0
             r = MutliMovingAverage();
             r.Run(dk);
-            self.rules[m] = r;
+            self.rules[market] = r;
+            self.buyTimes[market] = 0;
+            self.sellTimes[market] = 0;
+        #
         
     def run(self):
+        print '-----------------------------------------------------------------'
         # user
         info = self.exchange.getUser();
         self.user.updatePositions(info['accounts']);
+        print 'positions:', self.user.positions;
+        
+        # sever timestamp
+        # t = self.exchange.getServerTimestamp();
         # markets
+        sv = self.user.positions['cny']['volume'];
         for k,v in enumerate(self.markets):
-            m = v['id'];
+            market = v['id'];
             # order.
             # done in right env.
-            self.user.updateOrder(self.exchange.getOrder(m));
+            self.user.updateOrder(self.exchange.getOrder(market));
             # rule
-            r = self.rules[m];
-            lastk = r.KLines.Get(-1);
+            r = self.rules[market];
+            lastk=r.KLines.Get(-1);
             # k line.
-            dk = self.exchange.getK(m, 500, self.period, lastk.t);
-            
-            r.Run(dk);
-            ret=r.Do();
-            if ret:
-                print 'market:{0}, do:{1}'.format(m, ret);
+            # dk = self.exchange.getK(market, 500, self.period, lastk.t);
+            dk = self.exchange.getK(market, 2, self.period, lastk.t);
+            if dk:
+                r.Run(dk);
+                ret=r.Do();
+                lastk=r.KLines.Get(-1);
+                if ret:
+                    print 'market:{0}, do:{1}, price:{2}'.format(market, ret, lastk.c);
+                    vol = self.user.doOrder(market, ret, lastk.c);
+                    self.exchange.doOrder(market, ret, lastk.c, vol);
+            # position;
+            currency = market[0:len(market)-3];
+            pc = self.user.positions.get(currency);
+            if pc and lastk:
+                cost = self.user.getCost(currency);
+                current = pc['volume'] * lastk.c;
+                sv += current;
+                if cost:
+                    print '\tmarket:{0}, scale:{1}, position price:{2}, current price{3}'.format(market, (current - cost)/cost*100, pc['price'], lastk.c);
+
+        print 'all scale:{0}'.format((sv - self.user.initamount)/self.user.initamount*100)
 
