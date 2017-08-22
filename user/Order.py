@@ -1,4 +1,6 @@
 
+import time
+
 # order
 # 
 # order type
@@ -31,4 +33,4 @@ class Order():
             self.status = status;
 
     def __str__(self):
-        return "orderid:{0}, id:{1}, type:{2}, market:{3}, time:{4}, user price:{5}, average price:{6}, volume:{7}, left volume:{8}, status:{9}".format(self.orderid, self.id, self.type, self.market, self.time, self.userprice, self.averageprice, self.volume, self.leftvolume, self.status);
+        return "orderid:{0}, id:{1}, type:{2}, market:{3}, time:{4}, user price:{5}, average price:{6}, volume:{7}, left volume:{8}, status:{9}".format(self.orderid, self.id, self.type, self.market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(self.time)), self.userprice, self.averageprice, self.volume, self.leftvolume, self.status);

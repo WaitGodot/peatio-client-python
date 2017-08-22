@@ -72,16 +72,16 @@ class MutliMovingAverage():
         a = self.Angle();
         if bc:
             print "sell time:{0}, ma3 angle:{1}, ma3:{2}, c:{3}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), a, self.MA3[-1], k.c)
-        #    if a > 0 and self.MA3[-1] < k.c:
-        #        print "sell fail"
-        #        return None;
+            if a > 0 and self.MA3[-1] < k.c:
+                print "sell fail"
+                return None;
             return 'sell';
         sc = CROSS(self.MA1, self.MA2);
         if sc:
             print "buy time:{0}, ma3 angle:{1}, ma3:{2}, c:{3}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), a, self.MA3[-1], k.c)
-        #    if a <= 0 and self.MA3[-1] > k.c:
-        #        print "buy fail"
-        #        return None;
+            if a <= 0 and self.MA3[-1] > k.c:
+                print "buy fail"
+                return None;
             return 'buy';
         bc = CROSS(self.MA3, self.MA1);
         #if bc:

@@ -49,29 +49,18 @@ while True:
 # etc 120, 240
 
 
-r30 = Rebot(30); # 60, 240
-r60 = Rebot(60); # 60, 240
-r120 = Rebot(120); # 60, 240
-r240 = Rebot(240); # 60, 240
-r360 = Rebot(360); # 60, 240
-
+r = Rebot(240);
 t = 0;
 while True:
     t+=1;
     print "do", t;
     # time.sleep(0.1);
-    print 'r30:'
-    r30.run();
-    print 'r60:'
-    r60.run();
-    print 'r120:'
-    r120.run();
-    print 'r240:'
-    r240.run();
-    print 'r360:'
-    r360.run();
-    if t > 4000:
+    r.run();
+    if t > 330:
         break;
+print '\n\norders'
+for k,v in (r.user.orders.items()):
+    print k, v;
 
 '''
 r = Rebot(); # 60, 240

@@ -118,13 +118,16 @@ class yunbiEXLocal():
         return d;
 
     def getMarkets(self):
-        # return self.client.get(get_api_path('markets'));
-        return [{'id':'etccny'}];
+        return self.client.get(get_api_path('markets'));
+        # return [{'id':'anscny'}];
 
     def getK(self, market, limit, period, timestamp=None):
         ks = self.kss.get(market);
         if ks==None:
-            ks = self.client.get(get_api_path('k'), params={'market': market, 'limit':4000,'period':period, 'timestamp':timestamp});
+            if timestamp:
+                ks = self.client.get(get_api_path('k'), params={'market': market, 'limit':330,'period':period, 'timestamp':timestamp});
+            else:
+                ks = self.client.get(get_api_path('k'), params={'market': market, 'limit':330,'period':period});
             self.kss[market] = ks;
         if timestamp > ks[-1][0]:
             print '{0} k line is over'.format(market);
@@ -142,8 +145,8 @@ class yunbiEXLocal():
             return [];
         return ret;
 
-    def doOrder(self, market, side, price, volume):
-        id = self.createOrder(market, side, 1, price, volume)
+    def doOrder(self, market, side, price, volume, time):
+        id = self.createOrder(market, side, time, price, volume)
         if id:
             self.compeleteOrder(id);
 

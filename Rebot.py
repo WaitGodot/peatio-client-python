@@ -69,6 +69,7 @@ class Rebot():
         sv = self.user.positions['cny']['volume'];
         for k,v in enumerate(self.markets):
             market = v['id'];
+            print 'do marekt:{0}'.format(market);
             # order.
             # done in right env.
             self.user.updateOrder(self.exchange.getOrder(market));
@@ -85,7 +86,7 @@ class Rebot():
                 if ret:
                     print 'market:{0}, do:{1}, price:{2}'.format(market, ret, lastk.c);
                     vol = self.user.doOrder(market, ret, lastk.c);
-                    self.exchange.doOrder(market, ret, lastk.c, vol);
+                    self.exchange.doOrder(market, ret, lastk.c, vol, lastk.t);
             # position;
             currency = market[0:len(market)-3];
             pc = self.user.positions.get(currency);
@@ -93,8 +94,13 @@ class Rebot():
                 cost = self.user.getCost(currency);
                 current = pc['volume'] * lastk.c;
                 sv += current;
-                if cost:
-                    print '\tmarket:{0}, scale:{1}, position price:{2}, current price{3}'.format(market, (current - cost)/cost*100, pc['price'], lastk.c);
+                if cost and cost > 0:
+                    scale = (current - cost)/cost*100;
+                    if scale<-7.7:
+                        vol = self.user.doOrder(market, 'sell', pc['price'] * 0.9);
+                        self.exchange.doOrder(market, 'sell', pc['price'] * 0.9, vol);
+                        print 'do sell, scale less 0.077!!';
+                    print '\tmarket:{0}, scale:{1}, position price:{2}, current price{3}'.format(market, scale, pc['price'], lastk.c);
 
         print 'all scale:{0}'.format((sv - self.user.initamount)/self.user.initamount*100)
 

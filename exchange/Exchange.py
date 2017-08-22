@@ -34,9 +34,9 @@ class Exchange():
             return self.delegate.getOrder(market);
         return None;
 
-    def doOrder(self, market, side, price, vol):
+    def doOrder(self, market, side, price, vol, time=None):
         if self.delegate:
-            return self.delegate.doOrder(market, side, price, vol);
+            return self.delegate.doOrder(market, side, price, vol, time);
         return None;
 
     def doOrderCancel(self, orderID):
