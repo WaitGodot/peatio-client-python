@@ -84,4 +84,40 @@ def CROSS(AArr, BArr, N=None):
     if AArr[N-2] < BArr[N-2] and AArr[N-1] > BArr[N-1]:
         return True;
     return False;
+
+# MAX
+def MAX(Arr, idx1=None, idx2=None):
+    l = len(Arr);
+    if l <= 0:
+        return None;
+    idx1 = 0 if idx1==None else idx1;
+    idx2 = l if idx2==None else idx2;
+    value = Arr[idx1];
+    for idx in range(idx1, idx2):
+        if Arr[idx] > value:
+            value = Arr[idx];
+    return value;
     
+# MIN
+def MIN(Arr, idx1=None, idx2=None):
+    l = len(Arr);
+    if l <= 0:
+        return None;
+    idx1 = 0 if idx1==None else idx1;
+    idx2 = l if idx2==None else idx2;
+    value = Arr[idx1];
+    for idx in range(idx1, idx2):
+        if Arr[idx] < value:
+            value = Arr[idx];
+    return value;
+# SUM
+def SUM(Arr, idx1=None, idx2=None):
+    l = len(Arr);
+    if l <= 0:
+        return 0;
+    idx1 = 0 if idx1==None else idx1;
+    idx2 = l if idx2==None else idx2;
+    value = 0;
+    for idx in range(idx1, idx2):
+        value += Arr[idx];
+    return value;

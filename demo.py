@@ -48,7 +48,6 @@ while True:
 # gnt 360, 240
 # etc 120, 240
 
-
 r = Rebot(240);
 t = 0;
 while True:
@@ -61,6 +60,9 @@ while True:
 print '\n\norders'
 for k,v in (r.user.orders.items()):
     print k, v;
+# for k,v in(r.rules.items()):
+    # v.Export("C:\\Users\\randy\\ma.csv");
+    # v.ExportWave("C:\\Users\\randy\\wave.csv")
 
 '''
 r = Rebot(); # 60, 240

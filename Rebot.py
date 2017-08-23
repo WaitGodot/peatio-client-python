@@ -69,13 +69,13 @@ class Rebot():
         sv = self.user.positions['cny']['volume'];
         for k,v in enumerate(self.markets):
             market = v['id'];
-            print 'do marekt:{0}'.format(market);
             # order.
             # done in right env.
             self.user.updateOrder(self.exchange.getOrder(market));
             # rule
             r = self.rules[market];
             lastk=r.KLines.Get(-1);
+            print 'do marekt:{0}, current price:{1}'.format(market, lastk.c);
             # k line.
             # dk = self.exchange.getK(market, 500, self.period, lastk.t);
             dk = self.exchange.getK(market, 2, self.period, lastk.t);

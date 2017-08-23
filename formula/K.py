@@ -74,10 +74,12 @@ class KLine():
                     continue;
                 if d[0] == last.t: # update close 
                     last.c = d[4];
-            nk = K(d, self.idx + k);
+                    continue;
+            nk = K(d, self.idx);
             self.data.append(nk)
             self.prices.append(nk.c);
             self.volumes.append(nk.vol);
+            self.idx += 1;
             
     def ToList(self, key, N=None):
         ret = [];
