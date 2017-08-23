@@ -29,7 +29,7 @@ class Wave():
     def cal(self, ks):
         idx1 = self.point1.idx;
         idx2 = self.point2.idx;
-        self.type   = '{0}{1}'.format(self.point1.type, self.point2.type);
+        self.type   = '%s%s' % (self.point1.type, self.point2.type); #'{0}{1}'.format(self.point1.type, self.point2.type);
         self.wmax   = MAX(ks.prices, idx1, idx2);
         self.wmin   = MIN(ks.prices, idx1, idx2);
         self.wvolume    = SUM(ks.volumes, idx1, idx2);
@@ -38,8 +38,9 @@ class Wave():
         self.cprice = ks.prices[idx2];
 
         self.height = (self.wmax - self.wmin) * self.winterval;
+
     def __str__(self):
-        print ''
+        return 'type={0},idx1={1},idx2={2},height={3},min={4},max={5}'.format(self.type, self.point1.idx, self.point2.idx, self.height, self.wmin, self.wmax);
 
 class MutliMovingAverage():
     def __init__(self, N1=5, N2=10, N3=31):
@@ -114,20 +115,22 @@ class MutliMovingAverage():
         type=None;
         if bc:
             print "sell time:{0}, ma3 angle:{1}, ma3:{2}, c:{3}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), a, self.MA3[-1], k.c)
-            if a > 0 and self.MA3[-1] < k.c:
-                print "sell fail"
-            else:
-                type='sell';
+            #if a > 0 and self.MA3[-1] < k.c:
+            #    print "sell fail"
+            #else:
+            #    type='sell';
             type='sell';
         sc = CROSS(self.MA1, self.MA2);
         if sc:
             print "buy time:{0}, ma3 angle:{1}, ma3:{2}, c:{3}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), a, self.MA3[-1], k.c)
             # if a <= 0 and self.MA3[-1] > k.c:
-            if a < 0:
-                print "buy fail"
-            else:
-                type='buy';
+            # if a < 0:
+            #    print "buy fail"
+            # else:
+            #    type='buy';
             type='buy';
+        #if type != None:
+        #    return type;
         if type!=None:
             p1 = None;
             p2 = Point(type, k.idx, a);
@@ -147,10 +150,13 @@ class MutliMovingAverage():
                 for idx in range(0, lenwaves-1):
                     nw = self.waves[lenwaves-idx-1-1];
                     if nw.type == w.type:
-                        if nw.height != 0 and w.height / nw.height > 1.2:
-                            print '!!!!!!!!!!!!!!!!!!!!!!!!!!!!! w height:{0}, nw height:{1}, time:{2}'.format(w.height, nw.height, k.t);
-                            type = None;
-                            break;
+                        print 'type:{0}, angle:{1}, w:{2}, nw:{3}'.format(type, nw.point2.angle, w.__str__(), nw.__str__());
+                        #if nw.point2.angle < 0:
+                        if type == 'buy':
+                            if w.wmin < nw.wmin and nw.height != 0 and w.height / nw.height > 1.2:
+                                print '!!!!!!!!!!!!!!!!!!!!!!!!!!!!! w height:{0}, nw height:{1}, time:{2}'.format(w.height, nw.height, k.t);
+                                type = None;
+                        break;
 
 
 

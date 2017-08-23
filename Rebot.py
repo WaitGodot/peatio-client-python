@@ -57,16 +57,17 @@ class Rebot():
         #
         
     def run(self):
-        print '-----------------------------------------------------------------'
+        # print '-----------------------------------------------------------------'
         # user
         info = self.exchange.getUser();
         self.user.updatePositions(info['accounts']);
-        print 'positions:', self.user.positions;
+        # print 'positions:', self.user.positions;
         
         # sever timestamp
         # t = self.exchange.getServerTimestamp();
         # markets
         sv = self.user.positions['cny']['volume'];
+        flag=False;
         for k,v in enumerate(self.markets):
             market = v['id'];
             # order.
@@ -75,7 +76,7 @@ class Rebot():
             # rule
             r = self.rules[market];
             lastk=r.KLines.Get(-1);
-            print 'do marekt:{0}, current price:{1}'.format(market, lastk.c);
+            # print 'do marekt:{0}, current price:{1}'.format(market, lastk.c);
             # k line.
             # dk = self.exchange.getK(market, 500, self.period, lastk.t);
             dk = self.exchange.getK(market, 2, self.period, lastk.t);
@@ -87,6 +88,7 @@ class Rebot():
                     print 'market:{0}, do:{1}, price:{2}'.format(market, ret, lastk.c);
                     vol = self.user.doOrder(market, ret, lastk.c);
                     self.exchange.doOrder(market, ret, lastk.c, vol, lastk.t);
+                    flag=True;
             # position;
             currency = market[0:len(market)-3];
             pc = self.user.positions.get(currency);
@@ -101,6 +103,7 @@ class Rebot():
                         self.exchange.doOrder(market, 'sell', pc['price'] * 0.9, vol);
                         print 'do sell, scale less 0.077!!';
                     print '\tmarket:{0}, scale:{1}, position price:{2}, current price{3}'.format(market, scale, pc['price'], lastk.c);
-
-        print 'all scale:{0}'.format((sv - self.user.initamount)/self.user.initamount*100)
+        if flag:
+            print 'all scale:{0}'.format((sv - self.user.initamount)/self.user.initamount*100)
+            print '---------------------------------------------------------------------------'
 

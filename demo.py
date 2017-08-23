@@ -52,7 +52,7 @@ r = Rebot(240);
 t = 0;
 while True:
     t+=1;
-    print "do", t;
+    # print "do", t;
     # time.sleep(0.1);
     r.run();
     if t > 330:
