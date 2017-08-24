@@ -58,6 +58,7 @@ class MutliMovingAverage():
         # volume
         self.VMA1 = [];
         self.VMA2 = [];
+        self.rmbvolumeN3 = 0l
         # points
         self.points = [];
         # wave
@@ -80,6 +81,12 @@ class MutliMovingAverage():
         # volume
         MA(self.KLines.volumes, self.VMA1, self.N1);
         MA(self.KLines.volumes, self.VMA2, self.N2);
+        # rmb volume
+        lenvol = len(self.KLines.rmbvolumes);
+        if lenvol > self.N3:
+            self.rmbvolumeN3 = SUM(self.KLines.rmbvolumes, lenvol - self.N3);
+        else:
+            self.rmbvolumeN3 = SUM(self.KLines.rmbvolumes, 0, lenvol);
 
 
     def Export(self, path):
