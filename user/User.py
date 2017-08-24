@@ -70,7 +70,10 @@ class User():
     def doOrder(self, market, side, price, volume=None):
         if side == 'buy':
             if volume==None:
-                volume = self.amount / price;
+                if self.amount < 1000:
+                    volume = self.amount / price;
+                else:
+                    volume = self.amount / price / 1;
             amount = price * volume;
             if amount > self.amount:
                 amount = self.amount;

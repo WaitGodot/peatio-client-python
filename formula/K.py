@@ -23,6 +23,7 @@ class K():
         self.c = data[4];
         self.vol = data[5];
 
+        self.rmbvolume = self.vol * (self.h + self.l) / 2;
         self.increase = 0;
         if self.o > 0:
             self.increase = (self.c - self.o) / self.o;
@@ -61,6 +62,7 @@ class KLine():
         self.data = [];
         self.prices = []; # use close price
         self.volumes = []; # volume
+        self.rmbvolumes = [];
         self.idx = 0;
 
     def Input(self, data):
@@ -73,12 +75,16 @@ class KLine():
                 if d[0] < last.t:
                     continue;
                 if d[0] == last.t: # update close 
-                    last.c = d[4];
+                    last.Set(d);
+                    self.prices[-1]     = last.c;
+                    self.volumes[-1]    = last.vol;
+                    self.rmbvolumes[-1] = last.rmbvolume;
                     continue;
             nk = K(d, self.idx);
             self.data.append(nk)
             self.prices.append(nk.c);
             self.volumes.append(nk.vol);
+            self.rmbvolumes.append(nk.rmbvolume);
             self.idx += 1;
             
     def ToList(self, key, N=None):
