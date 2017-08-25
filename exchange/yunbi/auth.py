@@ -2,7 +2,7 @@ import hmac
 import hashlib
 import time
 import urllib
-
+from Time import Time
 class Auth():
     def __init__(self, access_key, secret_key):
         self.access_key = access_key
@@ -36,9 +36,7 @@ class Auth():
     def sign_params(self, verb, path, params=None):
         if not params:
             params = {}
-        ot = 20000;
-        # ot = 100000;
-        params.update({'tonce': int(1000*time.time() + ot), 'access_key': self.access_key})
+        params.update({'tonce': int(1000*Time.Time()), 'access_key': self.access_key})
         query = self.urlencode(params)
         signature = self.sign(verb, path, params)
         return signature, query

@@ -30,6 +30,13 @@ class User():
             return None;
         return pc['volume'] * pc['price'];
 
+    def getOrderMarket(self, market):
+        d = [];
+        for k,v in(self.orders.items()):
+            if v.market == market:
+                d.append(v);
+        return d;
+        
     def updatePositions(self, positions):
         for key, value in enumerate(positions):
             vol = float(value['balance']) - float(value['locked']);
@@ -56,6 +63,7 @@ class User():
             averageprice = value['avg_price'];
             leftvolume = value['remaining_volume'];
             state = value['state'];
+            ext = value.get('ext');
 
             o = self.orders.get(id);
             if o:
@@ -64,7 +72,7 @@ class User():
                 else:
                     o.update(averageprice, leftvolume);
             else:
-                o = Order(id, type, market, t, price, volume);
+                o = Order(id, type, market, t, price, volume, ext);
                 self.orders[id] = o;
 
     def doOrder(self, market, side, price, volume=None):
@@ -73,7 +81,7 @@ class User():
                 if self.amount < 1000:
                     volume = self.amount / price;
                 else:
-                    volume = self.amount / price / 1;
+                    volume = self.amount / price / 3;
             amount = price * volume;
             if amount > self.amount:
                 amount = self.amount;

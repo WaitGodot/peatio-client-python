@@ -10,7 +10,7 @@ class yunbiEX():
 
     # function 
     def getServerTimestamp(self):
-        return self.client.get(get_api_path('timestamp'));
+        return self.client.time();
 
     def getUser(self):
         return self.client.get(get_api_path('members'));
@@ -28,7 +28,7 @@ class yunbiEX():
     def getOrder(self, market):
     	return self.client.get(get_api_path('orders'), {'market': market});
 
-    def doOrder(self, market, side, price, vol):
+    def doOrder(self, market, side, price, vol, ext):
         return self.client.post(get_api_path('orders'), params = {'market':market, 'side':side, 'price':price, 'volume':vol})
 
     def doOrderCancel(self, orderID):
@@ -46,7 +46,7 @@ class yunbiEXLocal():
         self.ORDERID = 0;
         self.kss = {};
     
-    def createOrder(self, market, side, time, price, volume):
+    def createOrder(self, market, side, time, price, volume, ext):
         if volume<=0:
             return None;
         self.ORDERID += 1;
@@ -62,6 +62,7 @@ class yunbiEXLocal():
             'volume':volume,
             'remaining_volume':volume,
             'executed_volume':0,
+            'ext':ext
         }
         self.orders[id] = o;
         d = self.marketOrders.get(market);
@@ -107,7 +108,7 @@ class yunbiEXLocal():
 
     # function 
     def getServerTimestamp(self):
-        return self.client.get(get_api_path('timestamp'));
+        return self.client.time();
 
     def getUser(self):
         d = {}
@@ -119,7 +120,7 @@ class yunbiEXLocal():
 
     def getMarkets(self):
         return self.client.get(get_api_path('markets'));
-        return [{'id':'anscny'}, {'id':'bcccny'}, {'id':'omgcny'}];
+        # return [{'id':'anscny'}, {'id':'bcccny'}, {'id':'omgcny'}];
         # return [{'id':'anscny'}];
 
     def getK(self, market, limit, period, timestamp=None):
@@ -146,8 +147,8 @@ class yunbiEXLocal():
             return [];
         return ret;
 
-    def doOrder(self, market, side, price, volume, time):
-        id = self.createOrder(market, side, time, price, volume)
+    def doOrder(self, market, side, price, volume, time=None, ext=None):
+        id = self.createOrder(market, side, time, price, volume, ext)
         if id:
             self.compeleteOrder(id);
 

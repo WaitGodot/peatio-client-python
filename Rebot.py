@@ -16,6 +16,7 @@ from RebotConfig import RebotConfig
 from rule.Rule import Rule
 from rule.MutliMovingAverage import MutliMovingAverage
 from user.User import User
+from Time import Time
 
 class Rebot():
 
@@ -24,8 +25,10 @@ class Rebot():
         self.exchange = Exchange(RebotConfig.access_key, RebotConfig.secret_key);
         # self.exchange.delegate(yunbiEX());
         self.exchange.delegate(yunbiEXLocal());
-        self.user = User();
+        # time 
+        Time.SetServerTime(self.exchange.getServerTimestamp())
         # user.
+        self.user = User();
         info = self.exchange.getUser();
         print info
         print '-----------------------------------'
@@ -54,18 +57,20 @@ class Rebot():
             self.rules[market] = r;
             self.buyTimes[market] = 0;
             self.sellTimes[market] = 0;
-        #
+        #scale.
+        self.scales = [];
         
     def run(self):
         # print '-----------------------------------------------------------------'
         # user
         info = self.exchange.getUser();
         self.user.updatePositions(info['accounts']);
-        print 'positions:';
-        for k,v in (self.user.positions.items()):
-            if v['volume'] > 0:
-                print '\t{0} {1}'.format(k, v);
-        
+        if False:
+            print 'positions:';
+            for k,v in (self.user.positions.items()):
+                if v['volume'] > 0:
+                    print '\t{0} {1}'.format(k, v);
+            
         # sever timestamp
         # t = self.exchange.getServerTimestamp();
         # markets
@@ -76,6 +81,7 @@ class Rebot():
         mustselllist= [];
 
         marketsupdate = [];
+        summarketrmbvolume = 0;
         for k,v in enumerate(self.markets):
             market = v['id'];
             # order.
@@ -90,30 +96,31 @@ class Rebot():
             dk = self.exchange.getK(market, 2, self.period, lastk.t);
             if dk:
                 marketsupdate.append([market, r.rmbvolumeN3])
+                summarketrmbvolume += r.rmbvolumeN3;
                 r.Run(dk);
                 ret     = r.Do();
                 lastk   = r.KLines.Get(-1);
                 type    = ret.get('type');
                 if type == 'buy':
                     buylist.append({'market':market, 'result':ret})
-                    flag=True;
                 if type == 'sell':
                     selllist.append({'market':market, 'result':ret})
-                    flag=True;
                 # position;
-                currency = market[0:len(market)-3];
-                pc = self.user.positions.get(currency);
-                if pc and lastk:
-                    cost = self.user.getCost(currency);
-                    current = pc['volume'] * lastk.c;
-                    sv += current;
-                    #if cost and cost > 0:
-                    #    scale = (current - cost)/cost*100;
-                    #    if scale<-15:
-                    #        vol = self.user.doOrder(market, 'sell', pc['price'] * 0.85);
-                    #        self.exchange.doOrder(market, 'sell', pc['price'] * 0.85, vol);
-                    #        print 'do sell, scale less 0.077!!';
-                    #    print '\tmarket:{0}, scale:{1}, position price:{2}, current price{3}'.format(market, scale, pc['price'], lastk.c);
+            currency = market[0:len(market)-3];
+            pc = self.user.positions.get(currency);
+            if pc and lastk:
+                cost = self.user.getCost(currency);
+                current = pc['volume'] * lastk.c;
+                sv += current;
+                '''
+                if cost and cost > 0:
+                    scale = (current - cost)/cost*100;
+                    if scale<-15:
+                        vol = self.user.doOrder(market, 'sell', pc['price'] * 0.85);
+                        self.exchange.doOrder(market, 'sell', pc['price'] * 0.85, vol);
+                        print 'do sell, scale less 0.077!!';
+                    print '\tmarket:{0}, scale:{1}, position price:{2}, current price{3}'.format(market, scale, pc['price'], lastk.c);
+                '''
         # sell
         for k,v in enumerate(selllist):
             cwave   = v['result']['cwave'];
@@ -124,14 +131,15 @@ class Rebot():
 
         # buy
         markets = {};
-        marketsupdate.sort(key = lambda x : x[1], reverse=True);
+        marketsupdate.sort(key = lambda x : x[1], reverse=False);
         for k,v in enumerate(marketsupdate):
-            if k > 6:
-                break;
+            if v[1] > 150000000 / 3: 
+                markets[v[0]] = True;
             markets[v[0]] = True;
-            print 'marketsupdate:', v[0], v[1];
+            # print 'marketsupdate:', v[0], v[1], summarketrmbvolume/len(marketsupdate);
 
         nbuylist = [];
+        '''
         for k,v in enumerate(buylist):
             cwave   = v['result']['cwave'];
             market  = v['market'];
@@ -142,18 +150,42 @@ class Rebot():
             if cwave.crmbvolume > 10000000 and cwave.crmbvolume < 25000000:
                 v['sort'] = 2 + cwave.crmbvolume / 25000000;
                 nbuylist.append(v);
+        '''
+        for k,v in enumerate(buylist):
+            cwave   = v['result']['cwave'];
+            pwave   = v['result']['pwave'];
+            cfwave  = v['result']['cfwave'];
 
+            if cwave and cfwave and pwave:
+                if cfwave.wrmbvolume <= 1:
+                    print '\tmarket %s : ' % v['market'], cfwave;
+                if pwave.height == 0:
+                    print '\tmarket %s pre wave height is 0,' % v['market'], pwave;
+                v['sort'] = (cwave.wrmbvolume / cwave.winterval) / (cfwave.wrmbvolume / cfwave.winterval) + cwave.height/pwave.height;
+                nbuylist.append(v);
+                if v['sort'] > 10:
+                    markets[v['market']] = False;
+                print '\t market %s sort %s %s %s %s %s' % (v['market'], cwave.wrmbvolume, cfwave.wrmbvolume, v['sort'], cwave.winterval, cfwave.winterval)
+            else:
+                v['sort'] = 100000;
         nbuylist.sort(key=lambda v: v['sort'], reverse=False)
+
         for k,v in enumerate(nbuylist):
             market  = v['market'];
             if markets.get(market):
                 cwave   = v['result']['cwave'];
                 vol = self.user.doOrder(market, cwave.type, cwave.cprice);
-                self.exchange.doOrder(market, cwave.type, cwave.cprice, vol, cwave.ck.t);
-                print '\tmarket:{0}, do:{1}, price:{2}, rmb volume:{3}, time:{4}'.format(market, cwave.type, cwave.cprice, cwave.crmbvolume, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(cwave.ck.t)));
-            else:
-                print '\t!!! market:{0}, time:{1}, buy fail less volume'.format(market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(cwave.ck.t)));
+                self.exchange.doOrder(market, cwave.type, cwave.cprice, vol, cwave.ck.t, {'sort':v['sort']});
+                flag=True;
+                print '\tmarket:{0}, do:{1}, price:{2}, rmb volume:{3}, time:{4}'.format(market, cwave.type, cwave.cprice, cwave.wrmbvolume, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(cwave.ck.t)));
+            #else:
+            #    print '\t!!! market:{0}, time:{1}, buy fail less volume : {2}'.format(market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(cwave.ck.t)), v['rmbvolumeN3']);
         if flag:
-            print 'all scale:{0}'.format((sv - self.user.initamount)/self.user.initamount*100)
-            print '---------------------------------------------------------------------------'
+            ascale = (sv - self.user.initamount)/self.user.initamount*100;
+            self.scales.append(ascale);
+            print 'all scale:{0}'.format(ascale);
+        print 'positions:';
+        for k,v in (self.user.positions.items()):
+            if v['volume'] > 0:
+                print '\t{0} {1}'.format(k, v);
 

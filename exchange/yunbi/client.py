@@ -55,6 +55,21 @@ class Client():
             from conf import ACCESS_KEY, SECRET_KEY
             self.auth = Auth(ACCESS_KEY, SECRET_KEY)
 
+    def time(self):
+        url = 'https://yunbi.com//api/v2/timestamp.json';
+        try :
+            resp = urllib2.urlopen(url)
+            # print resp
+            if resp:
+                data = resp.readlines()
+                if len(data):
+                    return json.loads(data[0])
+            else:
+                print(url)
+        except Exception:
+            print 'http error!!, url:{0}'.format(url);
+            return None;
+
     def get(self, path, params=None, send=True):
         verb = "GET"
         signature, query = self.auth.sign_params(verb, path, params)

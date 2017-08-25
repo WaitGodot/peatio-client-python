@@ -17,7 +17,8 @@ from rule.MutliMovingAverage import MutliMovingAverage
 from user.User import User
 from Rebot import Rebot;
 from exchange.yunbi.client import Client, get_api_path
-
+from exchange.yunbiEX import yunbiEXLocal
+from Time import Time
 
 '''
 # k test
@@ -55,14 +56,31 @@ while True:
     print "do", t;
     # time.sleep(0.1);
     r.run();
+    print '------------------------------------------------------------------------'
     if t > 330:
         break;
 print '\n\norders'
-for k,v in (r.user.orders.items()):
-    print k, v;
+#for k,v in (r.user.orders.items()):
+#    print k, v;
 # for k,v in(r.rules.items()):
     # v.Export("C:\\Users\\randy\\ma.csv");
     # v.ExportWave("C:\\Users\\randy\\wave.csv")
+
+for k,v in enumerate(r.markets):
+    market = v['id'];
+    ods = r.user.getOrderMarket(market);
+    if len(ods) > 0:
+        for k,v in enumerate(ods):
+            print k,v;
+        print '\n'
+
+import csv
+f = open('C:\\Users\\randy\\scales3.csv', 'wb');
+w = csv.writer(f);
+w.writerow(['scale']);
+for k in range(0, len(r.scales)):
+    w.writerow([k, r.scales[k]]);
+f.close();
 
 '''
 r = Rebot(); # 60, 240

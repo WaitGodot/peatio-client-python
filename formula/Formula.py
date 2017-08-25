@@ -81,7 +81,7 @@ def CROSS(AArr, BArr, N=None):
         N = lena;
     if lena < N or lenb < N or N <= 0 or N < 2:
         return False;
-    if AArr[N-2] < BArr[N-2] and AArr[N-1] > BArr[N-1]:
+    if AArr[N-2] <= BArr[N-2] and AArr[N-1] >= BArr[N-1]:
         return True;
     return False;
 
@@ -110,14 +110,17 @@ def MIN(Arr, idx1=None, idx2=None):
         if Arr[idx] < value:
             value = Arr[idx];
     return value;
+    
 # SUM
 def SUM(Arr, idx1=None, idx2=None):
     l = len(Arr);
     if l <= 0:
-        return 0;
+        return 1;
     idx1 = 0 if idx1==None else idx1;
     idx2 = l if idx2==None else idx2;
     value = 0;
     for idx in range(idx1, idx2):
         value += Arr[idx];
+    if value < 1:
+        return 1;
     return value;
