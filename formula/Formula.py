@@ -11,7 +11,7 @@ def MA(xArr, yArr, N):
             nidx = idx - k;
             if nidx < 0:
                 av = ss / float(k);
-            else: 
+            else:
                 ss += xArr[idx - k];
         if av == 0:
             yArr.append(ss / float(N));
@@ -72,7 +72,7 @@ def LOW(xArr, yArr, N):
             if low > value:
                low = value;
         yArr.append(low);
-    
+
 #CROSS
 def CROSS(AArr, BArr, N=None):
     lena = len(AArr);
@@ -97,7 +97,7 @@ def MAX(Arr, idx1=None, idx2=None):
         if Arr[idx] > value:
             value = Arr[idx];
     return value;
-    
+
 # MIN
 def MIN(Arr, idx1=None, idx2=None):
     l = len(Arr);
@@ -110,7 +110,7 @@ def MIN(Arr, idx1=None, idx2=None):
         if Arr[idx] < value:
             value = Arr[idx];
     return value;
-    
+
 # SUM
 def SUM(Arr, idx1=None, idx2=None):
     l = len(Arr);
@@ -124,3 +124,15 @@ def SUM(Arr, idx1=None, idx2=None):
     if value < 1:
         return 1;
     return value;
+
+# RATE
+def RATE(xArr, yArr, idx=None):
+    lenX = len(xArr);
+    lenY = len(yArr);
+    if idx == None:
+        idx = 0;
+    for k in range(lenY, lenX):
+        if k > idx:
+            yArr.append(xArr[k] - xArr[k-1]);
+        else:
+            yArr.append(1990214);

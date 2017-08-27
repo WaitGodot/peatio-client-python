@@ -65,7 +65,7 @@ class Segment():
             self.k0 = k;
             self.k1 = k;
             self.k2 = k;
-        
+
         # k contain
         isContain = self.k2.Contain(k)
         if isContain:
@@ -107,7 +107,7 @@ class Segment():
 
     def __str__(self):
         return 'dir:{0}, hk.h:{1}, hk.h idx:{2}, lk.l:{3}, lk.l idx:{4}'.format(ToStringDir(self.dir), self.hk.h, self.hkidx, self.lk.l, self.lkidx);
-                
+
 
 class WaveKline():
     def __init__(self):
@@ -123,7 +123,7 @@ class WaveKline():
             rt, index = ps.InputOneK(idx, klines[idx])
             if rt == False :
                 ps = Segment(ps.dir);
-                # print 'insert new segment', len(self.segs) + 1; 
+                # print 'insert new segment', len(self.segs) + 1;
                 for k in range(index, idx+1):
                     ps.InputOneK(k, klines[k]);
                 self.segs.append(ps);

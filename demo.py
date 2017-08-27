@@ -53,34 +53,72 @@ r = Rebot(240);
 t = 0;
 while True:
     t+=1;
-    print "do", t;
+    # print "do", t;
     # time.sleep(0.1);
     r.run();
-    print '------------------------------------------------------------------------'
-    if t > 330:
+    # print '------------------------------------------------------------------------'
+    if t > 350 * 2:
         break;
-print '\n\norders'
-#for k,v in (r.user.orders.items()):
-#    print k, v;
-# for k,v in(r.rules.items()):
-    # v.Export("C:\\Users\\randy\\ma.csv");
-    # v.ExportWave("C:\\Users\\randy\\wave.csv")
 
+for k,v in(r.rules.items()):
+    v.Export("C:\\Users\\randy\\ma.csv");
+    v.ExportWave("C:\\Users\\randy\\wave.csv")
+'''
+v = r.rules['anscny'];
+v.Export("C:\\Users\\randy\\ma.csv");
+v.ExportWave("C:\\Users\\randy\\wave.csv")
+v.wavepointm3.ExportTrend(v.KLines, 'C:\\Users\\randy\\wavepointma3trend.csv');
+v.wavewavepointm3.ExportTrend(v.KLines, 'C:\\Users\\randy\\wavewavepointma3trend.csv')
+for k, seg in enumerate(v.wavepointm3.segs):
+    print  time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(v.KLines[seg.start.idx].t)), seg;
+'''
+print '\n\norders'
+alltradetimes = 0;
+allwintimes = 0;
+srotscale=[]
 for k,v in enumerate(r.markets):
     market = v['id'];
     ods = r.user.getOrderMarket(market);
     if len(ods) > 0:
+        buys = [];
+        tradetimes = 0;
+        wintimes = 0;
+        print 'market:%s' % market;
         for k,v in enumerate(ods):
-            print k,v;
-        print '\n'
+            if v.type == 'buy':
+                tradetimes += 1;
+                alltradetimes += 1;
+                buys.append(v);
+            if v.type == 'sell':
+                print '\t',v;
+                for bk, bv in enumerate(buys):
+                    scale = (v.averageprice - bv.averageprice)/bv.averageprice * 100;
+                    if scale > 0:
+                        wintimes += 1;
+                        allwintimes += 1;
+                    srotscale.append([bv.ext['sort'], scale])
+                    print '\t\tscale:%s, order:%s' % (scale, bv.__str__());
+                buys = [];
+        print '\twinner: %f, win: %d, all %d\n' % (float(wintimes)/ float(tradetimes) * 100, wintimes, tradetimes);
+
+print 'all winner: %f, win: %d, all %d\n' % (float(allwintimes)/ float(alltradetimes) * 100, allwintimes, alltradetimes);
 
 import csv
-f = open('C:\\Users\\randy\\scales3.csv', 'wb');
+f = open('C:\\Users\\randy\\scales6.csv', 'wb');
 w = csv.writer(f);
 w.writerow(['scale']);
 for k in range(0, len(r.scales)):
     w.writerow([k, r.scales[k]]);
 f.close();
+
+f = open('C:\\Users\\randy\\scalessort.csv', 'wb');
+w = csv.writer(f);
+w.writerow(['sort', 'scale']);
+for k in range(0, len(srotscale)):
+    w.writerow([srotscale[k][0], srotscale[k][1]]);
+f.close();
+
+
 
 '''
 r = Rebot(); # 60, 240
@@ -151,14 +189,14 @@ print "markets:", markets
 
 #get tickers of each market
 #market should be specified in url
-print 
+print
 print "tickers in markets"
 for market in markets:
     print client.get(get_api_path('tickers') % market['id'], None, False)
 
 #get orders of each market
 #market should be specified in params
-print 
+print
 print "orders in markets"
 for market in markets:
     print client.get(get_api_path('orders'), {'market': market['id']})

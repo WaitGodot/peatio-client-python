@@ -17,18 +17,29 @@ class User():
         self.orders = {};
         self.tradetimes = 0;
         self.wintimes = 0;
-    
+
+    def setHigh(self, market, high):
+        pc = self.positions[market];
+        if pc:
+            pc['high'] = high;
+
     def getAllCost(self):
         s = 0
         for key, value in(self.positions.items()):
             s += value['volume'] * value['price'];
         return s;
 
-    def getCost(self, market):
-        pc = self.positions[market];
+    def getCost(self, currency):
+        pc = self.positions[currency];
         if pc==None:
             return None;
         return pc['volume'] * pc['price'];
+
+    def getHighCost(self, currency):
+        pc = self.positions[currency];
+        if pc==None:
+            return None;
+        return pc['volume'] * pc['high'];
 
     def getOrderMarket(self, market):
         d = [];
@@ -36,7 +47,13 @@ class User():
             if v.market == market:
                 d.append(v);
         return d;
-        
+
+    def updateHigh(self, currency, hp):
+        pc = self.positions[currency];
+        if pc:
+            if hp > pc['high']:
+                pc['high'] = hp;
+
     def updatePositions(self, positions):
         for key, value in enumerate(positions):
             vol = float(value['balance']) - float(value['locked']);
@@ -44,7 +61,7 @@ class User():
             currency = value['currency'];
             pc = self.positions.get(currency);
             if pc==None:
-                self.positions[currency] = {'volume':0, 'price':1}; # default.
+                self.positions[currency] = {'volume':0, 'price':1, 'high':0}; # default.
                 pc = self.positions[currency];
             if price!=None:
                 pc['price'] = price;
@@ -74,6 +91,7 @@ class User():
             else:
                 o = Order(id, type, market, t, price, volume, ext);
                 self.orders[id] = o;
+                self.setHigh(market[0:len(market)-3], 0);
 
     def doOrder(self, market, side, price, volume=None):
         if side == 'buy':

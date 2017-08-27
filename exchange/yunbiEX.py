@@ -4,11 +4,11 @@ from exchange.yunbi.client import Client, get_api_path
 import json
 
 class yunbiEX():
-    
+
     def set(self, access, sercet):
         self.client = Client(access_key=access, secret_key=sercet);
 
-    # function 
+    # function
     def getServerTimestamp(self):
         return self.client.time();
 
@@ -35,7 +35,7 @@ class yunbiEX():
         return self.client.post(get_api_path('delete_order'), params ={'id':orderID});
 
 class yunbiEXLocal():
-    
+
     def set(self, access, sercet):
         self.client = Client(access_key=access, secret_key=sercet);
         self.accounts = {
@@ -45,7 +45,7 @@ class yunbiEXLocal():
         self.marketOrders = {};
         self.ORDERID = 0;
         self.kss = {};
-    
+
     def createOrder(self, market, side, time, price, volume, ext):
         if volume<=0:
             return None;
@@ -106,7 +106,7 @@ class yunbiEXLocal():
             ccny['balance'] = str(float(ccny['balance']) - addbalance*addprice);
 
 
-    # function 
+    # function
     def getServerTimestamp(self):
         return self.client.time();
 
@@ -121,15 +121,15 @@ class yunbiEXLocal():
     def getMarkets(self):
         return self.client.get(get_api_path('markets'));
         # return [{'id':'anscny'}, {'id':'bcccny'}, {'id':'omgcny'}];
-        # return [{'id':'anscny'}];
+        return [{'id':'anscny'}];
 
     def getK(self, market, limit, period, timestamp=None):
         ks = self.kss.get(market);
         if ks==None:
             if timestamp:
-                ks = self.client.get(get_api_path('k'), params={'market': market, 'limit':330,'period':period, 'timestamp':timestamp});
+                ks = self.client.get(get_api_path('k'), params={'market': market, 'limit':350*2,'period':period, 'timestamp':timestamp});
             else:
-                ks = self.client.get(get_api_path('k'), params={'market': market, 'limit':330,'period':period});
+                ks = self.client.get(get_api_path('k'), params={'market': market, 'limit':350*2,'period':period});
             self.kss[market] = ks;
         if timestamp > ks[-1][0]:
             print '{0} k line is over'.format(market);

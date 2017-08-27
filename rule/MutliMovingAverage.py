@@ -1,5 +1,5 @@
 # rule
-# 
+#
 #
 from formula.K import KLine
 from formula.MACD import MACD
@@ -40,9 +40,13 @@ class Wave():
         self.cprice = ks.prices[idx2];
         self.ck     = ks[idx2];
 
-        self.height = (self.wmax - self.wmin) * self.winterval;
+        # self.height = (self.wmax - self.wmin) * self.winterval;
+        self.volheight = self.wrmbvolume / self.winterval;
+        self.height = (self.wmax - self.wmin)/self.winterval;
         if self.height == 0:
             self.height = self.winterval;
+        if self.volheight == 0:
+            self.volheight = self.winterval;
 
     def __str__(self):
         return 'type={0},idx1={1},idx2={2},height={3},min={4},max={5}'.format(self.type, self.point1.idx, self.point2.idx, self.height, self.wmin, self.wmax);
@@ -65,6 +69,10 @@ class MutliMovingAverage():
         self.points = [];
         # wave
         self.waves = [];
+        # ma3 price wave point;
+        # self.ma3rate = [];
+        # self.wavepointm3 = WavePoint();
+        #self.wavewavepointm3 = WavePoint();
         # self.client = Client(access_key=RebotConfig.access_key, secret_key=RebotConfig.secret_key)
 
     def Run(self, d, period=None, servertimestamp=None):
@@ -76,7 +84,7 @@ class MutliMovingAverage():
             if x < period:
                 data[5] /= x; # virtual volume
         self.KLines.Input(d);
-        # price 
+        # price
         MA(self.KLines.prices, self.MA1, self.N1);
         MA(self.KLines.prices, self.MA2, self.N2);
         MA(self.KLines.prices, self.MA3, self.N3);
@@ -85,11 +93,15 @@ class MutliMovingAverage():
         MA(self.KLines.volumes, self.VMA2, self.N2);
         # rmb volume
         nv3 = (int)(self.N2);
-        lenvol = len(self.KLines.rmbvolumes);
+        lenvol =    len(self.KLines.rmbvolumes);
         if lenvol > nv3:
             self.rmbvolumeN3 = SUM(self.KLines.rmbvolumes, lenvol - nv3);
         else:
             self.rmbvolumeN3 = SUM(self.KLines.rmbvolumes, 0, lenvol);
+        # ma3 rate and wavepoint;
+        # RATE(self.MA3, self.ma3rate, self.N3);
+        # self.wavepointm3.InputTrend(self.ma3rate);
+        # self.wavewavepointm3.InputTrend(self.wavepointm3.points);
 
 
     def Export(self, path):
@@ -119,28 +131,31 @@ class MutliMovingAverage():
             return 0;
         dz = self.MA3[-1] - self.MA3[-2];
         l = math.sqrt(1 + dz * dz);
-        return math.asin(dz/l);
+        # return math.asin(dz/l);
+        return dz;
 
     def Do(self):
         ret = {};
+        # seg = self.wavewavepointm3.Get(-1);
         k   = self.KLines.Get(-1);
         bc  = CROSS(self.MA2, self.MA1);
         a   = self.Angle();
         type=None;
         if bc:
-            # print "sell time:{0}, ma3 angle:{1}, ma3:{2}, c:{3}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), a, self.MA3[-1], k.c)
+            print "sell time:{0}, ma3 angle:{1}, ma3:{2}, c:{3}, k idx:{4}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), a, self.MA3[-1], k.c, k.idx)
             type = 'sell';
         sc = CROSS(self.MA1, self.MA2);
         if sc:
-            # print "buy time:{0}, ma3 angle:{1}, ma3:{2}, c:{3}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), a, self.MA3[-1], k.c)
+            print "buy time:{0}, ma3 angle:{1}, ma3:{2}, c:{3}, k idx:{4}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), a, self.MA3[-1], k.c, k.idx)
             type = 'buy';
-        if type != None:   
+        if type != None:
             # frist update
             lenwaves    = len(self.waves);
             lenpoints   = len(self.points);
             pwave = None;
             cwave = None;
             cfwave = None;
+            sort = 1000;
             p1 = None;
             p2 = None;
 
@@ -148,7 +163,7 @@ class MutliMovingAverage():
                 p2 = self.points[-1];
                 if p2.idx != k.idx:
                     if p2.type == type:
-                        self.points[-1] = np2;
+                        self.points[-1] = p2;
                     else:
                         np2 = Point(type, k.idx, a);
                         self.points.append(np2);
@@ -186,18 +201,41 @@ class MutliMovingAverage():
                 pwave = self.waves[-3];
                 # print 'type:{0}, angle:{1}, cwave:{2}, pwave:{3}'.format(type, pwave.point2.angle, cwave.__str__(), pwave.__str__());
                 #if pwave.point2.angle < 0:
+                '''
                 if type == 'buy':
-                    if cwave.wmin < pwave.wmin and pwave.height != 0 and cwave.height / pwave.height > 1.2:
-                        print ' !!! wave buy cwave height:{0}, pwave height:{1}, time:{2}'.format(cwave.height, pwave.height, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
+                    if  seg.dir == Direction.DOWN:
                         type = None;
+                        print '\t!!!!!!!!!!!!!!!!!!!!!!!! do not buy';
                 if type == 'sell':
-                    if cwave.wmax > pwave.wmax and pwave.height != 0 and cwave.height / pwave.height > 0.8:
-                        print ' !!! wave sell cwave height:{0}, pwave height:{1}, time:{2}'.format(cwave.height, pwave.height, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
+                    if seg.dir != Direction.DOWN:
+                        print '\t!!!!!!!!!!!!!!!!!!!!!!!! do not sell';
                         type = None;
+                '''
+                if cwave and pwave and cfwave:
+                    #cpheight = cwave.height/pwave.height;
+                    #cpvolheight = cwave.volheight/pwave.volheight;
+                    #cfvolheight = cwave.volheight/cfwave.volheight;
+                    cpheight = pwave.height/cwave.height;
+                    cpvolheight = pwave.volheight/cwave.volheight;
+                    cfvolheight = 0;#cfwave.volheight/cwave.volheight;
+                    sort = cpheight + cpvolheight + cfvolheight;
+                    if type == 'buy':
+                        if cwave.wmin < pwave.wmin and cwave.wmax < pwave.wmax:
+                            type = None;
+                            if cpheight < 1 and cpvolheight < 1 and cfvolheight < 1:
+                                print ' !!! wave buy cpheight:{0}, cpvolheight:{1}, cfvolheight:{2}, time:{3}'.format(cpheight, cpvolheight, cfvolheight, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
+                                type = 'buy'
+                    if type == 'sell':
+                        if cwave.wmax > pwave.wmax and cwave.wmin > pwave.wmin:
+                            type = None;
+                            if cpheight < 1 and cpvolheight < 1 and cfvolheight < 1:
+                                print ' !!! wave sell cpheight:{0}, cpvolheight:{1}, cfvolheight:{2}, time:{3}'.format(cpheight, cpvolheight, cfvolheight, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
+                                type = 'sell';
             ret['type']     = type;
             ret['cwave']    = cwave;
             ret['pwave']    = pwave;
             ret['cfwave']   = cfwave;
+            ret['sort']     = sort;
         #bc = CROSS(self.MA3, self.MA1);
         #if bc:
         #    print "sell m3 cross m1 0 time:{0}, ma3 angle:{1}, ma3:{2}, c:{3}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), a, self.MA3[-1], k.c)
@@ -205,4 +243,4 @@ class MutliMovingAverage():
         return ret;
 
 
-        
+
