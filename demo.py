@@ -52,7 +52,7 @@ while True:
 r = Rebot(240);
 t = 0;
 while True:
-    t+=1;
+    t += 1;
     # print "do", t;
     # time.sleep(0.1);
     r.run();
@@ -61,8 +61,9 @@ while True:
         break;
 
 for k,v in(r.rules.items()):
-    v.Export("C:\\Users\\randy\\ma.csv");
-    v.ExportWave("C:\\Users\\randy\\wave.csv")
+    v.KDJ.Export('C:\\Users\\randy\\kdj.csv')
+#    v.Export("C:\\Users\\randy\\ma.csv");
+#    v.ExportWave("C:\\Users\\randy\\wave.csv")
 '''
 v = r.rules['anscny'];
 v.Export("C:\\Users\\randy\\ma.csv");

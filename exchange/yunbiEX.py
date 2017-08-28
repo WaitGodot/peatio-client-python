@@ -119,9 +119,9 @@ class yunbiEXLocal():
         return d;
 
     def getMarkets(self):
-        return self.client.get(get_api_path('markets'));
-        # return [{'id':'anscny'}, {'id':'bcccny'}, {'id':'omgcny'}];
-        return [{'id':'anscny'}];
+        # return self.client.get(get_api_path('markets'));
+        return [{'id':'btccny'}, {'id':'ethcny'}, {'id':'zeccny'}, {'id':'qtumcny'}, {'id':'gxscny'}, {'id':'eoscny'}, {'id':'anscny'}, {'id':'sccny'}, {'id':'dgdcny'}, {'id':'1stcny'}, {'id':'btscny'}, {'id':'gntcny'}, {'id':'repcny'}, {'id':'etccny'}];
+        return [{'id':'eoscny'}];
 
     def getK(self, market, limit, period, timestamp=None):
         ks = self.kss.get(market);

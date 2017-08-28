@@ -52,11 +52,13 @@ class Rebot():
             # k line.
             # dk = self.exchange.getK(market, 500, self.period);
             dk = self.exchange.getK(market, 10, self.period, 1498838400); # 1498838400:2017/7/1 0:0:0; 1496246400:2017/6/1 0:0:0; 1493568000:2017/5/1 0:0:0
-            r = MutliMovingAverage(21,42);
+            r = MutliMovingAverage();
             r.Run(dk);
             self.rules[market] = r;
             self.buyTimes[market] = 0;
             self.sellTimes[market] = 0;
+            lastk=r.KLines.Get(-1);
+            print 'start market:%s, time:%s'  %(market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)))
         #scale.
         self.scales = [];
 
@@ -136,7 +138,7 @@ class Rebot():
                         self.exchange.doOrder(market, 'sell', nprateprice, vol, lastk.t);
                         print '\tmarket:%s, do sell, high:%f scale less %f, volume:%f, high:%f, time:%s' % (market, pc['high'], rate, vol, nprateprice, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)));
                     # else:
-                    #    print '\tmarket:{0}, scale:{1}, position high price:{2}, current price{3}'.format(market, scale, pc['high'], lastk.c);
+                    # print '\tmarket:{0}, scale:{1}, position high price:{2}, current price{3}'.format(market, scale, pc['high'], lastk.c);
         # sell
         for k,v in enumerate(selllist):
             cwave   = v['result']['cwave'];
@@ -155,50 +157,30 @@ class Rebot():
             # print 'marketsupdate:', v[0], v[1], summarketrmbvolume/len(marketsupdate);
 
         nbuylist = [];
-        '''
         for k,v in enumerate(buylist):
-            cwave   = v['result']['cwave'];
-            market  = v['market'];
-            v['rmbvolumeN3'] = self.rules[market].rmbvolumeN3;
-            if cwave.crmbvolume > 600000 and cwave.crmbvolume < 10000000:
-                v['sort'] = 1 + cwave.crmbvolume / 10000000;
-                nbuylist.append(v);
-            if cwave.crmbvolume > 10000000 and cwave.crmbvolume < 25000000:
-                v['sort'] = 2 + cwave.crmbvolume / 25000000;
-                nbuylist.append(v);
-        '''
-        for k,v in enumerate(buylist):
-            nbuylist.append(v);
-            '''
-            cwave   = v['result']['cwave'];
-            pwave   = v['result']['pwave'];
-            cfwave  = v['result']['cfwave'];
-            if cwave and cfwave and pwave:
-                if cfwave.wrmbvolume <= 1:
-                    print '\tcf wave rmb volume less 1 market %s : ' % v['market'], cfwave;
-                    cfwave.wrmbvolume = 9999999999
-                if pwave.height == 0:
-                    print '\tmarket %s pre wave height is 0,' % v['market'], pwave;
-                v['sort'] = cwave.volheight/cfwave.volheight + pwave.height/cwave.height;
-                print '\t market %s sort %s volume height %s price height %s' % (v['market'], cwave.volheight/cfwave.volheight, pwave.height/cwave.height, v['sort'])
+            market = v['market'];
+            sort = v['result']['sort'];
+            v['sort'] = sort
+            print 'xxxx market:', market, 'sort:', sort;
+            if sort > 100 or sort < 1:
+                print '\tmarlet %s sort greater 10, sort %f' % (market, sort);
             else:
-                v['sort'] = 100000;
-            '''
-            v['sort'] = v['result']['sort']
-            if v['sort'] > 10:
-                markets[v['market']] = False;
-                print '\tmarlet %s sort greater 10' % market;
+                nbuylist.append(v);
+                print '123'
+            # nbuylist.append(v);
 
-        nbuylist.sort(key=lambda v: v['sort'], reverse=False)
+        nbuylist.sort(key=lambda v: v['sort'], reverse=True)
         for k,v in enumerate(nbuylist):
             market  = v['market'];
-            print 'xxx', market, v['sort'];
             if markets.get(market):
                 cwave   = v['result']['cwave'];
                 vol = self.user.doOrder(market, cwave.type, cwave.cprice);
                 self.exchange.doOrder(market, cwave.type, cwave.cprice, vol, cwave.ck.t, {'sort':v['sort']});
                 flag=True;
-                print '\tmarket:{0}, do:{1}, price:{2}, rmb volume:{3}, time:{4}'.format(market, cwave.type, cwave.cprice, cwave.wrmbvolume, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(cwave.ck.t)));
+                if vol > 0:
+                    print '\tmarket:{0}, do:{1}, price:{2}, volume:{3}, time:{4}'.format(market, cwave.type, cwave.cprice, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(cwave.ck.t)));
+                else:
+                    print '\tnot enough !!! market:{0}, do:{1}, price:{2}, volume:{3}, time:{4}'.format(market, cwave.type, cwave.cprice, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(cwave.ck.t)));
             #else:
             #    print '\t!!! market:{0}, time:{1}, buy fail less volume : {2}'.format(market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(cwave.ck.t)), v['rmbvolumeN3']);
         if flag:

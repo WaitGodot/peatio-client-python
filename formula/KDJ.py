@@ -4,9 +4,7 @@ K:SMA(RSV,M1,1);
 D:SMA(K,M2,1);
 J:3*K-2*D;
 '''
-from formula.Formula import HIGH
-from formula.Formula import LOW
-from formula.Formula import SMA
+from formula.Formula import *
 import csv
 
 class DATA():
@@ -28,6 +26,10 @@ class KDJ():
         self.K = [];
         self.D = [];
         self.J = [];
+        self.preK2D = None;
+        self.curK2D = None;
+        self.preD2K = None;
+        self.curD2K = None;
 
     def Input(self, klines):
         l = len(self.hightArr);
@@ -55,11 +57,29 @@ class KDJ():
     def Get(self, idx):
         return DATA(self.K[idx], self.D[idx], self.J[idx]);
 
+    def Do(self):
+        k2d = CROSS(self.K, self.D);
+        if k2d:
+            idx = len(self.K);
+            self.preK2D = self.curK2D;
+            self.curK2D = [idx, (self.K[-1] + self.D[-1])/2];
+            if self.preK2D and self.curK2D[1] < 80 and self.curK2D[1] >= 20 and self.curK2D[0] - self.preK2D[0] >= 5:
+                return 'buy'
+        d2k = CROSS(self.D, self.K);
+        if d2k:
+            idx = len(self.K);
+            self.preD2K = self.curD2K;
+            self.curD2K = [idx, (self.K[-1] + self.D[-1])/2];
+            if self.preD2K and self.curD2K[1] / self.preD2K[1] <= 0.88 and self.curD2K[0] - self.preD2K[0] >= 5:
+                return 'sell'
+        return None;
+
     def Export(self, path):
         f = open(path, 'wb');
         w = csv.writer(f);
-        for k, v in enumerate(self.K):
-            w.writerow([k,v]);
+        w.writerow(['id', 'k', 'd', 'j']);
+        for k in range(len(self.K)):
+            w.writerow([k, self.K[k], self.D[k],  self.J[k],]);
 
         f.close();
 
