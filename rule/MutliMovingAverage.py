@@ -98,9 +98,9 @@ class MutliMovingAverage():
         # volume
         MA(self.KLines.volumes, self.VMA1, self.N1);
         MA(self.KLines.volumes, self.VMA2, self.N2);
-        
 
-        
+
+
         # ma3 rate and wavepoint;
         # RATE(self.MA3, self.ma3rate, self.N3);
         # self.wavepointm3.InputTrend(self.ma3rate);
@@ -143,13 +143,13 @@ class MutliMovingAverage():
             self.status = 'buy'
             type = 'buy';
 
-        if self.status == 'buy' and type == None and True:
+        if self.status == 'buy' and type == None and False:
             type = self.KDJ.Do();
             if type:
                 pwidx = 2;
                 print "kdj:{0} time:{1}, c:{2}, k idx:{3}".format(type, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), k.c, k.idx)
 
-        if self.status == 'buy' and type == None and False:
+        if self.status == 'buy' and type == None and True:
             bc  = CROSS(self.MA2, self.MA1);
             if bc:
                 print "mashort sell time:{0}, c:{1}, k idx:{2}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), k.c, k.idx)
@@ -174,7 +174,7 @@ class MutliMovingAverage():
             sort = 1000;
             p1 = None;
             p2 = None;
-            
+
             if lenpoints > 0:
                 p2 = points[-1];
                 if p2.idx != k.idx:
@@ -240,16 +240,19 @@ class MutliMovingAverage():
                                 if cpheight < 1 and cpvolheight < 1 and cfvolheight < 1:
                                     type = 'sell';
                                 else:
-                                    print ' !!! wave sell cpheight:{0}, cpvolheight:{1}, cfvolheight:{2}, time:{3}'.format(cpheight, cpvolheight, cfvolheight, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));    
+                                    print ' !!! wave sell cpheight:{0}, cpvolheight:{1}, cfvolheight:{2}, time:{3}'.format(cpheight, cpvolheight, cfvolheight, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
                             else:
                                 print ' !!! wave sell cpheight:{0}, cpvolheight:{1}, cfvolheight:{2}, time:{3}'.format(cpheight, cpvolheight, cfvolheight, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
             if pwidx != 0 and type == 'buy':
-                p = self.points[0][-1];
+                p1 = self.points[0][-1];
+                p2 = self.points[0][-2];
+                # print 'tan p1 p2', 57.2956 * math.atan( (self.MA4[p2.idx] - self.MA4[p1.idx])/self.MA4[p1.idx] * 100 /(p1.idx - p2.idx)), (self.MA4[p2.idx] - self.MA4[p1.idx])/self.MA4[p1.idx] * 100 /(p1.idx - p2.idx);
+                # print 'tan c p1', 57.2956 * math.atan( (self.MA4[k.idx] - self.MA4[p1.idx])/self.MA4[p1.idx] * 100/(k.idx - p1.idx)), (self.MA4[k.idx] - self.MA4[p1.idx])/self.MA4[p1.idx] * 100/(k.idx - p1.idx);
                 # sort = self.MA4[p.idx] / self.MA4[-1];
-                if self.MA4[-1] - self.MA4[p.idx] < 0:
+
+                if self.MA4[-1] - self.MA4[p1.idx] < 0:
                     sort = -sort;
-                #else:
-                #    sort = 1/(self.MA4[-1] - self.MA4[p.idx]);
+                ret['angle'] = 57.2956 * math.atan( (self.MA4[p2.idx] - self.MA4[p1.idx])/self.MA4[p1.idx] * 100 /(p1.idx - p2.idx)) + 57.2956 * math.atan( (self.MA4[k.idx] - self.MA4[p1.idx])/self.MA4[p1.idx] * 100/(k.idx - p1.idx))
 
             ret['type']     = type;
             ret['cwave']    = cwave;

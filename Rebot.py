@@ -161,15 +161,18 @@ class Rebot():
             market = v['market'];
             sort = v['result']['sort'];
             v['sort'] = sort
-            print 'xxxx market:', market, 'sort:', sort;
-            if sort > 100 or sort < 1:
+            angle = v['result'].get('angle');
+            print 'xxxx market:', market, 'sort:', sort, 'angle', angle;
+            if sort > 100 or sort < 0:
                 print '\tmarlet %s sort greater 10, sort %f' % (market, sort);
-            else:
-                nbuylist.append(v);
-                print '123'
+                continue;
+            if angle and angle < 10:
+                print '\tmarlet %s angle less 10, sort %f' % (market, angle);
+                continue;
+            nbuylist.append(v);
             # nbuylist.append(v);
 
-        nbuylist.sort(key=lambda v: v['sort'], reverse=True)
+        nbuylist.sort(key=lambda v: v['sort'], reverse=False)
         for k,v in enumerate(nbuylist):
             market  = v['market'];
             if markets.get(market):
