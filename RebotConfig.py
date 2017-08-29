@@ -7,11 +7,20 @@ class RebotConfig():
     # secret key
     secret_key = "Xgz0QqlvdAx9lBjpiVLlnFOs2IwaPS3lftuw4geS";
 
-    # markets
-    markets = [ ["qtum", "2017-05-24 08:00:00"], ["bts", "2017-05-24 08:00:00"] ];
-
     # mysql config
     mysql_address = "localhost";
     mysql_user = "randy";
     mysql_password = "randy521";
     mysql_database = "bot";
+
+    # user
+    user_asset_ratio = 4;
+    user_asset_least = 1000;
+    user_initamount = 10000;
+
+    # rebot
+    rebot_period = 240; # min
+    rebot_buy_least_angle = 5;
+
+    # file
+    path = 'C:\\Users\\randy\\';

@@ -50,20 +50,22 @@ class Wave():
             self.volheight = self.winterval;
 
     def __str__(self):
-        return 'type={0},idx1={1},idx2={2},height={3},min={4},max={5}'.format(self.type, self.point1.idx, self.point2.idx, self.height, self.wmin, self.wmax);
+        return 'type={0},idx1={1},idx2={2},height={3},min={4},max={5},cprice={6}'.format(self.type, self.point1.idx, self.point2.idx, self.height, self.wmin, self.wmax, self.cprice);
 
 class MutliMovingAverage():
-    def __init__(self, N1=5, N2=10, N3=21, N4=42):
+    def __init__(self, N1=5, N2=10, N3=21, N4=42, N5=84):
         self.KLines = KLine();
         # price
         self.MA1 = [];
         self.MA2 = [];
         self.MA3 = [];
         self.MA4 = [];
+        self.MA5 = [];
         self.N1 = N1;
         self.N2 = N2;
         self.N3 = N3;
         self.N4 = N4;
+        self.N5 = N5;
         self.status = None;
         # volume
         self.VMA1 = [];
@@ -95,11 +97,10 @@ class MutliMovingAverage():
         MA(self.KLines.prices, self.MA2, self.N2);
         MA(self.KLines.prices, self.MA3, self.N3);
         MA(self.KLines.prices, self.MA4, self.N4);
+        MA(self.KLines.prices, self.MA5, self.N5);
         # volume
         MA(self.KLines.volumes, self.VMA1, self.N1);
         MA(self.KLines.volumes, self.VMA2, self.N2);
-
-
 
         # ma3 rate and wavepoint;
         # RATE(self.MA3, self.ma3rate, self.N3);
@@ -142,22 +143,22 @@ class MutliMovingAverage():
         if sc34:
             self.status = 'buy'
             type = 'buy';
-
+        
         if self.status == 'buy' and type == None and False:
             type = self.KDJ.Do();
             if type:
                 pwidx = 2;
                 print "kdj:{0} time:{1}, c:{2}, k idx:{3}".format(type, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), k.c, k.idx)
 
-        if self.status == 'buy' and type == None and True:
+        if type == None and True:
             bc  = CROSS(self.MA2, self.MA1);
             if bc:
-                print "mashort sell time:{0}, c:{1}, k idx:{2}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), k.c, k.idx)
+                # print "mashort sell time:{0}, c:{1}, k idx:{2}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), k.c, k.idx)
                 type = 'sell';
                 pwidx = 1;
             sc = CROSS(self.MA1, self.MA2);
             if sc:
-                print "mashort buy time:{0}, c:{1}, k idx:{2}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), k.c, k.idx)
+                # print "mashort buy time:{0}, c:{1}, k idx:{2}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), k.c, k.idx)
                 type = 'buy';
                 pwidx = 1;
 
@@ -168,9 +169,11 @@ class MutliMovingAverage():
 
             lenwaves    = len(waves);
             lenpoints   = len(points);
-            pwave = None;
-            cwave = None;
-            cfwave = None;
+            p1wave = None;
+            p2wave = None;
+            c1wave = None;
+            c2wave = None;
+
             sort = 1000;
             p1 = None;
             p2 = None;
@@ -197,68 +200,77 @@ class MutliMovingAverage():
                 p1 = points[-2];
 
             if lenwaves > 0:
-                cwave = waves[-1];
-                if cwave.point2.idx == k.idx:
-                    cwave.cal(self.KLines);
-                if cwave.type == type:
-                    cwave.point2 = p2;
-                    cwave.cal(self.KLines);
+                c1wave = waves[-1];
+                if c1wave.point2.idx == k.idx:
+                    c1wave.cal(self.KLines);
+                if c1wave.type == type:
+                    c1wave.point2 = p2;
+                    c1wave.cal(self.KLines);
                 else:
                     ncwave = Wave(p1, p2);
                     ncwave.cal(self.KLines);
                     waves.append(ncwave);
-                    cwave = ncwave;
+                    c1wave = ncwave;
             else:
-                cwave = Wave(p1, p2);
-                cwave.cal(self.KLines);
-                waves.append(cwave);
-            if lenwaves > 1:
-                cfwave = waves[-2];
-            if lenwaves > 2:
-                pwave = waves[-3];
-                if cwave and pwave and cfwave:
-                    cpheight = cwave.height/pwave.height;
-                    cpvolheight = cwave.volheight/pwave.volheight;
-                    cfvolheight = 0
-                    #cfvolheight = cwave.volheight/cfwave.volheight;
-                    if pwidx == 0:
-                        cpheight = pwave.height/cwave.height;
-                        cpvolheight = pwave.volheight/cwave.volheight;
-                        cfvolheight = 0;#cfwave.volheight/cwave.volheight;
-                    sort = cpheight + cpvolheight + cfvolheight;
-                    if pwidx == 1:
-                        if type == 'buy':
-                            if cwave.wmin < pwave.wmin and cwave.wmax < pwave.wmax:
-                                type = None;
-                                if cpheight < 1 and cpvolheight < 1 and cfvolheight < 1:
-                                    type = 'buy'
-                                else:
-                                    print ' !!! wave buy cpheight:{0}, cpvolheight:{1}, cfvolheight:{2}, time:{3}'.format(cpheight, cpvolheight, cfvolheight, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
-                        if type == 'sell':
-                            type = None;
-                            if cwave.wmax > pwave.wmax and cwave.wmin > pwave.wmin:
-                                if cpheight < 1 and cpvolheight < 1 and cfvolheight < 1:
-                                    type = 'sell';
-                                else:
-                                    print ' !!! wave sell cpheight:{0}, cpvolheight:{1}, cfvolheight:{2}, time:{3}'.format(cpheight, cpvolheight, cfvolheight, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
-                            else:
-                                print ' !!! wave sell cpheight:{0}, cpvolheight:{1}, cfvolheight:{2}, time:{3}'.format(cpheight, cpvolheight, cfvolheight, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
-            if pwidx != 0 and type == 'buy':
+                c1wave = Wave(p1, p2);
+                c1wave.cal(self.KLines);
+                waves.append(c1wave);
+
+            if lenwaves >= 4 and pwidx == 1 and self.status == 'buy':
+                c2wave = waves[-3];
+                p1wave = waves[-2];
+                p2wave = waves[-4];
+                
+                if type == 'buy':
+                    type = None;
+                    if c1wave.wmin > c2wave.wmax:
+                        sort = c2wave.height/c1wave.height + c2wave.volheight/c1wave.volheight + p2wave.height/p1wave.height + p2wave.volheight/p1wave.volheight;
+                        # print c1wave
+                        # print c2wave
+                        # print 'buysort', sort, c2wave.height/c1wave.height, c2wave.volheight/c1wave.volheight, p2wave.height/p1wave.height, p2wave.volheight/p1wave.volheight, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t));
+                        if sort < 4 :#and p2wave.height/p1wave.height <= 1:
+                            type = 'buy';
+                            # print '\t short ma wave buy sucess';
+                        #else:
+                        #    print ' !!! wave buy sort %f, time:%s' % (sort, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
+                    #else:
+                    #    print ' !!! wave buy c1wave wwin less c2wave wmax';
+
+                if type == 'sell':
+                    # print '\tc1wave', c1wave
+                    # print '\tc2wave', c2wave
+                    if c1wave.cprice > c2wave.wmax:
+                        type = None;
+                        print '\t !!! wave sell fail current price greater c2wave wmax time:{0}'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
+                    else:
+                        print '\t short ma wave sell sucess';
+            if pwidx == 0 or type == 'sell': # long long
+                sort = 1;
+            if type == 'buy' and len(self.points[0]) >= 2:
                 p1 = self.points[0][-1];
                 p2 = self.points[0][-2];
                 # print 'tan p1 p2', 57.2956 * math.atan( (self.MA4[p2.idx] - self.MA4[p1.idx])/self.MA4[p1.idx] * 100 /(p1.idx - p2.idx)), (self.MA4[p2.idx] - self.MA4[p1.idx])/self.MA4[p1.idx] * 100 /(p1.idx - p2.idx);
                 # print 'tan c p1', 57.2956 * math.atan( (self.MA4[k.idx] - self.MA4[p1.idx])/self.MA4[p1.idx] * 100/(k.idx - p1.idx)), (self.MA4[k.idx] - self.MA4[p1.idx])/self.MA4[p1.idx] * 100/(k.idx - p1.idx);
                 # sort = self.MA4[p.idx] / self.MA4[-1];
 
-                if self.MA4[-1] - self.MA4[p1.idx] < 0:
+                if self.MA4[-1] - self.MA4[p1.idx] < 0 and pwidx != 0:
                     sort = -sort;
-                ret['angle'] = 57.2956 * math.atan( (self.MA4[p2.idx] - self.MA4[p1.idx])/self.MA4[p1.idx] * 100 /(p1.idx - p2.idx)) + 57.2956 * math.atan( (self.MA4[k.idx] - self.MA4[p1.idx])/self.MA4[p1.idx] * 100/(k.idx - p1.idx))
 
-            ret['type']     = type;
-            ret['cwave']    = cwave;
-            ret['pwave']    = pwave;
-            ret['cfwave']   = cfwave;
-            ret['sort']     = sort;
+                if k.idx - p1.idx > 0:
+                    ret['angle'] = 57.2956 * math.atan( (self.MA4[p2.idx] - self.MA4[p1.idx])/self.MA4[p1.idx] * 100 /(p1.idx - p2.idx)) + 57.2956 * math.atan( (self.MA4[k.idx] - self.MA4[p1.idx])/self.MA4[p1.idx] * 100/(k.idx - p1.idx))
+                else:
+                    ret['angle'] = 57.2956 * math.atan( (self.MA4[p2.idx] - self.MA4[p1.idx])/self.MA4[p1.idx] * 100 /(p1.idx - p2.idx));
+                
+                # ma5v = self.MA5[p1.idx] - self.MA5[p2.idx];
+                ma5v = self.MA5[-1] - self.MA5[p2.idx]
+                if ma5v < 0:
+                    sort = -214;
+                    print '\t !!! ma5 buy less 0:{0}'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
+
+            ret['type'] = type;
+            ret['k']    = k;
+            ret['sort'] = sort;
+            ret['ext'] = {'idx':pwidx}
 
         return ret;
 

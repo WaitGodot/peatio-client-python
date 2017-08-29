@@ -20,17 +20,6 @@ from exchange.yunbi.client import Client, get_api_path
 from exchange.yunbiEX import yunbiEXLocal
 from Time import Time
 
-'''
-# k test
-c = Client(access_key=RebotConfig.access_key, secret_key=RebotConfig.secret_key)
-while True:
-    time.sleep(1);
-    d = c.get(get_api_path('k'), params={'market': 'eoscny', 'limit':1,'period':5});
-    t = c.get(get_api_path('tickers'), params={'market':'eoscny'});
-    print d, t;
-
-'''
-
 # 30 60 120 240 360
 # btc 120, 60
 # ans 60, 240
@@ -49,42 +38,30 @@ while True:
 # gnt 360, 240
 # etc 120, 240
 
-r = Rebot(240);
+r = Rebot(RebotConfig.rebot_period);
 t = 0;
 while True:
     t += 1;
-    # print "do", t;
-    # time.sleep(0.1);
+    print "do", t;
+    # time.sleep(RebotConfig.rebot_period/4);
+    time.sleep(2);
     r.run();
-    # print '------------------------------------------------------------------------'
+    print '------------------------------------------------------------------------'
     if t > 350 * 2:
         break;
-
-for k,v in(r.rules.items()):
-    v.KDJ.Export('C:\\Users\\randy\\kdj.csv')
-#    v.Export("C:\\Users\\randy\\ma.csv");
-#    v.ExportWave("C:\\Users\\randy\\wave.csv")
-'''
-v = r.rules['anscny'];
-v.Export("C:\\Users\\randy\\ma.csv");
-v.ExportWave("C:\\Users\\randy\\wave.csv")
-v.wavepointm3.ExportTrend(v.KLines, 'C:\\Users\\randy\\wavepointma3trend.csv');
-v.wavewavepointm3.ExportTrend(v.KLines, 'C:\\Users\\randy\\wavewavepointma3trend.csv')
-for k, seg in enumerate(v.wavepointm3.segs):
-    print  time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(v.KLines[seg.start.idx].t)), seg;
-'''
 print '\n\norders'
 alltradetimes = 0;
 allwintimes = 0;
-srotscale=[]
 for k,v in enumerate(r.markets):
     market = v['id'];
     ods = r.user.getOrderMarket(market);
-    if len(ods) > 0:
+    lenods = len(ods);
+    if lenods > 0:
         buys = [];
         tradetimes = 0;
         wintimes = 0;
         print 'market:%s' % market;
+        key=0;
         for k,v in enumerate(ods):
             if v.type == 'buy':
                 tradetimes += 1;
@@ -97,28 +74,22 @@ for k,v in enumerate(r.markets):
                     if scale > 0:
                         wintimes += 1;
                         allwintimes += 1;
-                    srotscale.append([bv.ext['sort'], scale])
                     print '\t\tscale:%s, order:%s' % (scale, bv.__str__());
+                    key = k;
                 buys = [];
+        for k,v in enumerate(buys):
+            print '\tcurrent buy order:'
+            print '\t\t',v;
         print '\twinner: %f, win: %d, all %d\n' % (float(wintimes)/ float(tradetimes) * 100, wintimes, tradetimes);
-
-print 'all winner: %f, win: %d, all %d\n' % (float(allwintimes)/ float(alltradetimes) * 100, allwintimes, alltradetimes);
+print 'all win: %f, win: %d, all %d\n' % (float(allwintimes)/ float(alltradetimes) * 100, allwintimes, alltradetimes);
 
 import csv
-f = open('C:\\Users\\randy\\scales6.csv', 'wb');
+f = open('%sscales.csv' % RebotConfig.path, 'wb');
 w = csv.writer(f);
 w.writerow(['scale']);
 for k in range(0, len(r.scales)):
     w.writerow([k, r.scales[k]]);
 f.close();
-
-f = open('C:\\Users\\randy\\scalessort.csv', 'wb');
-w = csv.writer(f);
-w.writerow(['sort', 'scale']);
-for k in range(0, len(srotscale)):
-    w.writerow([srotscale[k][0], srotscale[k][1]]);
-f.close();
-
 
 
 '''

@@ -2,6 +2,7 @@
 #
 #
 from user.Order import Order
+from RebotConfig import RebotConfig
 
 class User():
     instanse = None;
@@ -12,7 +13,7 @@ class User():
 
     def __init__(self):
         self.amount = 0; # cash
-        self.initamount = 10000;
+        self.initamount = RebotConfig.user_initamount;
         self.positions = {}; # [market]=count
         self.orders = {};
         self.tradetimes = 0;
@@ -96,10 +97,10 @@ class User():
     def doOrder(self, market, side, price, volume=None):
         if side == 'buy':
             if volume==None:
-                if self.amount < 1000:
+                if self.amount < RebotConfig.user_asset_least:
                     volume = self.amount / price;
                 else:
-                    volume = self.amount / price / 3;
+                    volume = self.amount / price / RebotConfig.user_asset_ratio;
             amount = price * volume;
             if amount > self.amount:
                 amount = self.amount;
