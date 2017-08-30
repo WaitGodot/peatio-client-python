@@ -43,12 +43,13 @@ t = 0;
 while True:
     t += 1;
     print "do", t;
-    # time.sleep(RebotConfig.rebot_period/4);
-    time.sleep(2);
     r.run();
+    # time.sleep(1);
+    time.sleep(RebotConfig.rebot_period*60/RebotConfig.rebot_do_per_period);
     print '------------------------------------------------------------------------'
-    if t > 350 * 2:
-        break;
+    #if t > 350 * 2:
+    #    break;
+    
 print '\n\norders'
 alltradetimes = 0;
 allwintimes = 0;

@@ -76,7 +76,8 @@ class MutliMovingAverage():
         # wave
         self.waves = [[], [], []];
         # kdj
-        self.KDJ = KDJ();
+        # self.KDJ = KDJ();
+
         # ma3 price wave point;
         # self.ma3rate = [];
         # self.wavepointm3 = WavePoint();
@@ -91,7 +92,7 @@ class MutliMovingAverage():
         # k
         self.KLines.Input(d);
         # kdj
-        self.KDJ.Input(self.KLines);
+        # self.KDJ.Input(self.KLines);
         # price
         MA(self.KLines.prices, self.MA1, self.N1);
         MA(self.KLines.prices, self.MA2, self.N2);

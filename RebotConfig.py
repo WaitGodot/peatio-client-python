@@ -21,6 +21,8 @@ class RebotConfig():
     # rebot
     rebot_period = 240; # min
     rebot_buy_least_angle = 5;
+    rebot_trade_sure_times = 2;
+    rebot_do_per_period = 5;
 
     # file
     path = 'C:\\Users\\randy\\';

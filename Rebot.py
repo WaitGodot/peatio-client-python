@@ -34,16 +34,14 @@ class Rebot():
         print '-----------------------------------'
         self.user.updatePositions(info['accounts']);
         # markets
-        print '-----------------------------------'
         self.markets = self.exchange.getMarkets();
-        print self.markets
-        print '-----------------------------------'
         # rule.
-        self.rules = {}; #MutliMovingAverage();
+        self.rules = {};
         # init.
         #
-        self.buyTimes = {};
-        self.sellTimes = {};
+        #time and times;
+        self.tradeSure = {}
+        self.marketTime = {};
         for k,v in enumerate(self.markets):
             market = v['id'];
             # order.
@@ -54,11 +52,12 @@ class Rebot():
             # dk = self.exchange.getK(market, 10, self.period, 1498838400); # 1498838400:2017/7/1 0:0:0; 1496246400:2017/6/1 0:0:0; 1493568000:2017/5/1 0:0:0
             r = MutliMovingAverage();
             r.Run(dk);
-            self.rules[market] = r;
-            self.buyTimes[market] = 0;
-            self.sellTimes[market] = 0;
             lastk=r.KLines.Get(-1);
-            print 'start market:%s, time:%s'  %(market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)))
+
+            self.rules[market] = r;
+            self.tradeSure[market] = {'buy':0, 'sell':0};
+            self.marketTime[market] = lastk.t;
+            print 'start market:%s, begin time %s, current time:%s'%(market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(r.KLines.Get(0).t)), time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)))
         #scale.
         self.scales = [];
 
@@ -94,6 +93,11 @@ class Rebot():
                 r.Run(dk);
                 ret     = r.Do();
                 lastk   = r.KLines.Get(-1);
+
+                if self.marketTime[market] != lastk.t:
+                    self.marketTime[market] = lastk.t;
+                    self.tradeSure[market] = {'buy':0, 'sell':0};
+                # print market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(self.marketTime[market])), time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t))
                 type    = ret.get('type');
                 if type == 'buy':
                     buylist.append({'market':market, 'result':ret})
@@ -133,9 +137,15 @@ class Rebot():
                     # else:
                     # print '\tmarket:{0}, scale:{1}, position high price:{2}, current price{3}'.format(market, scale, pc['high'], lastk.c);
         # sell
+        nselllist = [];
         for key,v in enumerate(selllist):
-            k   = v['result']['k'];
             market  = v['market'];
+            self.tradeSure[market]['sell'] += 1;
+            if self.tradeSure[market]['sell'] >= RebotConfig.rebot_trade_sure_times:
+                nselllist.append(v);
+        for key,v in enumerate(nselllist):
+            market  = v['market'];
+            k   = v['result']['k'];
             vol = self.user.doOrder(market, 'sell', k.c);
             self.exchange.doOrder(market, 'sell', k.c, vol, k.t);
             print '\tmarket:{0}, do:{1}, price:{2}, time:{3}, ext:{4}'.format(market, 'sell', k.c, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), v['result']['ext']);
@@ -155,7 +165,9 @@ class Rebot():
             if angle and angle < RebotConfig.rebot_buy_least_angle:
                 print '\tmarket %s angle illegal, angle %f, time %s' % (market, angle, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
                 continue;
-            nbuylist.append(v);
+            self.tradeSure[market]['buy'] += 1;
+            if self.tradeSure[market]['buy'] >= RebotConfig.rebot_trade_sure_times:
+                nbuylist.append(v);
             # nbuylist.append(v);
 
         nbuylist.sort(key=lambda v: v['sort'], reverse=False)
