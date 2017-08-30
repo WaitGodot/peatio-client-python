@@ -51,7 +51,7 @@ class Rebot():
             self.user.updateOrder(self.exchange.getOrder(market));
             # k line.
             if RebotConfig.rebot_is_test:
-                dk = self.exchange.getK(market, 10, self.period, 1498838400); # 1498838400:2017/7/1 0:0:0; 1496246400:2017/6/1 0:0:0; 1493568000:2017/5/1 0:0:0
+                dk = self.exchange.getK(market, 100, self.period, 1498838400); # 1498838400:2017/7/1 0:0:0; 1496246400:2017/6/1 0:0:0; 1493568000:2017/5/1 0:0:0
             else:
                 dk = self.exchange.getK(market, 500, self.period);
                 
@@ -90,13 +90,12 @@ class Rebot():
             # rule
             r = self.rules[market];
             lastk=r.KLines.Get(-1);
-            # print 'do marekt:{0}, current price:{1}'.format(market, lastk.c);
+            # print 'do marekt:{0}, last k idx:{1}'.format(market, lastk.idx);
             # k line.
             # dk = self.exchange.getK(market, 500, self.period, lastk.t);
             dk = self.exchange.getK(market, 2, self.period, lastk.t);
             if dk:
-                r.Run(dk);
-                ret     = r.Do();
+                ret     = r.Run(dk);
                 lastk   = r.KLines.Get(-1);
 
                 if self.marketTime[market] != lastk.t:

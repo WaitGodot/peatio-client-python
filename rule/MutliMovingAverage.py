@@ -94,6 +94,7 @@ class MutliMovingAverage():
         # kdj
         # self.KDJ.Input(self.KLines);
         # price
+        lena = len(self.MA1);
         MA(self.KLines.prices, self.MA1, self.N1);
         MA(self.KLines.prices, self.MA2, self.N2);
         MA(self.KLines.prices, self.MA3, self.N3);
@@ -108,6 +109,12 @@ class MutliMovingAverage():
         # self.wavepointm3.InputTrend(self.ma3rate);
         # self.wavewavepointm3.InputTrend(self.wavepointm3.points);
 
+        lenb = len(self.MA2);
+        lenc = lenb - lena;
+        if lenc >= 2:
+            for k in range(lena, lenc - 1):
+                self.Do(k);
+        return self.Do();
 
     def Export(self, path):
         if len(self.MA1) < 1:
@@ -130,9 +137,9 @@ class MutliMovingAverage():
             wcsv.writerow([k, w.type, w.point1.idx, w.point2.idx, w.wmax, w.wmin, w.wvolume, w.winterval, w.cvolume, w.cprice]);
         f.close();
 
-    def Do(self):
+    def Do(self, idx=-1):
         ret = {};
-        k   = self.KLines.Get(-1);
+        k   = self.KLines.Get(idx);
         type=None;
         pwidx = 0;
 
@@ -193,29 +200,26 @@ class MutliMovingAverage():
                 points.append(p2);
 
             lenpoints = len(points)
-            if lenpoints < 2:
-                p1 = Point('buy', 0);
-                if type == 'buy':
-                    p1.type = 'sell';
-            else:
+            if lenpoints >= 2:
                 p1 = points[-2];
 
-            if lenwaves > 0:
-                c1wave = waves[-1];
-                if c1wave.point2.idx == k.idx:
-                    c1wave.cal(self.KLines);
-                if c1wave.type == type:
-                    c1wave.point2 = p2;
-                    c1wave.cal(self.KLines);
+            if p1 and p2:
+                if lenwaves > 0:
+                    c1wave = waves[-1];
+                    if c1wave.point2.idx == k.idx:
+                        c1wave.cal(self.KLines);
+                    if c1wave.type == type:
+                        c1wave.point2 = p2;
+                        c1wave.cal(self.KLines);
+                    else:
+                        ncwave = Wave(p1, p2);
+                        ncwave.cal(self.KLines);
+                        waves.append(ncwave);
+                        c1wave = ncwave;
                 else:
-                    ncwave = Wave(p1, p2);
-                    ncwave.cal(self.KLines);
-                    waves.append(ncwave);
-                    c1wave = ncwave;
-            else:
-                c1wave = Wave(p1, p2);
-                c1wave.cal(self.KLines);
-                waves.append(c1wave);
+                    c1wave = Wave(p1, p2);
+                    c1wave.cal(self.KLines);
+                    waves.append(c1wave);
 
             if lenwaves >= 4 and pwidx == 1 and self.status == 'buy':
                 c2wave = waves[-3];

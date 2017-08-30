@@ -128,9 +128,9 @@ class yunbiEXLocal():
     def getK(self, market, limit, period, timestamp=None):
         if RebotConfig.rebot_is_test == False:
             if timestamp==None:
-                return self.client.get(get_api_path('k'), params={'market': market, 'limit':'{0}'.format(limit),'period':'{0}'.format(period)});
+                return self.client.get(get_api_path('k'), params={'market': market, 'limit':limit,'period':period});
             else:
-                return self.client.get(get_api_path('k'), params={'market': market, 'limit':'{0}'.format(limit),'period':'{0}'.format(period), 'timestamp':'{0}'.format(timestamp)});
+                return self.client.get(get_api_path('k'), params={'market': market, 'limit':limit,'period':period, 'timestamp':timestamp});
             return None
 
         ks = self.kss.get(market);
@@ -140,6 +140,9 @@ class yunbiEXLocal():
             else:
                 ks = self.client.get(get_api_path('k'), params={'market': market, 'limit':RebotConfig.rebot_test_k_count,'period':period});
             self.kss[market] = ks;
+        
+        if ks == None:
+            print '%s do not find kline' % market
         if timestamp > ks[-1][0]:
             print '{0} k line is over'.format(market);
             return None;
@@ -149,6 +152,7 @@ class yunbiEXLocal():
                 ret.append(v);
             if len(ret) >= limit:
                 return ret;
+        return ret;
 
     def getOrder(self, market):
         ret = self.marketOrders.get(market);
