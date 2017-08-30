@@ -68,15 +68,17 @@ class Rebot():
 
     def run(self):
         # print '-----------------------------------------------------------------'
+        # markets
+        self.markets = self.exchange.getMarkets();
         # user
         info = self.exchange.getUser();
         self.user.updatePositions(info['accounts']);
         if True:
-            print 'positions:';
+            print 'xxxx positions:';
             for k,v in (self.user.positions.items()):
                 if v['volume'] > 0:
-                    print '\t{0} {1}'.format(k, v);
-            print '\n'
+                    print 'xxxx {0} {1}'.format(k, v);
+            # print '\n'
 
         sv  = self.user.positions['cny']['volume'];
         flag=False;
@@ -118,26 +120,33 @@ class Rebot():
                 cost = self.user.getCost(currency);
                 if cost and cost > 0:
                     scale = (current - cost)/cost*100;
-                    rate = -10;
+                    rate = RebotConfig.rebot_loss_ratio;
                     if scale < rate:
-                        prate = (1 + rate * 1.1 / 100);
-                        nprateprice = pc['price'] * prate;
-                        vol = self.user.doOrder(market, 'sell', nprateprice);
-                        print '\tmarket:%s, do sell, price:%f scale less %f, volume:%f, price:%f, time:%s' % (market, pc['price'], rate, vol, nprateprice, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)));
+                        if RebotConfig.rebot_is_test:
+                            prate = (1 + rate * 1.1 / 100);
+                            nprateprice = pc['price'] * prate;
+                            vol = self.user.doOrder(market, 'sell', nprateprice);
+                            print '\tmarket:%s, do sell, price:%f scale less %f, volume:%f, price:%f, time:%s' % (market, pc['price'], rate, vol, nprateprice, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)));
 
-                        self.exchange.doOrder(market, 'sell', nprateprice, vol, lastk.t);
+                            self.exchange.doOrder(market, 'sell', nprateprice, vol, lastk.t);
+                        else:
+                            selllist.append({'market':market, 'result':{'k':lastk, 'ext':'rebot loss ratio' }})
                     # else:
                     #    print '\tmarket:{0}, scale:{1}, position high price:{2}, current price{3}'.format(market, scale, pc['high'], lastk.c);
                 cost = self.user.getHighCost(currency);
                 if cost and cost > 0:
                     scale = (current - cost)/cost*100;
-                    rate = -20;
+                    rate = RebotConfig.rebot_profit_ratio;
                     if scale < rate:
-                        prate = (1 + rate * 1.1 / 100);
-                        nprateprice = pc['high'] * prate;
-                        vol = self.user.doOrder(market, 'sell', nprateprice);
-                        self.exchange.doOrder(market, 'sell', nprateprice, vol, lastk.t);
-                        print '\tmarket:%s, do sell, high:%f scale less %f, volume:%f, high:%f, time:%s' % (market, pc['high'], rate, vol, nprateprice, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)));
+                        if RebotConfig.rebot_is_test:
+                            prate = (1 + rate * 1.1 / 100);
+                            nprateprice = pc['high'] * prate;
+                            vol = self.user.doOrder(market, 'sell', nprateprice);
+                            print '\tmarket:%s, do sell, high:%f scale less %f, volume:%f, high:%f, time:%s' % (market, pc['high'], rate, vol, nprateprice, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)));
+
+                            self.exchange.doOrder(market, 'sell', nprateprice, vol, lastk.t);
+                        else:
+                            selllist.append({'market':market, 'result':{'k':lastk, 'ext':'rebot profit ratio' }})
                     # else:
                     # print '\tmarket:{0}, scale:{1}, position high price:{2}, current price{3}'.format(market, scale, pc['high'], lastk.c);
         # sell
@@ -151,8 +160,9 @@ class Rebot():
             market  = v['market'];
             k   = v['result']['k'];
             vol = self.user.doOrder(market, 'sell', k.c);
-            self.exchange.doOrder(market, 'sell', k.c, vol, k.t);
-            print '\tmarket:{0}, do:{1}, price:{2}, time:{3}, ext:{4}'.format(market, 'sell', k.c, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), v['result']['ext']);
+            if vol and vol > 0:
+                print '\tmarket:{0}, do:{1}, price:{2}, volume:{3} time:{4}, ext:{5}'.format(market, 'sell', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), v['result']['ext']);
+                self.exchange.doOrder(market, 'sell', k.c, vol, k.t);
 
         # buy
         nbuylist = [];
@@ -184,7 +194,7 @@ class Rebot():
             if vol > 0:
                 print '\tmarket:{0}, do:{1}, price:{2}, volume:{3}, time:{4}, ext:{5}'.format(market, 'buy', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), v['result']['ext']);
             else:
-                print '\tnot enough !!! market:{0}, do:{1}, price:{2}, volume:{3}, time:{4}'.format(market, 'buy', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
+                print '\tnot enough cny !!! market:{0}, do:{1}, price:{2}, volume:{3}, time:{4}'.format(market, 'buy', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
             #else:
             #    print '\t!!! market:{0}, time:{1}, buy fail less volume : {2}'.format(market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(cwave.ck.t)), v['rmbvolumeN3']);
         if flag:

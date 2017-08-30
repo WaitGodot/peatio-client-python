@@ -26,5 +26,8 @@ class RebotConfig():
     rebot_release = False;
     rebot_is_test = False;
     rebot_test_k_count = 700;
+
+    rebot_loss_ratio = -10;
+    rebot_profit_ratio = -20;
     # file
     path = 'C:\\Users\\randy\\';

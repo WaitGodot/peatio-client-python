@@ -42,9 +42,8 @@ r = Rebot(RebotConfig.rebot_period);
 t = 0;
 while True:
     t += 1;
-    print "do", t;
+    print "xxxx do %d, time : %s" % (t, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(Time.Time())));
     r.run();
-    # time.sleep(1);
     if RebotConfig.rebot_is_test:
         if t > RebotConfig.rebot_test_k_count:
             break;
@@ -84,7 +83,10 @@ for k,v in enumerate(r.markets):
             print '\tcurrent buy order:'
             print '\t\t',v;
         print '\twinner: %f, win: %d, all %d\n' % (float(wintimes)/ float(tradetimes) * 100, wintimes, tradetimes);
-print 'all win: %f, win: %d, all %d\n' % (float(allwintimes)/ float(alltradetimes) * 100, allwintimes, alltradetimes);
+if alltradetimes <= 0:
+    print 'none trade'
+else:
+    print 'all win: %f, win: %d, all %d\n' % (float(allwintimes)/ float(alltradetimes) * 100, allwintimes, alltradetimes);
 
 import csv
 f = open('%sscales.csv' % RebotConfig.path, 'wb');
