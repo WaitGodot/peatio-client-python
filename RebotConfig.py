@@ -23,6 +23,8 @@ class RebotConfig():
     rebot_buy_least_angle = 5;
     rebot_trade_sure_times = 2;
     rebot_do_per_period = 5;
-
+    rebot_release = False;
+    rebot_is_test = False;
+    rebot_test_k_count = 700;
     # file
     path = 'C:\\Users\\randy\\';

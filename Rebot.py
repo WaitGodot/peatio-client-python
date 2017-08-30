@@ -23,8 +23,10 @@ class Rebot():
     def __init__(self, period):
         self.period = period;
         self.exchange = Exchange(RebotConfig.access_key, RebotConfig.secret_key);
-        # self.exchange.delegate(yunbiEX());
-        self.exchange.delegate(yunbiEXLocal());
+        if RebotConfig.rebot_release:
+            self.exchange.delegate(yunbiEX());
+        else:
+            self.exchange.delegate(yunbiEXLocal());
         # time
         Time.SetServerTime(self.exchange.getServerTimestamp())
         # user.
@@ -48,8 +50,11 @@ class Rebot():
             # done in right env.
             self.user.updateOrder(self.exchange.getOrder(market));
             # k line.
-            dk = self.exchange.getK(market, 500, self.period);
-            # dk = self.exchange.getK(market, 10, self.period, 1498838400); # 1498838400:2017/7/1 0:0:0; 1496246400:2017/6/1 0:0:0; 1493568000:2017/5/1 0:0:0
+            if RebotConfig.rebot_is_test:
+                dk = self.exchange.getK(market, 10, self.period, 1498838400); # 1498838400:2017/7/1 0:0:0; 1496246400:2017/6/1 0:0:0; 1493568000:2017/5/1 0:0:0
+            else:
+                dk = self.exchange.getK(market, 500, self.period);
+                
             r = MutliMovingAverage();
             r.Run(dk);
             lastk=r.KLines.Get(-1);

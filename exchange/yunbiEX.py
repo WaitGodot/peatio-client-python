@@ -1,5 +1,6 @@
 
 from exchange.yunbi.client import Client, get_api_path
+from RebotConfig import RebotConfig
 
 import json
 
@@ -45,6 +46,7 @@ class yunbiEXLocal():
         self.marketOrders = {};
         self.ORDERID = 0;
         self.kss = {};
+        self.poundage = 0.0001;
 
     def createOrder(self, market, side, time, price, volume, ext):
         if volume<=0:
@@ -88,7 +90,7 @@ class yunbiEXLocal():
             balance = float(c['balance']);
             c['balance'] = str(balance - o['executed_volume']);
             ccny = self.accounts.get('cny');
-            ccny['balance'] = str(float(ccny['balance']) + o['executed_volume'] * o['avg_price'] );
+            ccny['balance'] = str(float(ccny['balance']) + o['executed_volume'] * o['avg_price'] * (1 - self.poundage) );
         if o['side'] == 'buy':
             c = self.accounts.get(currency);
             if c==None:
@@ -96,7 +98,7 @@ class yunbiEXLocal():
                 c = self.accounts.get(currency);
             balance = float(c['balance']);
             price = c['price'];
-            addbalance = o['executed_volume'];
+            addbalance = o['executed_volume'] * (1 - self.poundage);
             addprice = o['avg_price'];
 
             c['balance'] = str(balance + addbalance);
@@ -124,7 +126,7 @@ class yunbiEXLocal():
         return [{'id':'anscny'}];
 
     def getK(self, market, limit, period, timestamp=None):
-        if True:
+        if RebotConfig.rebot_is_test == False:
             if timestamp==None:
                 return self.client.get(get_api_path('k'), params={'market': market, 'limit':'{0}'.format(limit),'period':'{0}'.format(period)});
             else:
@@ -134,9 +136,9 @@ class yunbiEXLocal():
         ks = self.kss.get(market);
         if ks==None:
             if timestamp:
-                ks = self.client.get(get_api_path('k'), params={'market': market, 'limit':350*2,'period':period, 'timestamp':timestamp});
+                ks = self.client.get(get_api_path('k'), params={'market': market, 'limit':RebotConfig.rebot_test_k_count,'period':period, 'timestamp':timestamp});
             else:
-                ks = self.client.get(get_api_path('k'), params={'market': market, 'limit':350*2,'period':period});
+                ks = self.client.get(get_api_path('k'), params={'market': market, 'limit':RebotConfig.rebot_test_k_count,'period':period});
             self.kss[market] = ks;
         if timestamp > ks[-1][0]:
             print '{0} k line is over'.format(market);
