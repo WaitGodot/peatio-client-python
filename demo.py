@@ -1,5 +1,7 @@
 import time
 import urllib2
+import sys
+import socket
 
 from exchange.Exchange import Exchange
 from exchange.yunbiEX import yunbiEX
@@ -19,6 +21,7 @@ from Rebot import Rebot;
 from exchange.yunbi.client import Client, get_api_path
 from exchange.yunbiEX import yunbiEXLocal
 from Time import Time
+from Log import Log
 
 # 30 60 120 240 360
 # btc 120, 60
@@ -37,7 +40,11 @@ from Time import Time
 # rep 60, 120
 # gnt 360, 240
 # etc 120, 240
+# sys.stdout = open('%s%s' % (RebotConfig.path, RebotConfig.log), 'a+')
 
+socket.setdefaulttimeout(30);
+
+Log.d('\nstart rebot %s' % time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(Time.Time())));
 r = Rebot(RebotConfig.rebot_period);
 t = 0;
 while True:
@@ -62,7 +69,7 @@ for k,v in enumerate(r.markets):
         buys = [];
         tradetimes = 0;
         wintimes = 0;
-        print 'market:%s' % market;
+        Log.d('market:%s' % market);
         key=0;
         for k,v in enumerate(ods):
             if v.type == 'buy':
@@ -70,23 +77,24 @@ for k,v in enumerate(r.markets):
                 alltradetimes += 1;
                 buys.append(v);
             if v.type == 'sell':
-                print '\t',v;
+                Log.d('\t%s' % v);
                 for bk, bv in enumerate(buys):
                     scale = (v.averageprice - bv.averageprice)/bv.averageprice * 100;
                     if scale > 0:
                         wintimes += 1;
                         allwintimes += 1;
-                    print '\t\tscale:%s, order:%s' % (scale, bv.__str__());
+                    Log.d('\t\tscale:%s, order:%s' % (scale, bv.__str__()));
                     key = k;
                 buys = [];
-        for k,v in enumerate(buys):
-            print '\tcurrent buy order:'
-            print '\t\t',v;
-        print '\twinner: %f, win: %d, all %d\n' % (float(wintimes)/ float(tradetimes) * 100, wintimes, tradetimes);
+        if len(buys) > 0:
+            Log.d('\tcurrent buy order:')
+            for k,v in enumerate(buys):
+                Log.d('\t\t%s' % v.__str__());
+        Log.d('\twinner: %f, win: %d, all %d\n' % (float(wintimes)/ float(tradetimes) * 100, wintimes, tradetimes));
 if alltradetimes <= 0:
-    print 'none trade'
+    Log.d('none trade')
 else:
-    print 'all win: %f, win: %d, all %d\n' % (float(allwintimes)/ float(alltradetimes) * 100, allwintimes, alltradetimes);
+    Log.d('all win: %f, win: %d, all %d\n' % (float(allwintimes)/ float(alltradetimes) * 100, allwintimes, alltradetimes));
 
 import csv
 f = open('%sscales.csv' % RebotConfig.path, 'wb');

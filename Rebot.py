@@ -17,6 +17,7 @@ from rule.Rule import Rule
 from rule.MutliMovingAverage import MutliMovingAverage
 from user.User import User
 from Time import Time
+from Log import Log
 
 class Rebot():
 
@@ -62,7 +63,7 @@ class Rebot():
             self.rules[market] = r;
             self.tradeSure[market] = {'buy':0, 'sell':0};
             self.marketTime[market] = lastk.t;
-            print 'start market:%s, begin time %s, current time:%s'%(market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(r.KLines.Get(0).t)), time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)))
+            Log.d('start market:%s, begin time %s, current time:%s'%(market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(r.KLines.Get(0).t)), time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t))));
         #scale.
         self.scales = [];
 
@@ -163,7 +164,7 @@ class Rebot():
             k   = v['result']['k'];
             vol = self.user.doOrder(market, 'sell', k.c);
             if vol and vol > 0:
-                print '\tmarket:{0}, do:{1}, price:{2}, volume:{3} time:{4}, ext:{5}'.format(market, 'sell', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), v['result']['ext']);
+                Log.d('\tmarket:{0}, do:{1}, price:{2}, volume:{3} time:{4}, ext:{5}'.format(market, 'sell', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), v['result']['ext']));
                 self.exchange.doOrder(market, 'sell', k.c, vol, k.t);
 
         # buy
@@ -194,14 +195,14 @@ class Rebot():
             self.exchange.doOrder(market, 'buy', k.c, vol, k.t, {'sort':v['sort']});
             flag=True;
             if vol > 0:
-                print '\tmarket:{0}, do:{1}, price:{2}, volume:{3}, time:{4}, ext:{5}'.format(market, 'buy', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), v['result']['ext']);
+                Log.d('\tmarket:{0}, do:{1}, price:{2}, volume:{3}, time:{4}, ext:{5}'.format(market, 'buy', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), v['result']['ext']));
             else:
-                print '\tnot enough cny !!! market:{0}, do:{1}, price:{2}, volume:{3}, time:{4}'.format(market, 'buy', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
+                Log.d('\tnot enough cny !!! market:{0}, do:{1}, price:{2}, volume:{3}, time:{4}'.format(market, 'buy', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t))));
             #else:
             #    print '\t!!! market:{0}, time:{1}, buy fail less volume : {2}'.format(market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(cwave.ck.t)), v['rmbvolumeN3']);
         if flag:
             ascale = (sv - self.user.initamount)/self.user.initamount*100;
             self.scales.append(ascale);
-            print 'all scale:{0}'.format(ascale);
+            Log.d('all scale:{0}'.format(ascale));
 
 
