@@ -54,7 +54,7 @@ class Rebot():
                 dk = self.exchange.getK(market, 100, self.period, 1498838400); # 1498838400:2017/7/1 0:0:0; 1496246400:2017/6/1 0:0:0; 1493568000:2017/5/1 0:0:0
             else:
                 dk = self.exchange.getK(market, 500, self.period);
-                
+
             r = MutliMovingAverage();
             r.Run(dk);
             lastk=r.KLines.Get(-1);
@@ -69,7 +69,9 @@ class Rebot():
     def run(self):
         # print '-----------------------------------------------------------------'
         # markets
-        self.markets = self.exchange.getMarkets();
+        nmarkets = self.exchange.getMarkets()
+        if nmarkets:
+            self.markets = nmarkets;
         # user
         info = self.exchange.getUser();
         self.user.updatePositions(info['accounts']);
@@ -96,7 +98,7 @@ class Rebot():
             # k line.
             # dk = self.exchange.getK(market, 500, self.period, lastk.t);
             dk = self.exchange.getK(market, 2, self.period, lastk.t);
-            if dk:
+            if dk and len(dk) > 0:
                 ret     = r.Run(dk);
                 lastk   = r.KLines.Get(-1);
 
@@ -201,5 +203,5 @@ class Rebot():
             ascale = (sv - self.user.initamount)/self.user.initamount*100;
             self.scales.append(ascale);
             print 'all scale:{0}'.format(ascale);
-        
+
 
