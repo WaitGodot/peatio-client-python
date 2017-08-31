@@ -1,6 +1,7 @@
 
 from exchange.yunbi.client import Client, get_api_path
 from RebotConfig import RebotConfig
+from Log import Log
 
 import json
 
@@ -17,7 +18,7 @@ class yunbiEX():
         return self.client.get(get_api_path('members'));
 
     def getMarkets(self):
-        if  RebotConfig.rebot_yunbi_markets:
+        if  len(RebotConfig.rebot_yunbi_markets) > 0:
             return RebotConfig.rebot_yunbi_markets;
         return self.client.get(get_api_path('markets'));
 
@@ -32,6 +33,10 @@ class yunbiEX():
     	return self.client.get(get_api_path('orders'), {'market': market});
 
     def doOrder(self, market, side, price, volume, time=None, ext=None):
+        cny = price * volume;
+        if cny < 1:
+            Log.d('\t\t market %s side %s price %f volume %f less 1' % (market, side, price, volume));
+            return ;
         return self.client.post(get_api_path('orders'), params = {'market':market, 'side':side, 'price':price, 'volume':volume})
 
     def doOrderCancel(self, orderID):
@@ -123,12 +128,12 @@ class yunbiEXLocal():
         return d;
 
     def getMarkets(self):
-        if  RebotConfig.rebot_yunbi_markets:
+        if  len(RebotConfig.rebot_yunbi_markets) > 0:
             return RebotConfig.rebot_yunbi_markets;
 
         return self.client.get(get_api_path('markets'));
         #return [{'id':'anscny'},{'id':'btccny'}, {'id':'ethcny'}, {'id':'zeccny'}, {'id':'qtumcny'}, {'id':'gxscny'}, {'id':'eoscny'}, {'id':'sccny'}, {'id':'dgdcny'}, {'id':'1stcny'}, {'id':'btscny'}, {'id':'gntcny'}, {'id':'repcny'}, {'id':'etccny'}];
-        return [{'id':'anscny'}];
+        #return [{'id':'anscny'}];
 
     def getK(self, market, limit, period, timestamp=None):
         if RebotConfig.rebot_is_test == False:
@@ -145,7 +150,7 @@ class yunbiEXLocal():
             else:
                 ks = self.client.get(get_api_path('k'), params={'market': market, 'limit':RebotConfig.rebot_test_k_count,'period':period});
             self.kss[market] = ks;
-        
+
         if ks == None:
             print '%s do not find kline' % market
         if timestamp > ks[-1][0]:

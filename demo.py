@@ -146,27 +146,20 @@ for key,value in enumerate(d):
 
 #print r.WaveKline;
 #client = Client(access_key='N1vXgZ0wSrTkLjgzG1oli4aD10DDRQW9gYxkHljW', secret_key='Xgz0QqlvdAx9lBjpiVLlnFOs2IwaPS3lftuw4geS')
-'''
+
 #demo of GET APIs
+'''
 exchange = Exchange(RebotConfig.access_key, RebotConfig.secret_key);
 exchange.delegate(yunbiEX());
-u = User();
-# markets
-markets = exchange.getMarkets();
-#get user info
-# do while
-info = exchange.getUser();
-u.updatePositions(info['accounts']);
-for key,value in enumerate(markets):
-    market = value['id'];
-    u.updateOrder(exchange.getOrder(market));
-'''
-#print '-------------------------------------------------------'
-#print exchange.doOrder('snt', 'sell', '1.0', 10);
-#print exchange.doOrderCancel(485916175);
-#print '-------------------------------------------------------'
-#print exchange.getOrder('snt');
 
+Time.SetServerTime(exchange.getServerTimestamp())
+
+
+print '-------------------------------------------------------'
+print exchange.doOrder('btccny', 'buy', '1.0', 0.1);
+print '-------------------------------------------------------'
+print exchange.getOrder('btccny');
+'''
 '''
 #get markets
 markets =  client.get(get_api_path('markets'))
