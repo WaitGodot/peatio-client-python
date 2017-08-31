@@ -156,7 +156,7 @@ Time.SetServerTime(exchange.getServerTimestamp())
 
 
 print '-------------------------------------------------------'
-print exchange.doOrder('btccny', 'buy', '1.0', 0.1);
+print exchange.doOrder('gntcny', 'sell', 3.0, 0.5);
 print '-------------------------------------------------------'
 print exchange.getOrder('btccny');
 '''

@@ -95,7 +95,12 @@ class Client():
         signature, query = self.auth.sign_params(verb, path, params)
         url = "%s%s" % (BASE_URL, path)
         data = "%s&signature=%s" % (query, signature)
-        resp = urllib2.urlopen(url, data)
-        data = resp.readlines()
-        if len(data):
-            return json.loads(data[0])
+        try:
+            resp = urllib2.urlopen(url, data)
+            data = resp.readlines()
+            if len(data):
+                return json.loads(data[0])
+        except Exception:
+            print 'http post error url:%s' % url;
+            return None;
+
