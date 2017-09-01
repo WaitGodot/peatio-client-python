@@ -49,14 +49,14 @@ r = Rebot(RebotConfig.rebot_period);
 t = 0;
 while True:
     t += 1;
-    print "xxxx do %d, time : %s" % (t, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(Time.Time())));
+    print "do %d, time : %s" % (t, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(Time.Time())));
     r.run();
+    print '------------------------------------------------------------------------'
     if RebotConfig.rebot_is_test:
         if t > RebotConfig.rebot_test_k_count:
             break;
     else:
         time.sleep(RebotConfig.rebot_period*60/RebotConfig.rebot_do_per_period);
-    print '------------------------------------------------------------------------'
 
 print '\n\norders'
 alltradetimes = 0;

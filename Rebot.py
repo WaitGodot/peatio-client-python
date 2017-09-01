@@ -80,10 +80,10 @@ class Rebot():
         info = self.exchange.getUser();
         self.user.updatePositions(info['accounts']);
         if True:
-            print 'xxxx positions:';
+            print 'positions:';
             for k,v in (self.user.positions.items()):
                 if v['volume'] > 0:
-                    print 'xxxx {0} {1}'.format(k, v);
+                    print '{0} {1}'.format(k, v);
             # print '\n'
 
         sv  = self.user.positions['cny']['volume'];
@@ -178,7 +178,7 @@ class Rebot():
             v['sort'] = sort
             angle = v['result'].get('angle');
             k   = v['result']['k'];
-            # print 'xxxx market:', market, 'sort:', sort, 'angle', angle;
+            
             if sort > 100 or sort < 0:
                 print '\tmarket %s sort illegal, sort %f, time %s' % (market, sort, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
                 continue;
@@ -199,14 +199,14 @@ class Rebot():
             flag=True;
             if vol > 0:
                 Log.d('\tmarket:{0}, do:{1}, price:{2}, volume:{3}, time:{4}, ext:{5}'.format(market, 'buy', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), v['result']['ext']));
-                self.tradeSure[market]['buy'] = -RebotConfig.rebot_trade_sure_times;
-            else:
-                Log.d('\tnot enough cny !!! market:{0}, do:{1}, price:{2}, volume:{3}, time:{4}'.format(market, 'buy', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t))));
+                self.tradeSure[market]['buy'] = -RebotConfig.rebot_do_per_period;
+            #else:
+            #    Log.d('\tnot enough cny !!! market:{0}, do:{1}, price:{2}, volume:{3}, time:{4}'.format(market, 'buy', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t))));
             #else:
             #    print '\t!!! market:{0}, time:{1}, buy fail less volume : {2}'.format(market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(cwave.ck.t)), v['rmbvolumeN3']);
         if flag:
             ascale = (sv - self.user.initamount)/self.user.initamount*100;
             self.scales.append(ascale);
-            Log.d('all scale:{0}'.format(ascale));
+            Log.d('all scale:{0}, cuurent cny:{1}'.format(ascale, sv));
 
 

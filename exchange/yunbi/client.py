@@ -88,7 +88,7 @@ class Client():
                     print(url)
             except Exception:
                 print 'http error!!, url:{0}'.format(url);
-                return None;
+                return [];
 
     def post(self, path, params=None):
         verb = "POST"
@@ -101,6 +101,6 @@ class Client():
             if len(data):
                 return json.loads(data[0])
         except Exception:
-            print 'http post error url:%s' % url;
-            return None;
+            print 'http post error url:%s' % data;
+            return [];
 

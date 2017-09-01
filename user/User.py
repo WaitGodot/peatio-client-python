@@ -60,7 +60,7 @@ class User():
 
     def updatePositions(self, positions):
         for key, value in enumerate(positions):
-            vol = float(value['balance']) - float(value['locked']);
+            vol = float(value['balance']);# - float(value['locked']);
             price = value.get('price');
             currency = value['currency'];
             pc = self.positions.get(currency);

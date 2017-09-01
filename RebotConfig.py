@@ -15,8 +15,8 @@ class RebotConfig():
 
     # user
     user_asset_ratio = 4;
-    user_asset_least = 150;
-    user_initamount = 650;
+    user_asset_least = 200;
+    user_initamount = 785;
 
     # rebot
     rebot_period = 60; # min
