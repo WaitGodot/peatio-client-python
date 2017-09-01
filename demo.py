@@ -42,7 +42,7 @@ from Log import Log
 # etc 120, 240
 # sys.stdout = open('%s%s' % (RebotConfig.path, RebotConfig.log), 'a+')
 
-socket.setdefaulttimeout(30);
+socket.setdefaulttimeout(60);
 
 Log.d('\nstart rebot %s' % time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(Time.Time())));
 r = Rebot(RebotConfig.rebot_period);

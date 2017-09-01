@@ -178,7 +178,7 @@ class Rebot():
             v['sort'] = sort
             angle = v['result'].get('angle');
             k   = v['result']['k'];
-            
+
             if sort > 100 or sort < 0:
                 print '\tmarket %s sort illegal, sort %f, time %s' % (market, sort, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
                 continue;

@@ -49,11 +49,11 @@ class User():
                 d.append(v);
         return d;
     def updateCost(self, currency, cost):
-        pc = self.positions[currency];
+        pc = self.positions.get(currency);
         if pc:
             pc['price'] = cost;
     def updateHigh(self, currency, hp):
-        pc = self.positions[currency];
+        pc = self.positions.get(currency);
         if pc:
             if hp > pc['high']:
                 pc['high'] = hp;

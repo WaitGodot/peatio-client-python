@@ -151,7 +151,7 @@ class MutliMovingAverage():
         if sc34:
             self.status = 'buy'
             type = 'buy';
-        
+
         if self.status == 'buy' and type == None and False:
             type = self.KDJ.Do();
             if type:
@@ -225,9 +225,10 @@ class MutliMovingAverage():
                 c2wave = waves[-3];
                 p1wave = waves[-2];
                 p2wave = waves[-4];
-                
+
                 if type == 'buy':
                     type = None;
+                    sort = -215
                     if c1wave.wmin > c2wave.wmax:
                         sort = c2wave.height/c1wave.height + c2wave.volheight/c1wave.volheight + p2wave.height/p1wave.height + p2wave.volheight/p1wave.volheight;
                         # print c1wave
@@ -249,6 +250,8 @@ class MutliMovingAverage():
                         print '\t !!! wave sell fail current price greater c2wave wmax time:{0}'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
                     else:
                         print '\t short ma wave sell sucess';
+            else:
+                type = None;
             if pwidx == 0 or type == 'sell': # long long
                 sort = 1;
             if type == 'buy' and len(self.points[0]) >= 2:
@@ -265,7 +268,7 @@ class MutliMovingAverage():
                     ret['angle'] = 57.2956 * math.atan( (self.MA4[p2.idx] - self.MA4[p1.idx])/self.MA4[p1.idx] * 100 /(p1.idx - p2.idx)) + 57.2956 * math.atan( (self.MA4[k.idx] - self.MA4[p1.idx])/self.MA4[p1.idx] * 100/(k.idx - p1.idx))
                 else:
                     ret['angle'] = 57.2956 * math.atan( (self.MA4[p2.idx] - self.MA4[p1.idx])/self.MA4[p1.idx] * 100 /(p1.idx - p2.idx));
-                
+
                 # ma5v = self.MA5[p1.idx] - self.MA5[p2.idx];
                 ma5v = self.MA5[-1] - self.MA5[p2.idx]
                 if ma5v < 0:
