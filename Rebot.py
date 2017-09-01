@@ -98,7 +98,6 @@ class Rebot():
             # rule
             r = self.rules[market];
             lastk=r.KLines.Get(-1);
-            # print 'do marekt:{0}, last k idx:{1}'.format(market, lastk.idx);
             # k line.
             # dk = self.exchange.getK(market, 500, self.period, lastk.t);
             dk = self.exchange.getK(market, 2, self.period, lastk.t);
@@ -115,6 +114,7 @@ class Rebot():
                     buylist.append({'market':market, 'result':ret})
                 if type == 'sell':
                     selllist.append({'market':market, 'result':ret})
+            print 'do market:{0}, market status : {1}, last k time : {2}'.format(market, r.status, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)));
                 # position;
             currency = market[0:len(market)-3];
             pc = self.user.positions.get(currency);

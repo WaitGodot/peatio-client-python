@@ -169,7 +169,6 @@ class MutliMovingAverage():
                 # print "mashort buy time:{0}, c:{1}, k idx:{2}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), k.c, k.idx)
                 type = 'buy';
                 pwidx = 1;
-
         if type != None:
             # frist update
             points = self.points[pwidx];
