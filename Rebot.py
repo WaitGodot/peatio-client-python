@@ -59,6 +59,9 @@ class Rebot():
             r = MutliMovingAverage();
             r.Run(dk);
             lastk=r.KLines.Get(-1);
+            currency = market[0:len(market)-3];
+            self.user.updateHigh(currency, lastk.c); # c or high
+            self.user.updateCost(currency, lastk.c)
 
             self.rules[market] = r;
             self.tradeSure[market] = {'buy':0, 'sell':0};
@@ -196,6 +199,7 @@ class Rebot():
             flag=True;
             if vol > 0:
                 Log.d('\tmarket:{0}, do:{1}, price:{2}, volume:{3}, time:{4}, ext:{5}'.format(market, 'buy', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), v['result']['ext']));
+                self.tradeSure[market]['buy'] = -RebotConfig.rebot_trade_sure_times;
             else:
                 Log.d('\tnot enough cny !!! market:{0}, do:{1}, price:{2}, volume:{3}, time:{4}'.format(market, 'buy', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t))));
             #else:

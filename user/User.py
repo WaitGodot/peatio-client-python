@@ -48,7 +48,10 @@ class User():
             if v.market == market:
                 d.append(v);
         return d;
-
+    def updateCost(self, currency, cost):
+        pc = self.positions[currency];
+        if pc:
+            pc['price'] = cost;
     def updateHigh(self, currency, hp):
         pc = self.positions[currency];
         if pc:
