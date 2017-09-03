@@ -78,10 +78,12 @@ def CROSS(AArr, BArr, N=None):
     lena = len(AArr);
     lenb = len(BArr);
     if N == None:
-        N = lena;
-    if lena < N or lenb < N or N <= 0 or N < 2:
+        N = lena-1;
+    if N < 0:
+        N = lena + N;
+    if lena < N or lenb < N or N < 2:
         return False;
-    if AArr[N-2] <= BArr[N-2] and AArr[N-1] >= BArr[N-1]:
+    if AArr[N-1] <= BArr[N-1] and AArr[N] >= BArr[N]:
         return True;
     return False;
 

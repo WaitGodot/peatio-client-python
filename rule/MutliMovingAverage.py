@@ -75,6 +75,9 @@ class MutliMovingAverage():
         self.points = [[], [], []];
         # wave
         self.waves = [[], [], []];
+        # trade time
+        self.tradeSure = [{'buy':0, 'sell':0}, {'buy':0, 'sell':0}];
+        self.tradeidx= 0;
         # kdj
         # self.KDJ = KDJ();
 
@@ -95,6 +98,7 @@ class MutliMovingAverage():
         # self.KDJ.Input(self.KLines);
         # price
         lena = len(self.MA1);
+
         MA(self.KLines.prices, self.MA1, self.N1);
         MA(self.KLines.prices, self.MA2, self.N2);
         MA(self.KLines.prices, self.MA3, self.N3);
@@ -113,7 +117,13 @@ class MutliMovingAverage():
         lenc = lenb - lena;
         if lenc >= 2:
             for k in range(lena, lenc - 1):
-                self.Do(k);
+                self.tradeidx = k;
+                self.tradeSure = [{'buy':0, 'sell':0}, {'buy':0, 'sell':0}];
+                self.Do(k, True);
+        lastk = self.KLines.Get(-1);
+        if lastk.idx > self.tradeidx:
+            self.tradeSure = [{'buy':0, 'sell':0}, {'buy':0, 'sell':0}];
+            self.tradeidx += 1;
         return self.Do();
 
     def Export(self, path):
@@ -137,20 +147,26 @@ class MutliMovingAverage():
             wcsv.writerow([k, w.type, w.point1.idx, w.point2.idx, w.wmax, w.wmin, w.wvolume, w.winterval, w.cvolume, w.cprice]);
         f.close();
 
-    def Do(self, idx=-1):
+    def Do(self, idx=-1, ignore=False):
         ret = {};
         k   = self.KLines.Get(idx);
         type=None;
         pwidx = 0;
 
-        bc43 = CROSS(self.MA4, self.MA3);
+        bc43 = CROSS(self.MA4, self.MA3, idx);
         if bc43:
-            self.status = 'sell';
-            type = 'sell';
-        sc34 = CROSS(self.MA3, self.MA4);
+            self.tradeSure[0]['sell'] += 1;
+            print "\tma long n3 n4 sell time:{0}, c:{1}, k idx:{2}, sure time:{3}, ignore:{4}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), k.c, k.idx, self.tradeSure[0]['sell'], ignore)
+            if ignore or self.tradeSure[0]['sell'] >= RebotConfig.rebot_trade_sure_times:
+                self.status = 'sell';
+                type = 'sell';
+        sc34 = CROSS(self.MA3, self.MA4, idx);
         if sc34:
-            self.status = 'buy'
-            type = 'buy';
+            self.tradeSure[0]['buy'] += 1;
+            print "\tma long n3 n4 buy time:{0}, c:{1}, k idx:{2}, sure time:{3}, ignore:{4}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), k.c, k.idx, self.tradeSure[0]['buy'], ignore)
+            if ignore or self.tradeSure[0]['buy'] >= RebotConfig.rebot_trade_sure_times:
+                self.status = 'buy'
+                type = 'buy';
 
         if self.status == 'buy' and type == None and False:
             type = self.KDJ.Do();
@@ -159,16 +175,20 @@ class MutliMovingAverage():
                 print "kdj:{0} time:{1}, c:{2}, k idx:{3}".format(type, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), k.c, k.idx)
 
         if type == None and True:
-            bc  = CROSS(self.MA2, self.MA1);
+            bc  = CROSS(self.MA2, self.MA1, idx);
             if bc:
-                # print "mashort sell time:{0}, c:{1}, k idx:{2}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), k.c, k.idx)
-                type = 'sell';
-                pwidx = 1;
-            sc = CROSS(self.MA1, self.MA2);
+                self.tradeSure[1]['sell'] += 1;
+                print "\tma short n1 n2 sell time:{0}, c:{1}, k idx:{2}, sure time:{3}, ignore:{4}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), k.c, k.idx, self.tradeSure[1]['sell'], ignore)
+                if ignore or self.tradeSure[1]['sell'] >= RebotConfig.rebot_trade_sure_times:
+                    type = 'sell';
+                    pwidx = 1;
+            sc = CROSS(self.MA1, self.MA2, idx);
             if sc:
-                # print "mashort buy time:{0}, c:{1}, k idx:{2}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), k.c, k.idx)
-                type = 'buy';
-                pwidx = 1;
+                self.tradeSure[1]['buy'] += 1;
+                print "\tma short n1 n2 buy time:{0}, c:{1}, k idx:{2}, sure time:{3}, ignore:{4}".format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), k.c, k.idx, self.tradeSure[1]['buy'], ignore)
+                if ignore or self.tradeSure[1]['buy'] >= RebotConfig.rebot_trade_sure_times:
+                    type = 'buy';
+                    pwidx = 1;
         if type != None:
             # frist update
             points = self.points[pwidx];
@@ -220,37 +240,38 @@ class MutliMovingAverage():
                     c1wave.cal(self.KLines);
                     waves.append(c1wave);
 
-            if lenwaves >= 4 and pwidx == 1 and self.status == 'buy':
-                c2wave = waves[-3];
-                p1wave = waves[-2];
-                p2wave = waves[-4];
-
-                if type == 'buy':
+            if lenwaves >= 4 and pwidx == 1:
+                if self.status != 'buy':
                     type = None;
-                    sort = -215
-                    if c1wave.wmin > c2wave.wmax:
-                        sort = c2wave.height/c1wave.height + c2wave.volheight/c1wave.volheight + p2wave.height/p1wave.height + p2wave.volheight/p1wave.volheight;
-                        # print c1wave
-                        # print c2wave
-                        # print 'buysort', sort, c2wave.height/c1wave.height, c2wave.volheight/c1wave.volheight, p2wave.height/p1wave.height, p2wave.volheight/p1wave.volheight, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t));
-                        if sort < 4 :#and p2wave.height/p1wave.height <= 1:
-                            type = 'buy';
-                            # print '\t short ma wave buy sucess';
-                        #else:
-                        #    print ' !!! wave buy sort %f, time:%s' % (sort, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
-                    #else:
-                    #    print ' !!! wave buy c1wave wwin less c2wave wmax';
-
-                if type == 'sell':
-                    # print '\tc1wave', c1wave
-                    # print '\tc2wave', c2wave
-                    if c1wave.cprice > c2wave.wmax:
+                else:
+                    c2wave = waves[-3];
+                    p1wave = waves[-2];
+                    p2wave = waves[-4];
+                    if type == 'buy':
                         type = None;
-                        print '\t !!! wave sell fail current price greater c2wave wmax time:{0}'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
-                    else:
-                        print '\t short ma wave sell sucess';
-            else:
-                type = None;
+                        sort = -215
+                        if c1wave.wmin > c2wave.wmax:
+                            sort = c2wave.height/c1wave.height + c2wave.volheight/c1wave.volheight + p2wave.height/p1wave.height + p2wave.volheight/p1wave.volheight;
+                            # print c1wave
+                            # print c2wave
+                            # print 'buysort', sort, c2wave.height/c1wave.height, c2wave.volheight/c1wave.volheight, p2wave.height/p1wave.height, p2wave.volheight/p1wave.volheight, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t));
+                            if sort < 4 :#and p2wave.height/p1wave.height <= 1:
+                                type = 'buy';
+                                # print '\t short ma wave buy sucess';
+                            else:
+                                print ' !!! wave buy sort %f, time:%s' % (sort, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
+                        else:
+                            print ' !!! wave buy c1wave wwin less c2wave wmax';
+
+                    if type == 'sell':
+                        # print '\tc1wave', c1wave
+                        # print '\tc2wave', c2wave
+                        if c1wave.cprice > c2wave.wmax:
+                            type = None;
+                            print '\t !!! wave sell fail current price greater c2wave wmax time:{0}'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
+                        else:
+                            print '\t short ma wave sell sucess';
+
             if pwidx == 0 or type == 'sell': # long long
                 sort = 1;
             if type == 'buy' and len(self.points[0]) >= 2:
@@ -278,7 +299,8 @@ class MutliMovingAverage():
             ret['k']    = k;
             ret['sort'] = sort;
             ret['ext'] = {'idx':pwidx}
-
+        if type != None:
+            self.tradeSure[pwidx][type] = -RebotConfig.rebot_do_per_period;
         return ret;
 
 

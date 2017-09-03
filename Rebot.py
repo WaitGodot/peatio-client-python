@@ -42,9 +42,6 @@ class Rebot():
         self.rules = {};
         # init.
         #
-        #time and times;
-        self.tradeSure = {}
-        self.marketTime = {};
         for k,v in enumerate(self.markets):
             market = v['id'];
             # order.
@@ -52,7 +49,7 @@ class Rebot():
             self.user.updateOrder(self.exchange.getOrder(market));
             # k line.
             if RebotConfig.rebot_is_test:
-                dk = self.exchange.getK(market, 100, self.period, 1498838400); # 1498838400:2017/7/1 0:0:0; 1496246400:2017/6/1 0:0:0; 1493568000:2017/5/1 0:0:0
+                dk = self.exchange.getK(market, 10, self.period, 1498838400); # 1498838400:2017/7/1 0:0:0; 1496246400:2017/6/1 0:0:0; 1493568000:2017/5/1 0:0:0
             else:
                 dk = self.exchange.getK(market, 500, self.period);
 
@@ -64,8 +61,6 @@ class Rebot():
             self.user.updateCost(currency, lastk.c)
 
             self.rules[market] = r;
-            self.tradeSure[market] = {'buy':0, 'sell':0};
-            self.marketTime[market] = lastk.t;
             Log.d('start market:%s, begin time %s, current time:%s'%(market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(r.KLines.Get(0).t)), time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t))));
         #scale.
         self.scales = [];
@@ -100,21 +95,18 @@ class Rebot():
             lastk=r.KLines.Get(-1);
             # k line.
             # dk = self.exchange.getK(market, 500, self.period, lastk.t);
+            print 'do market : %s' % market;
             dk = self.exchange.getK(market, 2, self.period, lastk.t);
             if dk and len(dk) > 0:
                 ret     = r.Run(dk);
                 lastk   = r.KLines.Get(-1);
-
-                if self.marketTime[market] != lastk.t:
-                    self.marketTime[market] = lastk.t;
-                    self.tradeSure[market] = {'buy':0, 'sell':0};
                 # print market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(self.marketTime[market])), time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t))
                 type    = ret.get('type');
                 if type == 'buy':
                     buylist.append({'market':market, 'result':ret})
                 if type == 'sell':
                     selllist.append({'market':market, 'result':ret})
-            print 'do market:{0}, market status : {1}, last k time : {2}'.format(market, r.status, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)));
+            print '\tmarket status : {1}, last k time : {2}, type : {3}'.format(market, r.status, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), type);
                 # position;
             currency = market[0:len(market)-3];
             pc = self.user.positions.get(currency);
@@ -155,13 +147,12 @@ class Rebot():
                             selllist.append({'market':market, 'result':{'k':lastk, 'ext':'rebot profit ratio' }})
                     # else:
                     # print '\tmarket:{0}, scale:{1}, position high price:{2}, current price{3}'.format(market, scale, pc['high'], lastk.c);
+        print 'do orders:'
         # sell
         nselllist = [];
         for key,v in enumerate(selllist):
             market  = v['market'];
-            self.tradeSure[market]['sell'] += 1;
-            if self.tradeSure[market]['sell'] >= RebotConfig.rebot_trade_sure_times:
-                nselllist.append(v);
+            nselllist.append(v);
         for key,v in enumerate(nselllist):
             market  = v['market'];
             k   = v['result']['k'];
@@ -169,25 +160,26 @@ class Rebot():
             if vol and vol > 0:
                 Log.d('\tmarket:{0}, do:{1}, price:{2}, volume:{3} time:{4}, ext:{5}'.format(market, 'sell', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), v['result']['ext']));
                 self.exchange.doOrder(market, 'sell', k.c, vol, k.t);
+            else:
+                print '\tmarket:%s, not enough to sell' % market;
 
         # buy
         nbuylist = [];
-        for k,v in enumerate(buylist):
+        for key,v in enumerate(buylist):
             market = v['market'];
             sort = v['result']['sort'];
             v['sort'] = sort
             angle = v['result'].get('angle');
             k   = v['result']['k'];
 
+            # print '\tmarket %s sort %f, angle %f, time %s' % (market, sort, angle, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
             if sort > 100 or sort < 0:
                 print '\tmarket %s sort illegal, sort %f, time %s' % (market, sort, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
                 continue;
             if angle and angle < RebotConfig.rebot_buy_least_angle:
                 print '\tmarket %s angle illegal, angle %f, time %s' % (market, angle, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
                 continue;
-            self.tradeSure[market]['buy'] += 1;
-            if self.tradeSure[market]['buy'] >= RebotConfig.rebot_trade_sure_times:
-                nbuylist.append(v);
+            nbuylist.append(v);
             # nbuylist.append(v);
 
         nbuylist.sort(key=lambda v: v['sort'], reverse=False)
@@ -199,9 +191,8 @@ class Rebot():
             flag=True;
             if vol > 0:
                 Log.d('\tmarket:{0}, do:{1}, price:{2}, volume:{3}, time:{4}, ext:{5}'.format(market, 'buy', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), v['result']['ext']));
-                self.tradeSure[market]['buy'] = -RebotConfig.rebot_do_per_period;
-            #else:
-            #    Log.d('\tnot enough cny !!! market:{0}, do:{1}, price:{2}, volume:{3}, time:{4}'.format(market, 'buy', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t))));
+            else:
+                print '\tnot enough cny !!! market:{0}, do:{1}, price:{2}, volume:{3}, time:{4}'.format(market, 'buy', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
             #else:
             #    print '\t!!! market:{0}, time:{1}, buy fail less volume : {2}'.format(market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(cwave.ck.t)), v['rmbvolumeN3']);
         if flag:

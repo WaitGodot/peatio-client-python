@@ -47,7 +47,7 @@ class yunbiEXLocal():
     def set(self, access, sercet):
         self.client = Client(access_key=access, secret_key=sercet);
         self.accounts = {
-            'cny' : {'currency':'cny', 'balance':'10000', 'locked':'0.0'},
+            'cny' : {'currency':'cny', 'balance':'%d' % RebotConfig.user_initamount, 'locked':'0.0'},
         };
         self.orders = {};
         self.marketOrders = {};

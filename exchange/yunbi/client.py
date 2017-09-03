@@ -78,7 +78,7 @@ class Client():
         # print(url);
         if send:
             try :
-                resp = urllib2.urlopen(url)
+                resp = urllib2.urlopen(url, timeout=60)
                 # print resp
                 if resp:
                     data = resp.readlines()
@@ -96,7 +96,7 @@ class Client():
         url = "%s%s" % (BASE_URL, path)
         data = "%s&signature=%s" % (query, signature)
         try:
-            resp = urllib2.urlopen(url, data)
+            resp = urllib2.urlopen(url, data, timeout=60)
             data = resp.readlines()
             if len(data):
                 return json.loads(data[0])
