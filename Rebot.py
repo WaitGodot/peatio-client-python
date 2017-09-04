@@ -97,6 +97,7 @@ class Rebot():
             # dk = self.exchange.getK(market, 500, self.period, lastk.t);
             print 'do market : %s' % market;
             dk = self.exchange.getK(market, 2, self.period, lastk.t);
+            type = None;
             if dk and len(dk) > 0:
                 ret     = r.Run(dk);
                 lastk   = r.KLines.Get(-1);
