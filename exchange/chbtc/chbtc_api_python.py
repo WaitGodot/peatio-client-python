@@ -1,5 +1,19 @@
 ﻿import json, urllib2, hashlib,struct,sha,time
 
+API_PATH_DICT = {
+    'getAccountInfo': 'https://trade.chbtc.com/api/getAccountInfo',
+    'markets': '%s/markets.json',
+    'getOrdersIgnoreTradeType':'https://trade.chbtc.com/api/getOrdersIgnoreTradeType',
+    'order': 'https://trade.chbtc.com/api/order',
+    'k': 'http://api.chbtc.com/data/v1/kline',
+    'cancelOrder': 'https://trade.chbtc.com/api/cancelOrder',
+}
+
+API_PARAMS = {
+    'getOrdersIgnoreTradeType' : ['currency', 'pageIndex', 'pageSize'],
+    'order' : ['price', 'amount', 'tradeType', 'currency'],
+    'cancelOrder' : ['id', 'currency'],
+}
 class chbtc_api():
     def __init__(self, mykey, mysecret):
         self.mykey    = mykey
@@ -18,7 +32,7 @@ class chbtc_api():
             slist[index] = chr(ord(slist[index]) ^ value)
         return "".join(slist)
 
-    def __hmacSign(self, aValue, aKey):
+    def hmacSign(self, aValue, aKey):
         keyb   = struct.pack("%ds" % len(aKey), aKey)
         value  = struct.pack("%ds" % len(aValue), aValue)
         k_ipad = self.__doXOr(keyb, 0x36)
@@ -29,7 +43,7 @@ class chbtc_api():
         m.update(k_ipad)
         m.update(value)
         dg = m.digest()
-        
+
         m = hashlib.md5()
         m.update(k_opad)
         subStr = dg[0:16]
@@ -37,7 +51,7 @@ class chbtc_api():
         dg = m.hexdigest()
         return dg
 
-    def __digest(self, aValue):
+    def digest(self, aValue):
         value  = struct.pack("%ds" % len(aValue), aValue)
         print value
         h = sha.new()
@@ -47,8 +61,8 @@ class chbtc_api():
 
     def __api_call(self, path, params = ''):
         try:
-            SHA_secret = self.__digest(self.mysecret)
-            sign = self.__hmacSign(params, SHA_secret)
+            SHA_secret = self.digest(self.mysecret)
+            sign = self.hmacSign(params, SHA_secret)
             reqTime = (int)(time.time()*1000)
             params+= '&sign=%s&reqTime=%d'%(sign, reqTime)
             # url = 'https://trade.chbtc.com/api/' + path + '?' + params
@@ -60,42 +74,39 @@ class chbtc_api():
         except Exception,ex:
             print >>sys.stderr, 'chbtc request ex: ', ex
             return None
-     def urlencode(self, params):
-        keys = params.keys()
-        keys.sort()
+    def urlencode(self, path, params):
+        l = API_PARAMS.get(path);
         query = ''
-        for key in keys:
-            value = params[key]
-            if key != "orders":
+        if l:
+            for key in l:
+                value = params[key]
+                query = "%s&%s=%s" % (query, key, value) if len(query) else "%s=%s" % (key, value)
+        else:
+            keys = params.keys()
+            keys.sort()
+            for key in keys:
+                value = params[key]
                 query = "%s&%s=%s" % (query, key, value) if len(query) else "%s=%s" % (key, value)
         return query
 
-API_PATH_DICT = {
-    'getAccountInfo': 'https://trade.chbtc.com/api/getAccountInfo',
-    'markets': '%s/markets.json',
-    'order': 'https://trade.chbtc.com/api/order',
-    'k': 'http://api.chbtc.com/data/v1/kline',
-    'delete_order': '%s/order/delete.json',
-}
-
 class Client():
     def __init__(self, access_key=None, secret_key=None):
-        if access_key and secret_key:
-            self.auth = chbtc_api(access_key, secret_key)
-        else:
-            from conf import ACCESS_KEY, SECRET_KEY
-            self.auth = chbtc_api(ACCESS_KEY, SECRET_KEY)
+        self.auth = chbtc_api(access_key, secret_key)
+        self.access_key = access_key;
+        self.secret_key = secret_key;
+
     def time(self):
         return time.time();
+
     def get(self, path, params=None, send=True):
-        query = ''
+        query = 'method=%s&accesskey=%s' % (path, self.access_key);
         if params:
-            query = urlencode(params);
-        SHA_secret = self.__digest(self.mysecret)
-        sign = self.__hmacSign(query, SHA_secret)
+            query = query + '&' + self.auth.urlencode(path, params);
+        SHA_secret = self.auth.digest(self.secret_key)
+        sign = self.auth.hmacSign(query, SHA_secret)
         reqTime = (int)(time.time()*1000)
         query += '&sign=%s&reqTime=%d'%(sign, reqTime)
-        
+
         apipath = API_PATH_DICT[path];
         url = apipath  + '?' + query
         #send = False

@@ -5,13 +5,34 @@ from Log import Log
 
 import json
 
-def convertmarket(market):
-    return market;
+PERIOD2TYPE={
+    1   :   '1min',
+    3   :   '3min',
+    5   :   '5min',
+    15  :   '15min',
+    30  :   '30min',
+    60  :   '1hour',
+    120 :   '2hour',
+    240 :   '4hour',
+    360 :   '6hour',
+    720 :   '12hour',
+}
+
+def u2c(market):
+    p = market.find('cny');
+    return market[:p] + '_cny';
+
+def c2u(market):
+    p = market.find('_');
+    return market[:p] + market[p+1:];
+
+def PERIOD(period):
+    return PERIOD2TYPE.get(period);
 
 class chbtcEX():
 
     def set(self, access, sercet):
-        self.client = Client(access_key=access, secret_key=sercet);
+        self.client = Client(access_key='6b658f1b-8a44-41cc-b307-ae3e95cc7de1', secret_key='d19135ee-d071-4653-a1b9-5b8065a07efc');
         self.access = access;
 
     # function
@@ -19,7 +40,7 @@ class chbtcEX():
         return self.client.time();
 
     def getUser(self):
-        return self.client.get('getAccountInfo', params={'method':'getAccountInfo', 'accesskey':self.access});
+        return self.client.get('getAccountInfo');
 
     def getMarkets(self):
         if  len(RebotConfig.rebot_yunbi_markets) > 0:
@@ -28,23 +49,26 @@ class chbtcEX():
 
     def getK(self, market, limit, period, timestamp=None):
         if timestamp==None:
-            return self.client.get('k', params={'market': convertmarket(market), 'size':limit,'period':period});
+            return self.client.get('k', params={'currency': u2c(market), 'size':limit,'type':PERIOD(period)});
         else:
-            return self.client.get('k', params={'market': convertmarket(market), 'size':limit,'period':period, 'timestamp':timestamp});
+            return self.client.get('k', params={'currency': u2c(market), 'size':limit,'type':PERIOD(period), 'since':timestamp});
         return None
 
     def getOrder(self, market):
-        return self.client.get('order', {'method':'order', 'a' market});
+        return self.client.get('getOrdersIgnoreTradeType', {'currency':u2c(market), 'pageIndex':1, 'pageSize':100});
 
     def doOrder(self, market, side, price, volume, time=None, ext=None):
         cny = price * volume;
         if cny < 1:
             Log.d('\t\t market %s side %s price %f volume %f less 1' % (market, side, price, volume));
             return ;
-        return self.client.get('orders', params = {'market':market, 'side':side, 'price':price, 'volume':volume})
+        tradeType = 0;
+        if side == 'buy':
+            tradeType = 1;
+        return self.client.get('order', params = {'price':price, 'amount':volume, 'tradeType':tradeType, 'currency':u2c(market)})
 
-    def doOrderCancel(self, orderID):
-        return self.client.get('delete_order', params ={'id':orderID});
+    def doOrderCancel(self, orderID, market):
+        return self.client.get('cancelOrder', params ={'id':orderID, 'currency': u2c(market)});
 
 class chbtcEXLocal():
 
