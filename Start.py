@@ -28,9 +28,11 @@ from Log import Log
 exchange = Exchange(RebotConfig.access_key, RebotConfig.secret_key);
 exchange.delegate(chbtcEX());
 
-print exchange.getServerTimestamp();
-print exchange.getUser();
-print exchange.getK('btccny', 10, 60);
-print exchange.getOrder('btscny');
-print exchange.doOrder('btscny', 'buy', 0.1, 100);
-print exchange.getOrder('btscny');
+#print exchange.getServerTimestamp();
+#print exchange.getUser();
+print exchange.getK('btccny', 2, 60, 1504598400000);
+#print exchange.getOrder('btscny');
+#print exchange.doOrder('btscny', 'buy', 0.1, 100);
+#print exchange.getOrder('btscny');
+#print exchange.doOrderCancel(2017090420479642, 'btscny');
+#print exchange.getOrder('btscny');

@@ -53,7 +53,6 @@ class chbtc_api():
 
     def digest(self, aValue):
         value  = struct.pack("%ds" % len(aValue), aValue)
-        print value
         h = sha.new()
         h.update(value)
         dg = h.hexdigest()

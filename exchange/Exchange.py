@@ -39,8 +39,8 @@ class Exchange():
             return self.delegate.doOrder(market, side, price, vol, time, ext);
         return None;
 
-    def doOrderCancel(self, orderID):
+    def doOrderCancel(self, orderID, market=None):
         if self.delegate:
-            return self.delegate.doOrderCancel(orderID);
+            return self.delegate.doOrderCancel(orderID, market);
         return None;
         

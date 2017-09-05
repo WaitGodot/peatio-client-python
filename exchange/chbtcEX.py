@@ -5,7 +5,7 @@ from Log import Log
 
 import json
 
-PERIOD2TYPE={
+PERIOD2TYPE = {
     1   :   '1min',
     3   :   '3min',
     5   :   '5min',
@@ -16,6 +16,17 @@ PERIOD2TYPE={
     240 :   '4hour',
     360 :   '6hour',
     720 :   '12hour',
+}
+
+STATUS = {
+    0 : 'wait',
+    1 : 'cannel',
+    2 : 'compelete',
+}
+
+TYPE = {
+    0 : 'sell',
+    1 : 'buy',
 }
 
 def u2c(market):
@@ -33,14 +44,18 @@ class chbtcEX():
 
     def set(self, access, sercet):
         self.client = Client(access_key='6b658f1b-8a44-41cc-b307-ae3e95cc7de1', secret_key='d19135ee-d071-4653-a1b9-5b8065a07efc');
-        self.access = access;
 
     # function
     def getServerTimestamp(self):
         return self.client.time();
 
     def getUser(self):
-        return self.client.get('getAccountInfo');
+        data = self.client.get('getAccountInfo');
+        balance = data['result']['balance'];
+        ret = [];
+        for k,v in balance.items():
+            ret.append({'currency':v['currency'].lower(), 'balance':v['amount']})
+        return ret;
 
     def getMarkets(self):
         if  len(RebotConfig.rebot_yunbi_markets) > 0:
@@ -48,14 +63,28 @@ class chbtcEX():
         return [];
 
     def getK(self, market, limit, period, timestamp=None):
+        data = None;
         if timestamp==None:
-            return self.client.get('k', params={'currency': u2c(market), 'size':limit,'type':PERIOD(period)});
+            data = self.client.get('k', params={'currency': u2c(market), 'size':limit,'type':PERIOD(period)});
         else:
-            return self.client.get('k', params={'currency': u2c(market), 'size':limit,'type':PERIOD(period), 'since':timestamp});
-        return None
+            data = self.client.get('k', params={'currency': u2c(market), 'size':limit,'type':PERIOD(period), 'since':timestamp});
+        if data:
+            return data['data'];
+        return None;
 
     def getOrder(self, market):
-        return self.client.get('getOrdersIgnoreTradeType', {'currency':u2c(market), 'pageIndex':1, 'pageSize':100});
+        data = self.client.get('getOrdersIgnoreTradeType', {'currency':u2c(market), 'pageIndex':1, 'pageSize':100});
+        code = 1000#data.get('code');
+        if code and code != 1000:
+            return None;
+        for k, v in enumerate(data):
+            v['side'] = TYPE[v['type']];
+            v['market'] = c2u(v['currency']);
+            v['volume'] = v['total_amount'];
+            v['avg_price'] = v['trade_price'];
+            v['remaining_volume'] = v['total_amount'] - v['trade_amount'];
+            v['state'] = STATUS[v['status']];
+        return data;
 
     def doOrder(self, market, side, price, volume, time=None, ext=None):
         cny = price * volume;
@@ -73,7 +102,7 @@ class chbtcEX():
 class chbtcEXLocal():
 
     def set(self, access, sercet):
-        self.client = Client(access_key=access, secret_key=sercet);
+        self.client = Client(access_key='6b658f1b-8a44-41cc-b307-ae3e95cc7de1', secret_key='d19135ee-d071-4653-a1b9-5b8065a07efc');
         self.accounts = {
             'cny' : {'currency':'cny', 'balance':'%d' % RebotConfig.user_initamount, 'locked':'0.0'},
         };
@@ -158,26 +187,34 @@ class chbtcEXLocal():
     def getMarkets(self):
         if  len(RebotConfig.rebot_yunbi_markets) > 0:
             return RebotConfig.rebot_yunbi_markets;
-
-        return self.client.get(get_api_path('markets'));
+        return [];
         #return [{'id':'anscny'},{'id':'btccny'}, {'id':'ethcny'}, {'id':'zeccny'}, {'id':'qtumcny'}, {'id':'gxscny'}, {'id':'eoscny'}, {'id':'sccny'}, {'id':'dgdcny'}, {'id':'1stcny'}, {'id':'btscny'}, {'id':'gntcny'}, {'id':'repcny'}, {'id':'etccny'}];
         #return [{'id':'anscny'}];
 
     def getK(self, market, limit, period, timestamp=None):
+        if timestamp and timestamp < 1000000000000:
+            timestamp *= 1000;
+
         if RebotConfig.rebot_is_test == False:
+            data = None;
             if timestamp==None:
-                return self.client.get(get_api_path('k'), params={'market': market, 'limit':limit,'period':period});
+                data = self.client.get('k', params={'currency': u2c(market), 'size':limit,'type':PERIOD(period)});
             else:
-                return self.client.get(get_api_path('k'), params={'market': market, 'limit':limit,'period':period, 'timestamp':timestamp});
-            return None
+                data = self.client.get('k', params={'currency': u2c(market), 'size':limit,'type':PERIOD(period), 'since':timestamp});
+            if data:
+                return data['data'];
 
         ks = self.kss.get(market);
         if ks==None:
-            if timestamp:
-                ks = self.client.get(get_api_path('k'), params={'market': market, 'limit':RebotConfig.rebot_test_k_count,'period':period, 'timestamp':timestamp});
+            data = None;
+            if timestamp==None:
+                data = self.client.get('k', params={'currency': u2c(market), 'size':RebotConfig.rebot_test_k_count,'type':PERIOD(period)});
             else:
-                ks = self.client.get(get_api_path('k'), params={'market': market, 'limit':RebotConfig.rebot_test_k_count,'period':period});
-            self.kss[market] = ks;
+                data = self.client.get('k', params={'currency': u2c(market), 'size':RebotConfig.rebot_test_k_count,'type':PERIOD(period), 'since':timestamp});
+            if data:
+                print data['data'];
+                self.kss[market] = data['data'];
+                ks = self.kss.get(market);
 
         if ks == None:
             print '%s do not find kline' % market
@@ -204,4 +241,4 @@ class chbtcEXLocal():
             self.compeleteOrder(id);
 
     def doOrderCancel(self, orderID):
-        return self.client.post(get_api_path('delete_order'), params ={'id':orderID});
+        return None;

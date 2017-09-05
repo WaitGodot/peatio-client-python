@@ -30,6 +30,8 @@ class K():
         self.amplitude = 0;
         if self.l > 0:
             self.amplitude = (self.h - self.l) / self.l;
+        if self.t > 1000000000000:
+            self.t /= 1000;
 
     def Contain(self, ohterk):
         if self.h >= ohterk.h and self.l <= ohterk.l :

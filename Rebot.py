@@ -4,6 +4,9 @@ import urllib2
 from exchange.Exchange import Exchange
 from exchange.yunbiEX import yunbiEX
 from exchange.yunbiEX import yunbiEXLocal
+from exchange.chbtcEX import chbtcEX
+from exchange.chbtcEX import chbtcEXLocal
+
 
 from formula.K import KLine
 from formula.MACD import MACD
@@ -24,10 +27,19 @@ class Rebot():
     def __init__(self, period):
         self.period = period;
         self.exchange = Exchange(RebotConfig.access_key, RebotConfig.secret_key);
-        if RebotConfig.rebot_release:
-            self.exchange.delegate(yunbiEX());
-        else:
-            self.exchange.delegate(yunbiEXLocal());
+        delegate = None;
+        if RebotConfig.exchange == 'chbtc':
+            if RebotConfig.rebot_release:
+                delegate = chbtcEX();
+            else:
+                delegate = chbtcEXLocal();
+        if RebotConfig.exchange == 'yunbi':
+            if RebotConfig.rebot_release:
+                delegate = yunbiEX();
+            else:
+                delegate = yunbiEXLocal();
+
+        self.exchange.delegate(delegate);
         # time
         Time.SetServerTime(self.exchange.getServerTimestamp())
         # user.
@@ -49,7 +61,7 @@ class Rebot():
             self.user.updateOrder(self.exchange.getOrder(market));
             # k line.
             if RebotConfig.rebot_is_test:
-                dk = self.exchange.getK(market, 10, self.period, 1498838400); # 1498838400:2017/7/1 0:0:0; 1496246400:2017/6/1 0:0:0; 1493568000:2017/5/1 0:0:0
+                dk = self.exchange.getK(market, 10, self.period, RebotConfig.rebot_test_begin); # 1498838400:2017/7/1 0:0:0; 1496246400:2017/6/1 0:0:0; 1493568000:2017/5/1 0:0:0
             else:
                 dk = self.exchange.getK(market, 500, self.period);
 
