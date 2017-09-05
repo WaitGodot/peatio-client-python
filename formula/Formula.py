@@ -11,8 +11,9 @@ def MA(xArr, yArr, N):
             nidx = idx - k;
             if nidx < 0:
                 av = ss / float(k);
+                break;
             else:
-                ss += xArr[idx - k];
+                ss += xArr[nidx];
         if av == 0:
             yArr.append(ss / float(N));
         else:

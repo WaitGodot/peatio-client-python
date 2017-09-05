@@ -57,9 +57,9 @@ def Done():
         if STATUS == 'stop':
             break;
         t += 1;
-        print "rebot status %s, do %d, time : %s" % (STATUS, t, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(Time.Time())));
+        #print "rebot status %s, do %d, time : %s" % (STATUS, t, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(Time.Time())));
         r.run();
-        print '------------------------------------------------------------------------'
+        #print '------------------------------------------------------------------------'
         if RebotConfig.rebot_is_test:
             if t > RebotConfig.rebot_test_k_count:
                 break;
@@ -111,6 +111,10 @@ def Done():
     for k in range(0, len(r.scales)):
         w.writerow([k, r.scales[k]]);
     f.close();
+
+    for k,v in r.rules.items():
+        print v;
+        v.Export('%sma.csv' % RebotConfig.path);
 
 
 nr = threading.Thread(target=Done);

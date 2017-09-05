@@ -212,7 +212,6 @@ class chbtcEXLocal():
             else:
                 data = self.client.get('k', params={'currency': u2c(market), 'size':RebotConfig.rebot_test_k_count,'type':PERIOD(period), 'since':timestamp});
             if data:
-                print data['data'];
                 self.kss[market] = data['data'];
                 ks = self.kss.get(market);
 

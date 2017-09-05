@@ -7,6 +7,12 @@
 # vol
 # increase
 # amplitude
+
+def ct(t):
+    if t > 1000000000000:
+        return t/1000;
+    return t;
+
 class K():
     def __init__(self, data=None, idx=-1):
         if data:
@@ -16,7 +22,7 @@ class K():
         self.idx = idx
 
     def Set(self, data):
-        self.t = data[0];
+        self.t = ct(data[0]);
         self.o = data[1];
         self.h = data[2];
         self.l = data[3];
@@ -30,8 +36,6 @@ class K():
         self.amplitude = 0;
         if self.l > 0:
             self.amplitude = (self.h - self.l) / self.l;
-        if self.t > 1000000000000:
-            self.t /= 1000;
 
     def Contain(self, ohterk):
         if self.h >= ohterk.h and self.l <= ohterk.l :
@@ -74,9 +78,10 @@ class KLine():
             last = self.data[-1];
         for k, d in enumerate(data):
             if last:
-                if d[0] < last.t:
+                nt = ct(d[0]);
+                if nt < last.t:
                     continue;
-                if d[0] == last.t: # update close 
+                if nt == last.t: # update close
                     last.Set(d);
                     self.prices[-1]     = last.c;
                     self.volumes[-1]    = last.vol;
@@ -88,7 +93,7 @@ class KLine():
             self.volumes.append(nk.vol);
             self.rmbvolumes.append(nk.rmbvolume);
             self.idx += 1;
-            
+
     def ToList(self, key, N=None):
         ret = [];
         if N == None:
@@ -103,7 +108,7 @@ class KLine():
 
     def Get(self, idx):
         return self.data[idx];
-        
+
     def __len__(self):
         return len(self.data);
 
