@@ -30,7 +30,7 @@ class RebotConfig():
 
     rebot_loss_ratio = -10;
     rebot_profit_ratio = -20;
-    rebot_yunbi_markets = [{'id':'ltccny'}];#[{'id':'btccny'}, {'id':'ltccny'}, {'id':'ethcny'}, {'id':'etccny'}, {'id':'btscny'}]#[{'id':'luncny'}];
+    rebot_yunbi_markets = [{'id':'btccny'}, {'id':'ltccny'}, {'id':'ethcny'}, {'id':'etccny'}, {'id':'btscny'}]#[{'id':'luncny'}];
     # file
     path = 'C:\\Users\\randy\\';
     log = 'log.txt';

@@ -113,7 +113,6 @@ def Done():
     f.close();
 
     for k,v in r.rules.items():
-        print v;
         v.Export('%sma.csv' % RebotConfig.path);
 
 

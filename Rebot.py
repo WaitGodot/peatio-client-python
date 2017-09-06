@@ -61,7 +61,7 @@ class Rebot():
             self.user.updateOrder(self.exchange.getOrder(market));
             # k line.
             if RebotConfig.rebot_is_test:
-                dk = self.exchange.getK(market, 10, self.period, RebotConfig.rebot_test_begin); # 1498838400:2017/7/1 0:0:0; 1496246400:2017/6/1 0:0:0; 1493568000:2017/5/1 0:0:0
+                dk = self.exchange.getK(market, 42, self.period, RebotConfig.rebot_test_begin); # 1498838400:2017/7/1 0:0:0; 1496246400:2017/6/1 0:0:0; 1493568000:2017/5/1 0:0:0
             else:
                 dk = self.exchange.getK(market, 500, self.period);
 

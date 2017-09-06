@@ -240,7 +240,7 @@ class MutliMovingAverage():
                     c1wave.cal(self.KLines);
                     waves.append(c1wave);
 
-            if lenwaves >= 4 and pwidx == 1:
+            if lenwaves >= 4 and pwidx == 1 and False:
                 if self.status != 'buy':
                     type = None;
                 else:
@@ -289,11 +289,14 @@ class MutliMovingAverage():
                 else:
                     ret['angle'] = 57.2956 * math.atan( (self.MA4[p2.idx] - self.MA4[p1.idx])/self.MA4[p1.idx] * 100 /(p1.idx - p2.idx));
 
+                ret['angle'] = 10;
+                sort = 1;
+                
                 # ma5v = self.MA5[p1.idx] - self.MA5[p2.idx];
                 ma5v = self.MA5[-1] - self.MA5[p2.idx]
-                if ma5v < 0:
-                    sort = -214;
-                    print '\t !!! ma5 buy less 0:{0}'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
+                #if ma5v < 0:
+                #    sort = -214;
+                #    print '\t !!! ma5 buy less 0:{0}'.format(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
 
             ret['type'] = type;
             ret['k']    = k;

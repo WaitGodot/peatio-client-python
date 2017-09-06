@@ -4,6 +4,7 @@ from RebotConfig import RebotConfig
 from Log import Log
 
 import json
+import time
 
 PERIOD2TYPE = {
     1   :   '1min',
@@ -214,7 +215,8 @@ class chbtcEXLocal():
             if data:
                 self.kss[market] = data['data'];
                 ks = self.kss.get(market);
-
+                time.sleep(1);
+        
         if ks == None:
             print '%s do not find kline' % market
         if timestamp > ks[-1][0]:
