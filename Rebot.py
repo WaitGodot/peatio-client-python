@@ -6,6 +6,7 @@ from exchange.yunbiEX import yunbiEX
 from exchange.yunbiEX import yunbiEXLocal
 from exchange.chbtcEX import chbtcEX
 from exchange.chbtcEX import chbtcEXLocal
+from exchange.tushareEX import tushareEXLocal
 
 
 from formula.K import KLine
@@ -38,6 +39,8 @@ class Rebot():
                 delegate = yunbiEX();
             else:
                 delegate = yunbiEXLocal();
+        if RebotConfig.exchange == "tushare":
+            delegate = tushareEXLocal();
 
         self.exchange.delegate(delegate);
         # time

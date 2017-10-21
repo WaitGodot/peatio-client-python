@@ -15,22 +15,22 @@ class RebotConfig():
     # user
     user_asset_ratio = 4;
     user_asset_least = 200;
-    user_initamount = 785;
+    user_initamount = 10000;
     # exchange
-    exchange = 'chbtc';
+    exchange = 'tushare';#'chbtc';
     # rebot
-    rebot_period = 240; # min
+    rebot_period = 60; # min
     rebot_buy_least_angle = 5;
     rebot_trade_sure_times = 1;
     rebot_do_per_period = 5;
     rebot_release = False;
     rebot_is_test = True;
-    rebot_test_k_count = 200;
-    rebot_test_begin = 1502006400000;
+    rebot_test_k_count = 400;
+    rebot_test_begin = 1502006400;
 
     rebot_loss_ratio = -10;
     rebot_profit_ratio = -20;
-    rebot_yunbi_markets = [{'id':'btccny'}, {'id':'ltccny'}, {'id':'ethcny'}, {'id':'etccny'}, {'id':'btscny'}]#[{'id':'luncny'}];
+    rebot_yunbi_markets = [{'id':'600516'}]; #[{'id':'btccny'}, {'id':'ltccny'}, {'id':'ethcny'}, {'id':'etccny'}, {'id':'btscny'}]#[{'id':'luncny'}];
     # file
     path = 'C:\\Users\\randy\\';
     log = 'log.txt';
