@@ -161,28 +161,40 @@ class tushareEXLocal():
         #return [{'id':'anscny'}];
 
     def getK(self, market, limit, period, timestamp=None):
-        st=None;
-        if timestamp != None:
-            if period >= 240:
-                st = time.strftime("%Y-%m-%d", time.localtime(timestamp));
-            else:
-                st = time.strftime("%Y-%m-%d %H:%M", time.localtime(timestamp));
-        data = self.client.getK(market, PERIOD(period), st);
-        ndata = data.values.tolist();
-        for k,v in enumerate(ndata):
-            if period >= 240:
-                v[0] = time.mktime(time.strptime(v[0], "%Y-%m-%d"));
-            else:
-                v[0] = time.mktime(time.strptime(v[0], "%Y-%m-%d %H:%M"));
-            c = v[2];
-            h = v[3];
-            l = v[4];
-            v[2] = h;
-            v[3] = l;
-            v[4] = c;
-            
+        ks = self.kss.get(market);
+        if ks==None:
+            data = None;
+            st=None;
+            if timestamp != None:
+                if period >= 240:
+                    st = time.strftime("%Y-%m-%d", time.localtime(timestamp));
+                else:
+                    st = time.strftime("%Y-%m-%d %H:%M", time.localtime(timestamp));
+            data = self.client.getK(market, PERIOD(period), st);
+            ndata = data.values.tolist();
+            for k,v in enumerate(ndata):
+                if period >= 240:
+                    v[0] = time.mktime(time.strptime(v[0], "%Y-%m-%d"));
+                else:
+                    v[0] = time.mktime(time.strptime(v[0], "%Y-%m-%d %H:%M"));
+                c = v[2];
+                h = v[3];
+                l = v[4];
+                v[2] = h;
+                v[3] = l;
+                v[4] = c;
+            self.kss[market] = ndata;
+            ks = self.kss.get(market);
+            time.sleep(1);
+
+
+        if ks == None:
+            print '%s do not find kline' % market
+        if timestamp > ks[-1][0]:
+            print '{0} k line is over'.format(market);
+            return None;
         ret = [];
-        for k,v in enumerate(ndata):
+        for k,v in enumerate(ks):
             if v[0] >= timestamp:
                 ret.append(v);
             if len(ret) >= limit:

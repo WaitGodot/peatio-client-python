@@ -20,7 +20,7 @@ class RebotConfig():
     mysql_database = "bot";
 
     # user
-    user_asset_ratio = 4;
+    user_asset_ratio = 1;
     user_asset_least = 200;
     user_initamount = 10000;
     # exchange
