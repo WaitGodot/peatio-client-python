@@ -180,7 +180,14 @@ class tushareEXLocal():
             v[2] = h;
             v[3] = l;
             v[4] = c;
-        return ndata;
+            
+        ret = [];
+        for k,v in enumerate(ndata):
+            if v[0] >= timestamp:
+                ret.append(v);
+            if len(ret) >= limit:
+                return ret;
+        return ret;
 
     def getOrder(self, market):
         ret = self.marketOrders.get(market);

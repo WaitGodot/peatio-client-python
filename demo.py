@@ -58,10 +58,10 @@ def Done():
             break;
         t += 1;
         #print "rebot status %s, do %d, time : %s" % (STATUS, t, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(Time.Time())));
-        r.run();
+        stop = r.run();
         #print '------------------------------------------------------------------------'
         if RebotConfig.rebot_is_test:
-            if t > RebotConfig.rebot_test_k_count:
+            if t > RebotConfig.rebot_test_k_count or stop == True:
                 break;
         else:
             time.sleep(RebotConfig.rebot_period*60/RebotConfig.rebot_do_per_period);

@@ -64,6 +64,7 @@ class Rebot():
             self.user.updateOrder(self.exchange.getOrder(market));
             # k line.
             if RebotConfig.rebot_is_test:
+                print 'xxxxx', time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(RebotConfig.rebot_test_begin));
                 dk = self.exchange.getK(market, 42, self.period, RebotConfig.rebot_test_begin); # 1498838400:2017/7/1 0:0:0; 1496246400:2017/6/1 0:0:0; 1493568000:2017/5/1 0:0:0
             else:
                 dk = self.exchange.getK(market, 500, self.period);
@@ -98,6 +99,7 @@ class Rebot():
 
         sv  = self.user.positions['cny']['volume'];
         flag=False;
+        stop=True;
         buylist     = [];
         selllist    = [];
         for k,v in enumerate(self.markets):
@@ -108,6 +110,7 @@ class Rebot():
             # rule
             r = self.rules[market];
             lastk=r.KLines.Get(-1);
+            prelastk=lastk;
             # k line.
             # dk = self.exchange.getK(market, 500, self.period, lastk.t);
             print 'do market : %s' % market;
@@ -123,7 +126,9 @@ class Rebot():
                 if type == 'sell':
                     selllist.append({'market':market, 'result':ret})
             print '\tmarket status : {1}, last k time : {2}, type : {3}'.format(market, r.status, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), type);
-                # position;
+            print lastk, prelastk;
+            if lastk.t != prelastk.t:
+                stop = False;
             currency = market[0:len(market)-3];
             pc = self.user.positions.get(currency);
             if pc and lastk:
@@ -215,5 +220,6 @@ class Rebot():
             ascale = (sv - self.user.initamount)/self.user.initamount*100;
             self.scales.append(ascale);
             Log.d('all scale:{0}, cuurent cny:{1}'.format(ascale, sv));
+        return stop;
 
 
