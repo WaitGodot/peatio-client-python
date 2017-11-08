@@ -19,6 +19,7 @@ from formula.Formula import LOW
 from RebotConfig import RebotConfig
 from rule.Rule import Rule
 from rule.MutliMovingAverage import MutliMovingAverage
+from rule.WVStats import WVStats
 from user.User import User
 from Time import Time
 from Log import Log
@@ -68,7 +69,7 @@ class Rebot():
             else:
                 dk = self.exchange.getK(market, 500, self.period);
 
-            r = MutliMovingAverage();
+            r = WVStats();#MutliMovingAverage();
             r.Run(dk);
             lastk=r.KLines.Get(-1);
             currency = market[0:len(market)-3];

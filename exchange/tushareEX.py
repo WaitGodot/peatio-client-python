@@ -5,6 +5,7 @@ from Log import Log
 
 import json
 import time
+import math
 
 PERIOD2TYPE = {
     1   :   '1',
@@ -82,6 +83,7 @@ class tushareEXLocal():
         self.poundage = 0.0001;
 
     def createOrder(self, market, side, time, price, volume, ext):
+        volume = math.floor(volume/100)*100;
         if volume<=0:
             return None;
         self.ORDERID += 1;
