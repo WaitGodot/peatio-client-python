@@ -11,3 +11,9 @@ class Client():
 
     def getK(self, market, period, timestamp):
         return ts.get_k_data(market, start = timestamp, ktype = period);
+
+    def getMarkets(self):
+        data = ts.get_today_all();
+        
+
+print ts.get_today_all();

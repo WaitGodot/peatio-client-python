@@ -21,8 +21,25 @@ class WVStats():
         self.ValueN = ValueN;
         self.status = None;
         self.statusdelay = 0;
+        self.stats = [];
 
     def Export(self, path):
+        f = open(path, 'wb');
+        w = csv.writer(f);
+        w.writerow(['increase', 'amplitude', 'close', 'vol', 'value', 'volume', 'increase', 'amplitude', 'close', 'vol', 'value', 'volume', 'increase', 'amplitude', 'close', 'vol', 'value', 'volume', 'increase', 'amplitude', 'close', 'vol', 'value', 'volume', 'increase', 'amplitude', 'close', 'vol', 'value', 'volume']);
+        for k, arr in enumerate(self.stats):
+            d = [];
+            for i in range(0,len(arr)):
+                nd = arr[i];
+                d.append(nd['k'].increase)
+                d.append(nd['k'].amplitude)
+                d.append(nd['k'].c)
+                d.append(nd['k'].vol)
+                d.append(nd['value'])
+                d.append(nd['volume'])
+
+            w.writerow(d);
+        f.close();
         return;
 
     def Run(self, d, period=None, servertimestamp=None):
@@ -44,10 +61,19 @@ class WVStats():
         ret['sort'] = 1;
         ret['angle'] = 10;
         ret['ext'] = {'idx':idx}
+
+        statslen = len(self.stats)
+        for i in range(0, statslen):
+            nk = statslen - i - 1;
+            arr = self.stats[nk];
+            if len(arr) < 5:
+                arr.append({'k':k, 'value':value, 'volume':volume});
+
         if k.c > value and k.vol > 2 * volume:
             ret['type'] = 'buy'
             self.status = 'buy';
             self.statusdelay = 0;
+            self.stats.append([]);
             return  ret;
 
         if self.status == 'buy':
