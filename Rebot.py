@@ -72,12 +72,12 @@ class Rebot():
             r = WVStats();#MutliMovingAverage();
             r.Run(dk);
             lastk=r.KLines.Get(-1);
-            currency = market[0:len(market)-3];
+            currency = market;#market[0:len(market)-3];
             self.user.updateHigh(currency, lastk.c); # c or high
             self.user.updateCost(currency, lastk.c)
 
             self.rules[market] = r;
-            Log.d('start market:%s, begin time %s, current time:%s'%(market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(r.KLines.Get(0).t)), time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t))));
+            Log.d('index:%d, start market:%s, begin time %s, current time:%s'%(k, market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(r.KLines.Get(0).t)), time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t))));
         #scale.
         self.scales = [];
 
@@ -128,7 +128,7 @@ class Rebot():
             print '\tmarket status : {1}, last k time : {2}, type : {3}'.format(market, r.status, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), type);
             if lastk.t != prelastk.t:
                 stop = False;
-            currency = market[0:len(market)-3];
+            currency =  market;#market[0:len(market)-3]; # for bitcoin
             pc = self.user.positions.get(currency);
             if pc and lastk:
                 current = pc['volume'] * lastk.c;
@@ -136,6 +136,7 @@ class Rebot():
 
                 self.user.updateHigh(currency, lastk.c); # c or high
                 cost = self.user.getCost(currency);
+
                 if cost and cost > 0:
                     scale = (current - cost)/cost*100;
                     rate = RebotConfig.rebot_loss_ratio;

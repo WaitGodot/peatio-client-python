@@ -68,14 +68,7 @@ class WVStats():
             arr = self.stats[nk];
             if len(arr) < 5:
                 arr.append({'k':k, 'value':value, 'volume':volume});
-
-        if k.c > value and k.vol > 2 * volume:
-            ret['type'] = 'buy'
-            self.status = 'buy';
-            self.statusdelay = 0;
-            self.stats.append([]);
-            return  ret;
-
+                
         if self.status == 'buy':
             self.statusdelay = self.statusdelay + 1;
             if self.statusdelay >= 5 :
@@ -83,5 +76,12 @@ class WVStats():
                 self.status = 'sell';
                 self.statusdelay = 0;
                 return ret;
+
+        if k.c > value and k.vol > 2 * volume:
+            ret['type'] = 'buy'
+            self.status = 'buy';
+            self.statusdelay = 0;
+            self.stats.append([]);
+            return  ret;
 
         return ret;

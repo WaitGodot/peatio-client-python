@@ -80,6 +80,8 @@ class tushareEXLocal():
         self.marketOrders = {};
         self.ORDERID = 0;
         self.kss = {};
+        self.allMarkets = None;
+        self.currentMarkets = None;
         self.poundage = 0.0001;
 
     def createOrder(self, market, side, time, price, volume, ext):
@@ -114,7 +116,7 @@ class tushareEXLocal():
         if o==None:
             return;
         market = o['market'];
-        currency = market[0:len(market)-3];
+        currency = market;#market[0:len(market)-3];
 
         o['remaining_volume']=0;
         o['executed_volume']=o['volume'];
@@ -158,7 +160,19 @@ class tushareEXLocal():
     def getMarkets(self):
         if  len(RebotConfig.rebot_yunbi_markets) > 0:
             return RebotConfig.rebot_yunbi_markets;
-        return [];
+
+        if self.currentMarkets:
+            return self.currentMarkets;
+
+        self.currentMarkets = [];
+        self.allMarkets = self.client.getMarkets();
+        total = 1000;
+        for k, v in enumerate(self.allMarkets):
+            if k > total:
+                break;
+            self.currentMarkets.append(v);
+        
+        return self.currentMarkets;
         #return [{'id':'anscny'},{'id':'btccny'}, {'id':'ethcny'}, {'id':'zeccny'}, {'id':'qtumcny'}, {'id':'gxscny'}, {'id':'eoscny'}, {'id':'sccny'}, {'id':'dgdcny'}, {'id':'1stcny'}, {'id':'btscny'}, {'id':'gntcny'}, {'id':'repcny'}, {'id':'etccny'}];
         #return [{'id':'anscny'}];
 

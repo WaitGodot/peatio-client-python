@@ -95,7 +95,7 @@ class User():
             else:
                 o = Order(id, type, market, t, price, volume, ext);
                 self.orders[id] = o;
-                self.setHigh(market[0:len(market)-3], 0);
+                self.setHigh(market, 0);#self.setHigh(market[0:len(market)-3], 0);
 
     def doOrder(self, market, side, price, volume=None):
         if side == 'buy':
@@ -111,7 +111,7 @@ class User():
             self.amount = self.amount - amount;
             return volume;
         if side == 'sell':
-            currency = market[0:len(market)-3];
+            currency = market;#market[0:len(market)-3];
             pc = self.positions.get(currency);
             if pc==None:
                 return;

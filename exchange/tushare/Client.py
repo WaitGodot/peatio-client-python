@@ -13,7 +13,8 @@ class Client():
         return ts.get_k_data(market, start = timestamp, ktype = period);
 
     def getMarkets(self):
-        data = ts.get_today_all();
-        
-
-print ts.get_today_all();
+        data = ts.get_today_all().values.tolist();
+        nd = [];
+        for k,v in enumerate(data):
+            nd.append({'id':v[0]});
+        return nd;

@@ -21,9 +21,9 @@ class RebotConfig():
     mysql_database = "bot";
 
     # user
-    user_asset_ratio = 1;
+    user_asset_ratio = 100;
     user_asset_least = 200;
-    user_initamount = 10000;
+    user_initamount = 10000000;
     # exchange
     exchange = 'tushare';#'chbtc';
     # rebot
@@ -38,7 +38,7 @@ class RebotConfig():
 
     rebot_loss_ratio = -10;
     rebot_profit_ratio = -20;
-    rebot_yunbi_markets = [{'id':'000038'}]; #[{'id':'btccny'}, {'id':'ltccny'}, {'id':'ethcny'}, {'id':'etccny'}, {'id':'btscny'}]#[{'id':'luncny'}];
+    rebot_yunbi_markets = [];#[{'id':'603998'}, {'id':'603997'}]; #[{'id':'btccny'}, {'id':'ltccny'}, {'id':'ethcny'}, {'id':'etccny'}, {'id':'btscny'}]#[{'id':'luncny'}];
     # file
     path = 'C:\\Users\\randy\\';
     log = 'log.txt';
