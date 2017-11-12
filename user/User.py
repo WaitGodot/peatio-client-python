@@ -3,6 +3,7 @@
 #
 from user.Order import Order
 from RebotConfig import RebotConfig
+import math
 
 class User():
     instanse = None;
@@ -104,6 +105,7 @@ class User():
                     volume = self.amount / price;
                 else:
                     volume = self.amount / price / RebotConfig.user_asset_ratio;
+            volume = math.floor(volume/100)*100;
             amount = price * volume;
             if amount > self.amount:
                 amount = self.amount;

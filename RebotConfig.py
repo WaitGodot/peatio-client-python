@@ -19,11 +19,12 @@ class RebotConfig():
     mysql_user = "randy";
     mysql_password = "randy521";
     mysql_database = "bot";
-
+    #data
+    data_need_load = False;
     # user
-    user_asset_ratio = 100;
+    user_asset_ratio = 10;
     user_asset_least = 200;
-    user_initamount = 10000000;
+    user_initamount = 100000;
     # exchange
     exchange = 'tushare';#'chbtc';
     # rebot
@@ -33,7 +34,7 @@ class RebotConfig():
     rebot_do_per_period = 5;
     rebot_release = False;
     rebot_is_test = True;
-    rebot_test_k_count = 200;
+    rebot_test_k_count = 100;
     rebot_test_begin = time.time() - rebot_test_k_count / DAY[rebot_period] *24*60*60; #1502006400;
 
     rebot_loss_ratio = -10;

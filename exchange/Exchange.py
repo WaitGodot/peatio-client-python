@@ -10,6 +10,14 @@ class Exchange():
         self.delegate = delegate;
 
     # function .
+    def loadData(self, period, timestamp):
+        if self.delegate and self.delegate.loadData:
+            self.delegate.loadData(period, timestamp);
+
+    def prepare(self, period, timestamp):
+        if self.delegate and self.delegate.prepare:
+            self.delegate.prepare(period, timestamp);
+
     def getServerTimestamp(self):
         if self.delegate:
             return self.delegate.getServerTimestamp();
@@ -43,4 +51,4 @@ class Exchange():
         if self.delegate:
             return self.delegate.doOrderCancel(orderID, market);
         return None;
-        
+

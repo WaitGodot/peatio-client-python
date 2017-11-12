@@ -106,14 +106,16 @@ class KLine():
 
         return ret;
 
-    def Get(self, idx):
-        return self.data[idx];
+    def Get(self, k):
+        if len(self.data) > 0:
+            return self.data[k];
+        return None;
 
     def __len__(self):
         return len(self.data);
 
     def __getitem__(self, k):
-        return self.data[k];
+        return self.Get(k);
 
     def __str__(self):
         str = '';

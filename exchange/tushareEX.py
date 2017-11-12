@@ -20,13 +20,24 @@ PERIOD2TYPE = {
 
 def PERIOD(period):
     return PERIOD2TYPE.get(period);
-
+def TIMESTAMP(period, timestamp):
+    st=None;
+    if period >= 240:
+        st = time.strftime("%Y-%m-%d", time.localtime(timestamp));
+    else:
+        st = time.strftime("%Y-%m-%d %H:%M", time.localtime(timestamp));
+    return st;
 class tushareEX():
 
     def set(self, access, sercet):
-        self.client = Client(access_key='6b658f1b-8a44-41cc-b307-ae3e95cc7de1', secret_key='d19135ee-d071-4653-a1b9-5b8065a07efc');
-
+        self.client = Client();
     # function
+    def loadData(self, period, timestamp):
+        self.client.loadData(PERIOD(period), TIMESTAMP(period, timestamp));
+
+    def prepare(self, period, timestamp):
+        self.client.prepare(PERIOD(period), TIMESTAMP(period, timestamp));
+
     def getServerTimestamp(self):
         return self.client.time();
 
@@ -72,7 +83,7 @@ class tushareEX():
 class tushareEXLocal():
 
     def set(self, access, sercet):
-        self.client = Client(access_key='6b658f1b-8a44-41cc-b307-ae3e95cc7de1', secret_key='d19135ee-d071-4653-a1b9-5b8065a07efc');
+        self.client = Client();
         self.accounts = {
             'cny' : {'currency':'cny', 'balance':'%d' % RebotConfig.user_initamount, 'locked':'0.0'},
         };
@@ -83,6 +94,12 @@ class tushareEXLocal():
         self.allMarkets = None;
         self.currentMarkets = None;
         self.poundage = 0.0001;
+
+    def loadData(self, period, timestamp):
+        self.client.loadData(PERIOD(period), TIMESTAMP(period, timestamp));
+
+    def prepare(self, period, timestamp):
+        self.client.prepare(PERIOD(period), TIMESTAMP(period, timestamp));
 
     def createOrder(self, market, side, time, price, volume, ext):
         volume = math.floor(volume/100)*100;
@@ -161,32 +178,14 @@ class tushareEXLocal():
         if  len(RebotConfig.rebot_yunbi_markets) > 0:
             return RebotConfig.rebot_yunbi_markets;
 
-        if self.currentMarkets:
-            return self.currentMarkets;
-
-        self.currentMarkets = [];
-        self.allMarkets = self.client.getMarkets();
-        total = 1000;
-        for k, v in enumerate(self.allMarkets):
-            if k > total:
-                break;
-            self.currentMarkets.append(v);
-        
-        return self.currentMarkets;
+        return self.client.getMarkets();
         #return [{'id':'anscny'},{'id':'btccny'}, {'id':'ethcny'}, {'id':'zeccny'}, {'id':'qtumcny'}, {'id':'gxscny'}, {'id':'eoscny'}, {'id':'sccny'}, {'id':'dgdcny'}, {'id':'1stcny'}, {'id':'btscny'}, {'id':'gntcny'}, {'id':'repcny'}, {'id':'etccny'}];
         #return [{'id':'anscny'}];
 
     def getK(self, market, limit, period, timestamp=None):
         ks = self.kss.get(market);
         if ks==None:
-            data = None;
-            st=None;
-            if timestamp != None:
-                if period >= 240:
-                    st = time.strftime("%Y-%m-%d", time.localtime(timestamp));
-                else:
-                    st = time.strftime("%Y-%m-%d %H:%M", time.localtime(timestamp));
-            data = self.client.getK(market, PERIOD(period), st);
+            data = self.client.getK(market, PERIOD(period), TIMESTAMP(period, timestamp));
             ndata = data.values.tolist();
             for k,v in enumerate(ndata):
                 if period >= 240:
@@ -201,14 +200,14 @@ class tushareEXLocal():
                 v[4] = c;
             self.kss[market] = ndata;
             ks = self.kss.get(market);
-            time.sleep(1);
+            # time.sleep(0.01);
 
 
         if ks == None:
             print '%s do not find kline' % market
         if timestamp > ks[-1][0]:
             print '{0} k line is over'.format(market);
-            return None;
+            return [];
         ret = [];
         for k,v in enumerate(ks):
             if v[0] >= timestamp:

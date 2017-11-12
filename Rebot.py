@@ -46,6 +46,11 @@ class Rebot():
         self.exchange.delegate(delegate);
         # time
         Time.SetServerTime(self.exchange.getServerTimestamp())
+        # data.
+        if RebotConfig.data_need_load:
+            self.exchange.loadData(period, RebotConfig.rebot_test_begin);
+        else:
+            self.exchange.prepare(period, RebotConfig.rebot_test_begin);
         # user.
         self.user = User();
         info = self.exchange.getUser();
@@ -72,9 +77,10 @@ class Rebot():
             r = WVStats();#MutliMovingAverage();
             r.Run(dk);
             lastk=r.KLines.Get(-1);
-            currency = market;#market[0:len(market)-3];
-            self.user.updateHigh(currency, lastk.c); # c or high
-            self.user.updateCost(currency, lastk.c)
+            if lastk:
+                currency = market;#market[0:len(market)-3];
+                self.user.updateHigh(currency, lastk.c); # c or high
+                self.user.updateCost(currency, lastk.c)
 
             self.rules[market] = r;
             Log.d('index:%d, start market:%s, begin time %s, current time:%s'%(k, market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(r.KLines.Get(0).t)), time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t))));
@@ -90,7 +96,7 @@ class Rebot():
         # user
         info = self.exchange.getUser();
         self.user.updatePositions(info['accounts']);
-        if True:
+        if False:
             print 'positions:';
             for k,v in (self.user.positions.items()):
                 if v['volume'] > 0:
@@ -113,8 +119,10 @@ class Rebot():
             prelastk=lastk;
             # k line.
             # dk = self.exchange.getK(market, 500, self.period, lastk.t);
-            print 'do market : %s' % market;
-            dk = self.exchange.getK(market, 2, self.period, lastk.t);
+            # print 'do market : %s' % market;
+            dk=None;
+            if lastk:
+                dk = self.exchange.getK(market, 2, self.period, lastk.t);
             type = None;
             if dk and len(dk) > 0:
                 ret     = r.Run(dk);
@@ -125,8 +133,8 @@ class Rebot():
                     buylist.append({'market':market, 'result':ret})
                 if type == 'sell':
                     selllist.append({'market':market, 'result':ret})
-            print '\tmarket status : {1}, last k time : {2}, type : {3}'.format(market, r.status, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), type);
-            if lastk.t != prelastk.t:
+            # print '\tmarket status : {1}, last k time : {2}, type : {3}'.format(market, r.status, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), type);
+            if lastk and prelastk and lastk.t != prelastk.t:
                 stop = False;
             currency =  market;#market[0:len(market)-3]; # for bitcoin
             pc = self.user.positions.get(currency);

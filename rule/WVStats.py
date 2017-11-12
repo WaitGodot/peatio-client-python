@@ -43,6 +43,8 @@ class WVStats():
         return;
 
     def Run(self, d, period=None, servertimestamp=None):
+        if len(d) == 0:
+            return ;
         self.KLines.Input(d);
 
         MA(self.KLines.prices, self.Value, self.ValueN);
@@ -68,19 +70,20 @@ class WVStats():
             arr = self.stats[nk];
             if len(arr) < 5:
                 arr.append({'k':k, 'value':value, 'volume':volume});
-                
+
         if self.status == 'buy':
-            self.statusdelay = self.statusdelay + 1;
-            if self.statusdelay >= 5 :
+            if (self.statusdelay - k.c)/self.statusdelay > 0.1:
                 ret['type'] = 'sell';
                 self.status = 'sell';
                 self.statusdelay = 0;
                 return ret;
+            else:
+                self.statusdelay = k.c;
 
         if k.c > value and k.vol > 2 * volume:
             ret['type'] = 'buy'
             self.status = 'buy';
-            self.statusdelay = 0;
+            self.statusdelay = k.c;
             self.stats.append([]);
             return  ret;
 
