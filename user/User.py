@@ -110,6 +110,9 @@ class User():
             if amount > self.amount:
                 amount = self.amount;
                 volume = amount / price;
+                volume = math.floor(volume/100)*100;
+            if volume < 100:
+                return 0;
             self.amount = self.amount - amount;
             return volume;
         if side == 'sell':

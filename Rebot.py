@@ -25,7 +25,6 @@ from Time import Time
 from Log import Log
 
 class Rebot():
-
     def __init__(self, period):
         self.period = period;
         self.exchange = Exchange(RebotConfig.access_key, RebotConfig.secret_key);
@@ -133,7 +132,7 @@ class Rebot():
                     buylist.append({'market':market, 'result':ret})
                 if type == 'sell':
                     selllist.append({'market':market, 'result':ret})
-            # print '\tmarket status : {1}, last k time : {2}, type : {3}'.format(market, r.status, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), type);
+            #print '\tmarket status : {1}, last k time : {2}, type : {3}'.format(market, r.status, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), type);
             if lastk and prelastk and lastk.t != prelastk.t:
                 stop = False;
             currency =  market;#market[0:len(market)-3]; # for bitcoin
@@ -227,7 +226,7 @@ class Rebot():
         if flag:
             ascale = (sv - self.user.initamount)/self.user.initamount*100;
             self.scales.append(ascale);
-            Log.d('all scale:{0}, cuurent cny:{1}'.format(ascale, sv));
+            Log.d('all scale:{0}, current cny:{1}'.format(ascale, sv));
         return stop;
 
 

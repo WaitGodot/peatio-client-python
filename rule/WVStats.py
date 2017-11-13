@@ -20,8 +20,11 @@ class WVStats():
         self.Volume = [];
         self.ValueN = ValueN;
         self.status = None;
+        self.statuscost = 0;
         self.statusdelay = 0;
         self.stats = [];
+        self.High = [];
+        self.Low = [];
 
     def Export(self, path):
         f = open(path, 'wb');
@@ -49,13 +52,19 @@ class WVStats():
 
         MA(self.KLines.prices, self.Value, self.ValueN);
         MA(self.KLines.volumes, self.Volume, self.ValueN);
-
-        return self.Do();
+        HIGH(self.KLines.prices, self.High, self.ValueN*2);
+        LOW(self.KLines.prices, self.Low, self.ValueN*2);
+        if len(self.KLines) > self.ValueN:
+            return self.Do();
+        return {'type':None};
 
     def Do(self, idx=-1, ignore=False):
         k = self.KLines.Get(idx);
         value = self.Value[idx];
         volume = self.Volume[idx];
+        phigh = self.High[-2];
+        plow = self.Low[-2];
+
         ret = {};
 
         ret['type'] = None;
@@ -72,18 +81,20 @@ class WVStats():
                 arr.append({'k':k, 'value':value, 'volume':volume});
 
         if self.status == 'buy':
-            if (self.statusdelay - k.c)/self.statusdelay > 0.1:
+            if (self.statuscost - k.c)/self.statuscost > 0.1 or self.statusdelay > 10:
                 ret['type'] = 'sell';
                 self.status = 'sell';
-                self.statusdelay = 0;
+                self.statuscost = 0;
                 return ret;
-            else:
-                self.statusdelay = k.c;
+            
+            self.statuscost = k.h;
+            self.statusdelay = self.statusdelay + 1;
 
-        if k.c > value and k.vol > 2 * volume:
+        if k.c > value and k.vol > 2 * volume and k.c > phigh:
             ret['type'] = 'buy'
             self.status = 'buy';
-            self.statusdelay = k.c;
+            self.statuscost = k.c;
+            self.statusdelay = 0;
             self.stats.append([]);
             return  ret;
 

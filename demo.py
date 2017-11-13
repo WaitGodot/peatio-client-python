@@ -97,6 +97,7 @@ def Done():
             if len(buys) > 0:
                 Log.d('\tcurrent buy order:')
                 for k,v in enumerate(buys):
+                    alltradetimes -= 1;
                     Log.d('\t\t%s' % v.__str__());
             Log.d('\twinner: %f, win: %d, all %d\n' % (float(wintimes)/ float(tradetimes) * 100, wintimes, tradetimes));
     if alltradetimes <= 0:

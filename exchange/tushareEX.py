@@ -93,7 +93,7 @@ class tushareEXLocal():
         self.kss = {};
         self.allMarkets = None;
         self.currentMarkets = None;
-        self.poundage = 0.0001;
+        self.poundage = 0;#0.0001;
 
     def loadData(self, period, timestamp):
         self.client.loadData(PERIOD(period), TIMESTAMP(period, timestamp));
