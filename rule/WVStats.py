@@ -80,6 +80,8 @@ class WVStats():
             if len(arr) < 5:
                 arr.append({'k':k, 'value':value, 'volume':volume});
 
+        self.stats.append([]);
+        
         if self.status == 'buy':
             if (self.statuscost - k.c)/self.statuscost > 0.1 or self.statusdelay > 10:
                 ret['type'] = 'sell';
@@ -95,7 +97,6 @@ class WVStats():
             self.status = 'buy';
             self.statuscost = k.c;
             self.statusdelay = 0;
-            self.stats.append([]);
             return  ret;
 
         return ret;
