@@ -145,6 +145,7 @@ class tushareEXLocal():
             c['balance'] = str(balance - o['executed_volume']);
             ccny = self.accounts.get('cny');
             ccny['balance'] = str(float(ccny['balance']) + o['executed_volume'] * o['avg_price'] * (1 - self.poundage) );
+            print '\t\tsell', market, balance, c['balance']
         if o['side'] == 'buy':
             c = self.accounts.get(currency);
             if c==None:
@@ -155,6 +156,7 @@ class tushareEXLocal():
             addbalance = o['executed_volume'] * (1 - self.poundage);
             addprice = o['avg_price'];
 
+            print '\t\tbuy',market, balance, addbalance
             c['balance'] = str(balance + addbalance);
             c['price'] = (balance)/(balance+addbalance)*price + addbalance/(balance+addbalance)*addprice;
 
@@ -203,7 +205,7 @@ class tushareEXLocal():
             # time.sleep(0.01);
 
 
-        if ks == None:
+        if ks == None or len(ks) == 0:
             print '%s do not find kline' % market
         if timestamp > ks[-1][0]:
             print '{0} k line is over'.format(market);

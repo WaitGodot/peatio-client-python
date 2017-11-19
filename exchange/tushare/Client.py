@@ -32,9 +32,13 @@ class Client():
             id = str(v[0]);
             if len(id) < 6:
                 id = '%s%s' % (self.zero(6 - len(id)), id);
-            key = '%s%s' %(id, period);
-            kd = pandas.read_csv('./data/%s/%s.csv' % (period, id));
-            self.kdatas[key] = kd;
+            try:
+                key = '%s%s' %(id, period);
+                kd = pandas.read_csv('./data/%s/%s.csv' % (period, id));
+                self.kdatas[key] = kd;
+            except Exception as e:
+                print '%s load fail!' % id;
+
         print 'prepare data compelete'
 
     def time(self):

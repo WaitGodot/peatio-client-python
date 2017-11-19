@@ -37,9 +37,9 @@ class RebotConfig():
     rebot_test_k_count = 100;
     rebot_test_begin = time.time() - rebot_test_k_count / DAY[rebot_period] *24*60*60; #1502006400;
 
-    rebot_loss_ratio = -10;
-    rebot_profit_ratio = -20;
-    rebot_yunbi_markets = [{'id':'603688'}];#[{'id':'603998'}, {'id':'603997'}]; #[{'id':'btccny'}, {'id':'ltccny'}, {'id':'ethcny'}, {'id':'etccny'}, {'id':'btscny'}]#[{'id':'luncny'}];
+    rebot_loss_ratio = -5;
+    rebot_profit_ratio = -8;
+    rebot_yunbi_markets = [];#[{'id':'603688'}];#[{'id':'603998'}, {'id':'603997'}]; #[{'id':'btccny'}, {'id':'ltccny'}, {'id':'ethcny'}, {'id':'etccny'}, {'id':'btscny'}]#[{'id':'luncny'}];
     # file
     path = 'C:\\Users\\randy\\';
     log = 'log.txt';
