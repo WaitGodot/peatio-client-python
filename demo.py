@@ -69,6 +69,7 @@ def Done():
     print '\n\norders'
     alltradetimes = 0;
     allwintimes = 0;
+    alluncompeletetimes = 0;
     for k,v in enumerate(r.markets):
         market = v['id'];
         ods = r.user.getOrderMarket(market);
@@ -77,6 +78,7 @@ def Done():
             buys = [];
             tradetimes = 0;
             wintimes = 0;
+            uncompeletetimes = 0
             Log.d('market:%s' % market);
             key=0;
             for k,v in enumerate(ods):
@@ -97,13 +99,17 @@ def Done():
             if len(buys) > 0:
                 Log.d('\tcurrent buy order:')
                 for k,v in enumerate(buys):
-                    alltradetimes -= 1;
+                    uncompeletetimes += 1;
+                    alluncompeletetimes += 1;
                     Log.d('\t\t%s' % v.__str__());
-            Log.d('\twinner: %f, win: %d, all %d\n' % (float(wintimes)/ float(tradetimes) * 100, wintimes, tradetimes));
+            if tradetimes - uncompeletetimes > 0 :
+                Log.d('\twinner: %f, win: %d, uncompelete %d, all %d\n' % (float(wintimes)/ float(tradetimes - uncompeletetimes) * 100, wintimes, uncompeletetimes, tradetimes));
+            else:
+                Log.d('\twinner: %f, win: %d, uncompelete %d, all %d\n' % (0, wintimes, uncompeletetimes, tradetimes));
     if alltradetimes <= 0:
         Log.d('none trade')
     else:
-        Log.d('all win: %f, win: %d, all %d\n' % (float(allwintimes)/ float(alltradetimes) * 100, allwintimes, alltradetimes));
+        Log.d('all win: %f, win: %d, uncompelete %d, all %d\n' % (float(allwintimes)/ float(alltradetimes - alluncompeletetimes) * 100, allwintimes, alluncompeletetimes, alltradetimes));
 
     import csv
     f = open('%sscales.csv' % RebotConfig.path, 'wb');

@@ -8,6 +8,10 @@ DAY = {
     1680 : 0.14,
 }
 
+'''
+huobi secret_key: f11eee28-537fc560-53f4dd12-07941
+huobi access_key: e4986d53-5ea3cb58-f96bc6c8-3e02c
+'''
 class RebotConfig():
     # access key
     access_key = "N1vXgZ0wSrTkLjgzG1oli4aD10DDRQW9gYxkHljW";
