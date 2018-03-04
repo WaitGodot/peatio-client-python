@@ -18,8 +18,8 @@ class yunbiEX():
         return self.client.get(get_api_path('members'));
 
     def getMarkets(self):
-        if  len(RebotConfig.rebot_yunbi_markets) > 0:
-            return RebotConfig.rebot_yunbi_markets;
+        if  len(RebotConfig.rebot_trade_markets) > 0:
+            return RebotConfig.rebot_trade_markets;
         return self.client.get(get_api_path('markets'));
 
     def getK(self, market, limit, period, timestamp=None):
@@ -128,8 +128,8 @@ class yunbiEXLocal():
         return d;
 
     def getMarkets(self):
-        if  len(RebotConfig.rebot_yunbi_markets) > 0:
-            return RebotConfig.rebot_yunbi_markets;
+        if  len(RebotConfig.rebot_trade_markets) > 0:
+            return RebotConfig.rebot_trade_markets;
 
         return self.client.get(get_api_path('markets'));
         #return [{'id':'anscny'},{'id':'btccny'}, {'id':'ethcny'}, {'id':'zeccny'}, {'id':'qtumcny'}, {'id':'gxscny'}, {'id':'eoscny'}, {'id':'sccny'}, {'id':'dgdcny'}, {'id':'1stcny'}, {'id':'btscny'}, {'id':'gntcny'}, {'id':'repcny'}, {'id':'etccny'}];

@@ -7,7 +7,8 @@ from exchange.yunbiEX import yunbiEXLocal
 from exchange.chbtcEX import chbtcEX
 from exchange.chbtcEX import chbtcEXLocal
 from exchange.tushareEX import tushareEXLocal
-
+from exchange.huobiEX import huobiEX
+from exchange.huobiEX import huobiEXLocal
 
 from formula.K import KLine
 from formula.MACD import MACD
@@ -41,6 +42,11 @@ class Rebot():
                 delegate = yunbiEXLocal();
         if RebotConfig.exchange == "tushare":
             delegate = tushareEXLocal();
+        if RebotConfig.exchange == "huobi":
+            if RebotConfig.rebot_release:
+                delegate = huobiEX();
+            else:
+                delegate = huobiEXLocal();
 
         self.exchange.delegate(delegate);
         # time
@@ -102,7 +108,7 @@ class Rebot():
                     print '{0} {1}'.format(k, v);
             # print '\n'
 
-        sv  = self.user.positions['cny']['volume'];
+        sv  = self.user.positions[RebotConfig.base_currency]['volume'];
         flag=False;
         stop=True;
         buylist     = [];

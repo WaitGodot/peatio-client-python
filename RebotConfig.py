@@ -3,6 +3,7 @@
 import time;
 
 DAY = {
+    30 : 8,
     60 : 4,
     240 : 1,
     1680 : 0.14,
@@ -14,9 +15,9 @@ huobi access_key: e4986d53-5ea3cb58-f96bc6c8-3e02c
 '''
 class RebotConfig():
     # access key
-    access_key = "N1vXgZ0wSrTkLjgzG1oli4aD10DDRQW9gYxkHljW";
+    access_key = "e4986d53-5ea3cb58-f96bc6c8-3e02c";
     # secret key
-    secret_key = "Xgz0QqlvdAx9lBjpiVLlnFOs2IwaPS3lftuw4geS";
+    secret_key = "f11eee28-537fc560-53f4dd12-07941";
 
     # mysql config
     mysql_address = "localhost";
@@ -30,20 +31,21 @@ class RebotConfig():
     user_asset_least = 10000;
     user_initamount = 1000000;
     # exchange
-    exchange = 'tushare';#'chbtc';
+    exchange = 'huobi';#'chbtc';
+    base_currency = 'usdt';
     # rebot
-    rebot_period = 1680; # min
+    rebot_period = 60; # min
     rebot_buy_least_angle = 5;
     rebot_trade_sure_times = 1;
     rebot_do_per_period = 5;
     rebot_release = False;
     rebot_is_test = True;
-    rebot_test_k_count = 100;
-    rebot_test_begin = time.time() - rebot_test_k_count / DAY[rebot_period] *24*60*60; #1502006400;
+    rebot_test_k_count = 200;
+    rebot_test_begin = time.time() - rebot_test_k_count / DAY[rebot_period]*24*60*60; #1502006400;
 
     rebot_loss_ratio = -5;
     rebot_profit_ratio = -8;
-    rebot_yunbi_markets = [];#[{'id':'603688'}];#[{'id':'603998'}, {'id':'603997'}]; #[{'id':'btccny'}, {'id':'ltccny'}, {'id':'ethcny'}, {'id':'etccny'}, {'id':'btscny'}]#[{'id':'luncny'}];
+    rebot_trade_markets = [{'id':'etcusdt'}];#[{'id':'603688'}];#[{'id':'603998'}, {'id':'603997'}]; #[{'id':'btccny'}, {'id':'ltccny'}, {'id':'ethcny'}, {'id':'etccny'}, {'id':'btscny'}]#[{'id':'luncny'}];
     # file
     path = 'C:\\Users\\randy\\';
     log = 'log.txt';

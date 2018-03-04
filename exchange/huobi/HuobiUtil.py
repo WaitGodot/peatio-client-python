@@ -51,6 +51,10 @@ ACCOUNT_ID = None
 # API 请求地址
 MARKET_URL = TRADE_URL = "https://api.huobi.pro"
 
+def set_user_key(access_key, secret_key):
+    ACCESS_KEY = access_key;
+    SECRET_KEY = secret_key;
+
 #各种请求,获取数据方式
 def http_get_request(url, params, add_to_headers=None):
     headers = {
