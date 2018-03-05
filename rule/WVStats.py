@@ -83,16 +83,16 @@ class WVStats():
         self.stats.append([]);
 
         if self.status == 'buy':
-            if (self.statuscost - k.c)/self.statuscost > 0.1 or self.statusdelay > 10:
+            if (self.statuscost - k.c)/self.statuscost > 0.15 or self.statusdelay > 10:
                 ret['type'] = 'sell';
                 self.status = 'sell';
                 self.statuscost = 0;
                 return ret;
 
             self.statuscost = k.h;
-            self.statusdelay = self.statusdelay + 1;
+            # self.statusdelay = self.statusdelay + 1;
 
-        if k.c > value and k.vol > 1.5 * volume and k.c > phigh and k.vol < 3.5 * volume:
+        if k.c > value and k.vol > 2.5 * volume: #and k.c > phigh :#and k.vol < 3.5 * volume:
             ret['type'] = 'buy'
             self.status = 'buy';
             self.statuscost = k.c;

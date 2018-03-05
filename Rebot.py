@@ -79,7 +79,8 @@ class Rebot():
             else:
                 dk = self.exchange.getK(market, 500, self.period);
 
-            r = WVStats();#MutliMovingAverage();
+            r = WVStats();
+            # r = MutliMovingAverage();
             r.Run(dk);
             lastk=r.KLines.Get(-1);
             if lastk:
@@ -132,13 +133,13 @@ class Rebot():
             if dk and len(dk) > 0:
                 ret     = r.Run(dk);
                 lastk   = r.KLines.Get(-1);
-                # print market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(self.marketTime[market])), time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t))
+                # print market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t))
                 type    = ret.get('type');
 
             #print '\tmarket status : {1}, last k time : {2}, type : {3}'.format(market, r.status, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), type);
             if lastk and prelastk and lastk.t != prelastk.t:
                 stop = False;
-            currency =  market;#market[0:len(market)-3]; # for bitcoin
+            currency = market[0:len(market) - len(RebotConfig.base_currency)];
             pc = self.user.positions.get(currency);
 
             scaleless = False;

@@ -21,6 +21,7 @@ from user.User import User
 from Rebot import Rebot;
 from exchange.yunbi.client import Client, get_api_path
 from exchange.yunbiEX import yunbiEXLocal
+from exchange.huobiEX import huobiEX
 from Time import Time
 from Log import Log
 
@@ -43,6 +44,14 @@ from Log import Log
 # gnt 360, 240
 # etc 120, 240
 # sys.stdout = open('%s%s' % (RebotConfig.path, RebotConfig.log), 'a+')
+
+ex = Exchange(RebotConfig.access_key, RebotConfig.secret_key);
+ex.delegate(huobiEX());
+
+print ex.getUser();
+print ex.doOrder('eosusdt', 'sell', 1000, 1); #def doOrder(self, market, side, price, volume, time=None, ext=None):
+
+exit();
 
 STATUS = "running";
 stop = 'stop'

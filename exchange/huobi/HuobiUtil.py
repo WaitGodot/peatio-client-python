@@ -52,6 +52,8 @@ ACCOUNT_ID = None
 MARKET_URL = TRADE_URL = "https://api.huobi.pro"
 
 def set_user_key(access_key, secret_key):
+    global ACCESS_KEY
+    global SECRET_KEY
     ACCESS_KEY = access_key;
     SECRET_KEY = secret_key;
 
@@ -106,7 +108,6 @@ def api_key_get(params, request_path):
     host_name = host_url = TRADE_URL
     host_name = urlparse.urlparse(host_url).hostname
     host_name = host_name.lower()
-
 
     params['Signature'] = createSign(params, method, host_name, request_path, SECRET_KEY)
     url = host_url + request_path

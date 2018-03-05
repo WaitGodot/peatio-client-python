@@ -71,7 +71,7 @@ class User():
             if price!=None:
                 pc['price'] = price;
             pc['volume']=vol;
-            if currency=='cny':
+            if currency==RebotConfig.base_currency:
                 self.amount = vol;
 
     def updateOrder(self, orders):
@@ -96,7 +96,7 @@ class User():
             else:
                 o = Order(id, type, market, t, price, volume, ext);
                 self.orders[id] = o;
-                self.setHigh(market, 0);#self.setHigh(market[0:len(market)-3], 0);
+                self.setHigh(market[0:len(market)-len(RebotConfig.base_currency)], 0);
 
     def doOrder(self, market, side, price, volume=None):
         if side == 'buy':
@@ -105,24 +105,24 @@ class User():
                     volume = self.amount / price;
                 else:
                     volume = self.amount / price / RebotConfig.user_asset_ratio;
-            volume = math.floor(volume/100)*100;
+            # volume = math.floor(volume/100)*100;
             amount = price * volume;
             if amount > self.amount:
                 amount = self.amount;
                 volume = amount / price;
-                volume = math.floor(volume/100)*100;
-            if volume < 100:
+                # volume = math.floor(volume/100)*100;
+            if volume < RebotConfig.user_least_vol:
                 return 0;
             self.amount = self.amount - amount;
             return volume;
         if side == 'sell':
-            currency = market;#market[0:len(market)-3];
+            currency = market[0:len(market) - len(RebotConfig.base_currency)];
             pc = self.positions.get(currency);
             if pc==None:
                 return;
             v = pc['volume'];
             if pc == None or v <= 0:
-                # print "\t\tnot enough positions, market : {0}".format(currency);
+                print "\t\tnot enough positions, market : {0}".format(currency);
                 return 0;
             if volume==None:
                 volume = v;
