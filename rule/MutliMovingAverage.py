@@ -174,7 +174,7 @@ class MutliMovingAverage():
                 pwidx = 2;
                 print "kdj:{0} time:{1}, c:{2}, k idx:{3}".format(type, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), k.c, k.idx)
 
-        if type == None and self.status == 'buy':
+        if type == None:# and self.status == 'buy':
             bc  = CROSS(self.MA2, self.MA1, idx);
             if bc:
                 self.tradeSure[1]['sell'] += 1;
@@ -241,7 +241,7 @@ class MutliMovingAverage():
                     waves.append(c1wave);
 
             if lenwaves >= 4 and pwidx == 1 and True:
-                if self.status != 'buy':
+                if self.status != 'buy' and False:
                     type = None;
                 else:
                     c2wave = waves[-3];

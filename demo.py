@@ -45,14 +45,6 @@ from Log import Log
 # etc 120, 240
 # sys.stdout = open('%s%s' % (RebotConfig.path, RebotConfig.log), 'a+')
 
-ex = Exchange(RebotConfig.access_key, RebotConfig.secret_key);
-ex.delegate(huobiEX());
-
-print ex.getUser();
-print ex.doOrder('eosusdt', 'sell', 1000, 1); #def doOrder(self, market, side, price, volume, time=None, ext=None):
-
-exit();
-
 STATUS = "running";
 stop = 'stop'
 

@@ -208,6 +208,7 @@ def orders_list(symbol, states, types=None, start_date=None, end_date=None, _fro
     if size:
         params['size'] = size
     url = '/v1/order/orders'
+    print params
     return api_key_get(params, url)
 
 

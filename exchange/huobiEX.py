@@ -153,6 +153,7 @@ class huobiEX():
         return ndata;
 
     def getOrder(self, market):
+        '''
         ret = self.marketOrders.get(market);
         if ret == None:
             return [];
@@ -166,6 +167,24 @@ class huobiEX():
                 o['remaining_volume'] = float(data['amount']) - float(data['field-amount']);
                 o['executed_volume'] = float(data['field-amount']);
                 o['averageprice'] = float(data['field-cash-amount']) / float(data['field-amount']);
+        '''
+        data = orders_list(market, "pre-submitted,submitted,partial-filled,partial-canceled,filled,canceled");
+        if data['status'] != 'ok':
+            return None;
+        ret = data['data'];
+
+        for k, o in enumerate(data['data']):
+            o['side'] = o['type'][0:3];
+            o['market'] = o['symbol'];
+            o['volume'] = float(o['amount']);
+            o['remaining_volume'] = float(o['amount']) - float(o['field-amount']);
+            o['executed_volume'] = float(o['field-amount']);
+            if o['executed_volume'] > 0:
+                o['averageprice'] = float(o['field-cash-amount']) / float(o['field-amount']);
+            else:
+                o['averageprice'] = 0;
+            if o['state'] == "canceled":
+                o['state'] = "cancel";
         return ret;
 
 
@@ -175,11 +194,15 @@ class huobiEX():
             nside = 'sell-limit';
         result = send_order(volume, 'api', market, nside, price);
         if result['status'] != 'ok':
-            return None;
-        self.createOrder(result['data'], market, side, price, volume, time, ext);
+            return False;
+        # self.createOrder(result['data'], market, side, price, volume, time, ext);
+        return True;
 
     def doOrderCancel(self, orderID, market):
-        return None;
+        data = cancel_order(orderID);
+        if data['status'] != "ok":
+            return False;
+        return True;
 
 
 class huobiEXLocal():

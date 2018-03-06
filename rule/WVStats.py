@@ -13,6 +13,10 @@ import time
 import math
 import csv
 
+MAXKCOUNT = 10;
+VOLTIMES = 2.2;
+MAXBETA = 0.1;
+
 class WVStats():
     def __init__(self, ValueN=10):
         self.KLines = KLine();
@@ -21,6 +25,7 @@ class WVStats():
         self.ValueN = ValueN;
         self.status = None;
         self.statuscost = 0;
+        self.statusbuycurrent = 0;
         self.statusdelay = 0;
         self.stats = [];
         self.High = [];
@@ -54,11 +59,15 @@ class WVStats():
         MA(self.KLines.volumes, self.Volume, self.ValueN);
         HIGH(self.KLines.prices, self.High, self.ValueN*2);
         LOW(self.KLines.prices, self.Low, self.ValueN*2);
-        if len(self.KLines) > self.ValueN:
+        if len(self.KLines) > self.ValueN + 1:
             return self.Do();
         return {'type':None};
 
     def Do(self, idx=-1, ignore=False):
+        prek = self.KLines.Get(idx - 1);
+        prevolume = self.Volume[idx - 1];
+        prevalue = self.Value[idx - 1];
+
         k = self.KLines.Get(idx);
         value = self.Value[idx];
         volume = self.Volume[idx];
@@ -82,21 +91,32 @@ class WVStats():
 
         self.stats.append([]);
 
+        dv = 1;
         if self.status == 'buy':
-            if (self.statuscost - k.c)/self.statuscost > 0.15 or self.statusdelay > 10:
+            dv = (self.statuscost - self.statusbuycurrent)/self.statuscost * 2 + 1;
+            # print (self.statuscost - k.c)/self.statuscost, MAXBETA * dv, dv, self.statusdelay, MAXKCOUNT * dv, prek.c > prevalue, prek.vol / (VOLTIMES * prevolume);
+            if (self.statuscost - k.c)/self.statuscost > MAXBETA * dv or self.statusdelay > MAXKCOUNT * dv:
                 ret['type'] = 'sell';
                 self.status = 'sell';
                 self.statuscost = 0;
+                self.statusbuycurrent = 0;
                 return ret;
 
-            self.statuscost = k.h;
-            # self.statusdelay = self.statusdelay + 1;
+            if self.statuscost < k.h :
+                self.statuscost = k.h;
+            self.statusdelay = self.statusdelay + 1;
 
-        if k.c > value and k.vol > 2.5 * volume: #and k.c > phigh :#and k.vol < 3.5 * volume:
+        if prek.vol > VOLTIMES * prevolume:
+            print prek.c, prevalue, prek.c > prevalue, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(prek.t));
+        if prek.c > prevalue and prek.vol > VOLTIMES * prevolume * dv: #and k.c > phigh :#and k.vol < 3.5 * volume:
             ret['type'] = 'buy'
             self.status = 'buy';
-            self.statuscost = k.c;
-            self.statusdelay = 0;
+            if self.statusbuycurrent == 0:
+                self.statuscost = k.c;
+                self.statusbuycurrent = k.c;
+                self.statusdelay = self.statusdelay/3;
+            else:
+                self.statusdelay = 0;
             return  ret;
 
         return ret;

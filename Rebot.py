@@ -102,7 +102,7 @@ class Rebot():
         # user
         info = self.exchange.getUser();
         self.user.updatePositions(info['accounts']);
-        if True:
+        if False:
             print 'positions:';
             for k,v in (self.user.positions.items()):
                 if v['volume'] > 0:
@@ -149,7 +149,7 @@ class Rebot():
                 self.user.updateHigh(currency, lastk.c); # c or high
                 cost = self.user.getCost(currency);
 
-                if cost and cost > 0:
+                if cost and cost > 0 and False:
                     scale = (current - cost)/cost*100;
                     rate = RebotConfig.rebot_loss_ratio;
                     if scale < rate:
@@ -163,7 +163,7 @@ class Rebot():
                     # else:
                     #    print '\tmarket:{0}, scale:{1}, position high price:{2}, current price{3}'.format(market, scale, pc['high'], lastk.c);
                 cost = self.user.getHighCost(currency);
-                if cost and cost > 0 and scaleless == False:
+                if cost and cost > 0 and scaleless == False and False:
                     scale = (current - cost)/cost*100;
                     rate = RebotConfig.rebot_profit_ratio;
                     if scale < rate:
@@ -185,7 +185,7 @@ class Rebot():
                 if type == 'sell':
                     selllist.append({'market':market, 'result':ret})
 
-        print 'do orders:'
+        # print 'do orders:'
         # sell
         nselllist = [];
         for key,v in enumerate(selllist):
