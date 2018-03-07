@@ -61,20 +61,21 @@ def set_user_key(access_key, secret_key):
 def http_get_request(url, params, add_to_headers=None):
     headers = {
         "Content-type": "application/x-www-form-urlencoded",
-        'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0'
+        'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:53.0) Gecko/20100101 Firefox/53.0',
+        'Accept-Language':'zh-cn'
     }
     if add_to_headers:
         headers.update(add_to_headers)
     postdata = urllib.urlencode(params)
-    try:
-        response = requests.get(url, postdata, headers=headers, timeout=TIMEOUT)
-        if response.status_code == 200:
-            return response.json()
-        else:
-            return {"status":"fail"}
-    except Exception as e:
-        print("httpGet failed, detail is:%s" %e)
-        return {"status":"fail","msg":e}
+    for k in range(0,10):
+        try:
+            response = requests.get(url, postdata, headers=headers, timeout=TIMEOUT)
+            if response.status_code == 200:
+                return response.json()
+            print 'response fail, recontected time', k;
+        except Exception as e:            
+            print("httpGet failed, detail is:%s" %e)
+    return {"status":"fail"}
 
 def http_post_request(url, params, add_to_headers=None):
     headers = {

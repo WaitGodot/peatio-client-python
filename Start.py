@@ -25,13 +25,15 @@ from Rebot import Rebot;
 from Time import Time
 from Log import Log
 
+print time.strftime("%H", time.localtime(1520411520));
+'''
 x = [311, 308.5, 304.11, 305.50, 304.51, 308.86, 305.96, 306.07, 308.1, 308.6, 310.99];
 y = [];
 MA(x, y, 21);
 print y;
 exchange = Exchange(RebotConfig.access_key, RebotConfig.secret_key);
 exchange.delegate(chbtcEX());
-
+'''
 #print exchange.getServerTimestamp();
 #print exchange.getUser();
 # print exchange.getK('btccny', 2, 60, 1504598400000);

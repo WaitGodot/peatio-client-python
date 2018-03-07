@@ -102,7 +102,7 @@ class Rebot():
         # user
         info = self.exchange.getUser();
         self.user.updatePositions(info['accounts']);
-        if False:
+        if True:
             print 'positions:';
             for k,v in (self.user.positions.items()):
                 if v['volume'] > 0:
@@ -129,6 +129,7 @@ class Rebot():
             dk=None;
             if lastk:
                 dk = self.exchange.getK(market, 2, self.period, lastk.t);
+            #    print dk
             type = None;
             if dk and len(dk) > 0:
                 ret     = r.Run(dk);
@@ -185,7 +186,7 @@ class Rebot():
                 if type == 'sell':
                     selllist.append({'market':market, 'result':ret})
 
-        # print 'do orders:'
+        print 'do orders:'
         # sell
         nselllist = [];
         for key,v in enumerate(selllist):

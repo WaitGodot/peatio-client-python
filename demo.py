@@ -65,6 +65,7 @@ def Done():
             if t > RebotConfig.rebot_test_k_count or stop == True:
                 break;
         else:
+            print 'sleep time', RebotConfig.rebot_period*60/RebotConfig.rebot_do_per_period;
             time.sleep(RebotConfig.rebot_period*60/RebotConfig.rebot_do_per_period);
 
     print '\n\norders'

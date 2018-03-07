@@ -20,13 +20,8 @@ def PERIOD(period):
         return '60min';
     return PERIOD2TYPE.get(period);
 
-def TIMESTAMP(period, timestamp):
-    st=None;
-    if period >= 240:
-        st = time.strftime("%Y-%m-%d", time.localtime(timestamp));
-    else:
-        st = time.strftime("%Y-%m-%d %H:%M", time.localtime(timestamp));
-    return st;
+def TIMEHOUR(timestamp):
+    return float(time.strftime("%H", time.localtime(timestamp)));
 
 def CreateDefalutKline():
     return {
@@ -37,27 +32,64 @@ def CreateDefalutKline():
         'close' : 0,
         'vol'   : 0, }
 
+def SortCompare(a, b):
+    return a['id'] < b['id'];
+
 def ConvertData(preiod1, data, period2):
     ndata = [];
     kcount = period2 / preiod1;
     datalenght = len(data);
     nk = None;
-    for key in range(0, datalenght):
-        idx = key % kcount;
-        k = data[key];
-        if idx == 1 or key == 0:
+    
+    for key in range(1, datalenght):
+        k = data[datalenght - 1 - key];
+        prek = data[datalenght - key];
+
+        h = TIMEHOUR(k['id']);
+        idx = h % kcount;
+
+        if idx == 0:
+            if nk != None:
+                nk['close'] = prek['close'];
+                nk['high']  = max(nk['high'], prek['high']);
+                nk['low']   = min(nk['low'], prek['low']);
+                nk['vol']   = nk['vol'] + nk['prevol'];
+
             nk = CreateDefalutKline();
+            ndata.append(nk);
             nk['id']    = k['id'];
             nk['open']  = k['open'];
-        if (idx == 0 and key != 0) or key == datalenght - 1:
-            nk['close'] = k['close'];
-            ndata.append(nk);
-        nk['high'] = max(nk['high'], k['high']);
-        nk['low'] = min(nk['low'], k['low']);
-        nk['vol'] = nk['vol'] + k['vol'];
+            nk['prevol'] = 0;
+            nk['idx'] = idx;
 
+        if nk != None:
+            nk['close'] = k['close'];
+            nk['high']  = max(nk['high'], k['high']);
+            nk['low']   = min(nk['low'], k['low']);
+            if nk['idx'] != idx:
+                nk['prevol'] += prek['vol'];
+                nk['idx'] = idx;
+            nk['vol'] = nk['prevol'] + k['vol'];
+
+    ndata.reverse();
+    #for k,v in enumerate(ndata):
+    #    print v, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(v['id']));
     return ndata;
 
+def ConvertKlineData(data):
+    ndata = [];
+    lendatadata = len(data);
+    for k in range(0, lendatadata):
+        v = data[lendatadata - 1 - k];
+        d = [0,1,2,3,4,5];
+        d[0] = v['id'];
+        d[1] = v['open'];
+        d[2] = v['high'];
+        d[3] = v['low'];
+        d[4] = v['close'];
+        d[5] = v['vol'];
+        ndata.append(d);
+    return ndata;
 
 class huobiEX():
 
@@ -132,25 +164,14 @@ class huobiEX():
             data = get_kline(market, PERIOD(period), limit * period / 60);
         else:
             data = get_kline(market, PERIOD(period), limit);
+        if data['status'] != 'ok':
+            return [];
         datadata = data['data'];
         if period > 60 :
             datadata = ConvertData(60, datadata, period);
 
         print "kline length", len(datadata), limit;
-        ndata = [];
-        lendatadata = len(datadata);
-        for k in range(0, lendatadata):
-            v = datadata[lendatadata - 1 - k];
-            if v['id'] >= timestamp:
-                d = [0,1,2,3,4,5];
-                d[0] = v['id'];
-                d[1] = v['open'];
-                d[2] = v['high'];
-                d[3] = v['low'];
-                d[4] = v['close'];
-                d[5] = v['vol'];
-                ndata.append(d);
-        return ndata;
+        return ConvertKlineData(datadata);
 
     def getOrder(self, market):
         '''
@@ -309,6 +330,19 @@ class huobiEXLocal():
         #return [{'id':'anscny'}];
 
     def getK(self, market, limit, period, timestamp=None):
+        if RebotConfig.rebot_is_test == False:
+            data = None;
+            if period > 60:
+                data = get_kline(market, PERIOD(period), RebotConfig.rebot_test_k_count * period / 60);
+            else:
+                data = get_kline(market, PERIOD(period), RebotConfig.rebot_test_k_count);
+            if data['status'] != 'ok':
+                return [];
+            datadata = data['data'];
+            if period > 60 :
+                datadata = ConvertData(60, datadata, period);
+            return ConvertKlineData(datadata);
+
         ks = self.kss.get(market);
         if ks==None:
             data = None;
@@ -321,21 +355,7 @@ class huobiEXLocal():
                 datadata = ConvertData(60, datadata, period);
 
             print "kline length", len(datadata), RebotConfig.rebot_test_k_count;
-            ndata = [];
-            lendatadata = len(datadata);
-            for k in range(0, lendatadata):
-                v = datadata[lendatadata - 1 - k];
-                if v['id'] >= timestamp:
-                    d = [0,1,2,3,4,5];
-                    d[0] = v['id'];
-                    d[1] = v['open'];
-                    d[2] = v['high'];
-                    d[3] = v['low'];
-                    d[4] = v['close'];
-                    d[5] = v['vol'];
-                    ndata.append(d);
-            
-            self.kss[market] = ndata;
+            self.kss[market] = ConvertKlineData(datadata);
             ks = self.kss.get(market);
             # time.sleep(0.01);
         # print timestamp, len(ks), ks[-1][0]
