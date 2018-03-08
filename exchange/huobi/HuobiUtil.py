@@ -67,14 +67,15 @@ def http_get_request(url, params, add_to_headers=None):
     if add_to_headers:
         headers.update(add_to_headers)
     postdata = urllib.urlencode(params)
-    for k in range(0,10):
+    for k in range(0,20):
         try:
             response = requests.get(url, postdata, headers=headers, timeout=TIMEOUT)
             if response.status_code == 200:
                 return response.json()
-            print 'response fail, recontected time', k;
+            print 'response fail, code', response.status_code;
+            return {"status":"fail"};
         except Exception as e:            
-            print("httpGet failed, detail is:%s" %e)
+            print 'response fail, recontected time', k, url, postdata;
     return {"status":"fail"}
 
 def http_post_request(url, params, add_to_headers=None):

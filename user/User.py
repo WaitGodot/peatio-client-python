@@ -106,6 +106,7 @@ class User():
                 else:
                     volume = self.amount / price / RebotConfig.user_asset_ratio;
             # volume = math.floor(volume/100)*100;
+            print self.amount, self.amount/ RebotConfig.user_asset_ratio;
             amount = price * volume;
             if amount > self.amount:
                 amount = self.amount;

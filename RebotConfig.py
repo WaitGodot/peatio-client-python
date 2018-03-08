@@ -23,7 +23,7 @@ class RebotConfig():
     user_asset_ratio = 6;
     user_asset_least = 600;
     user_initamount = 10000;
-    user_least_vol = 0;
+    user_least_vol = 0.0001;
     # exchange
     exchange = 'huobi';#'chbtc';
     base_currency = 'usdt';

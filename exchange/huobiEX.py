@@ -333,9 +333,9 @@ class huobiEXLocal():
         if RebotConfig.rebot_is_test == False:
             data = None;
             if period > 60:
-                data = get_kline(market, PERIOD(period), RebotConfig.rebot_test_k_count * period / 60);
+                data = get_kline(market, PERIOD(period), limit * period / 60);
             else:
-                data = get_kline(market, PERIOD(period), RebotConfig.rebot_test_k_count);
+                data = get_kline(market, PERIOD(period), limit);
             if data['status'] != 'ok':
                 return [];
             datadata = data['data'];
