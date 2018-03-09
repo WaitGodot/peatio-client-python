@@ -30,6 +30,7 @@ class WVStats():
         self.stats = [];
         self.High = [];
         self.Low = [];
+        self.lastidx = 0;
 
     def Export(self, path):
         f = open(path, 'wb');
@@ -53,7 +54,7 @@ class WVStats():
     def Run(self, d, period=None, servertimestamp=None):
         if len(d) == 0:
             return ;
-        self.KLines.Input(d);
+        self.lastidx = self.KLines.Input(d);
 
         MA(self.KLines.prices, self.Value, self.ValueN);
         MA(self.KLines.volumes, self.Volume, self.ValueN);
@@ -92,19 +93,30 @@ class WVStats():
         self.stats.append([]);
 
         dv = 1;
+        # print "xxxx", self.lastidx, self.statusbuycurrent, self.statusdelay, self.status;
         if self.status == 'buy':
             dv = (self.statuscost - self.statusbuycurrent)/self.statuscost * 2 + 1;
+            scale = (self.statuscost - k.c)/self.statuscost > MAXBETA * dv;
+            delay = (self.lastidx - self.statusdelay) > MAXKCOUNT * dv;
             # print (self.statuscost - k.c)/self.statuscost, MAXBETA * dv, dv, self.statusdelay, MAXKCOUNT * dv, prek.c > prevalue, prek.vol / (VOLTIMES * prevolume);
-            if (self.statuscost - k.c)/self.statuscost > MAXBETA * dv or self.statusdelay > MAXKCOUNT * dv:
+            if scale or delay:
                 ret['type'] = 'sell';
+                ret['ext'] = {
+                    'idx'   : idx,
+                    'dv'    : dv,
+                    'scale' : scale,
+                    'delay' : delay,
+                }
+
                 self.status = 'sell';
                 self.statuscost = 0;
+                self.statusdelay = 0;
                 self.statusbuycurrent = 0;
+
                 return ret;
 
             if self.statuscost < k.h :
                 self.statuscost = k.h;
-            self.statusdelay = self.statusdelay + 1;
 
         #if prek.vol > VOLTIMES * prevolume:
         #    print prek.c, prevalue, prek.c > prevalue, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(prek.t));
@@ -115,9 +127,12 @@ class WVStats():
             if self.statusbuycurrent == 0:
                 self.statuscost = k.c;
                 self.statusbuycurrent = k.c;
-                self.statusdelay = self.statusdelay/3;
+                self.statusdelay = self.lastidx;
+
+                ret['ext']['close'] = (k.c - value) / value * 100
+                ret['ext']['voltimes'] = k.vol / volume;
             else:
-                self.statusdelay = 0;
+                self.statusdelay = self.lastidx + (self.lastidx - self.statusdelay) / 3;
             return  ret;
 
         return ret;

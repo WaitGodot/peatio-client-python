@@ -93,6 +93,7 @@ class KLine():
             self.volumes.append(nk.vol);
             self.rmbvolumes.append(nk.rmbvolume);
             self.idx += 1;
+        return self.idx;
 
     def ToList(self, key, N=None):
         ret = [];

@@ -19,7 +19,7 @@ import urlparse
 # timeout in 5 seconds:
 TIMEOUT = 5
 
-API_HOST = "api.huobi.pro"
+API_HOST = "api.huobipro.com"
 
 SCHEME = 'https'
 
@@ -49,7 +49,7 @@ ACCOUNT_ID = None
 
 
 # API 请求地址
-MARKET_URL = TRADE_URL = "https://api.huobi.pro"
+MARKET_URL = TRADE_URL = "https://api.huobipro.com"
 
 def set_user_key(access_key, secret_key):
     global ACCESS_KEY
@@ -67,15 +67,16 @@ def http_get_request(url, params, add_to_headers=None):
     if add_to_headers:
         headers.update(add_to_headers)
     postdata = urllib.urlencode(params)
+    nurl = url + "?" + postdata;
     for k in range(0,20):
         try:
-            response = requests.get(url, postdata, headers=headers, timeout=TIMEOUT)
-            if response.status_code == 200:
-                return response.json()
-            print 'response fail, code', response.status_code;
-            return {"status":"fail"};
+            resp = urllib2.urlopen(nurl, timeout=TIMEOUT)
+            if resp:
+                data = resp.readlines()
+                if len(data):
+                    return json.loads(data[0])
         except Exception as e:            
-            print 'response fail, recontected time', k, url, postdata;
+            print 'response fail, recontected time', k, nurl;
     return {"status":"fail"}
 
 def http_post_request(url, params, add_to_headers=None):
