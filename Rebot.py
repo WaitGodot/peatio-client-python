@@ -134,7 +134,7 @@ class Rebot():
             if dk and len(dk) > 0:
                 ret     = r.Run(dk);
                 lastk   = r.KLines.Get(-1);
-                print market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t))
+                print market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), lastk
                 type    = ret.get('type');
 
             #print '\tmarket status : {1}, last k time : {2}, type : {3}'.format(market, r.status, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), type);
