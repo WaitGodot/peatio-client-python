@@ -94,9 +94,10 @@ class User():
                 else:
                     o.update(averageprice, leftvolume);
             else:
-                o = Order(id, type, market, t, price, volume, ext);
-                self.orders[id] = o;
-                self.setHigh(market[0:len(market)-len(RebotConfig.base_currency)], 0);
+                if state != 'cancel' and state != 'compelete':
+                    o = Order(id, type, market, t, price, volume, ext);
+                    self.orders[id] = o;
+                    self.setHigh(market[0:len(market)-len(RebotConfig.base_currency)], 0);
 
     def doOrder(self, market, side, price, volume=None):
         if side == 'buy':

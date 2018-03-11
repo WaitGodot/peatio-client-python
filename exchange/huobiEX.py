@@ -151,7 +151,7 @@ class huobiEX():
             d = ndata.get(v);
             if d['balance'] > 0 or d['locked'] > 0:
                 nndata.append(d);
-        return nndata;
+        return {'accounts':nndata};
 
     def getMarkets(self):
         if  len(RebotConfig.rebot_trade_markets) > 0:
@@ -195,17 +195,23 @@ class huobiEX():
         ret = data['data'];
 
         for k, o in enumerate(data['data']):
+            o['created_at'] = o['created-at'];
             o['side'] = o['type'][0:3];
+            if o['side'] != 'buy':
+                o['side'] = 'sell';
             o['market'] = o['symbol'];
             o['volume'] = float(o['amount']);
             o['remaining_volume'] = float(o['amount']) - float(o['field-amount']);
             o['executed_volume'] = float(o['field-amount']);
             if o['executed_volume'] > 0:
-                o['averageprice'] = float(o['field-cash-amount']) / float(o['field-amount']);
+                o['avg_price'] = float(o['field-cash-amount']) / float(o['field-amount']);
             else:
-                o['averageprice'] = 0;
-            if o['state'] == "canceled":
+                o['avg_price'] = 0;
+            # pre-submitted,submitted,partial-filled,partial-canceled,filled,canceled
+            if o['state'] == "canceled" or o['state'] == 'partial-canceled':
                 o['state'] = "cancel";
+            if o['state'] == 'filled':
+                o['state'] = 'compelete';
         return ret;
 
 
