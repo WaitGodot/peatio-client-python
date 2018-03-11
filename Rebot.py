@@ -197,8 +197,10 @@ class Rebot():
             k   = v['result']['k'];
             vol = self.user.doOrder(market, 'sell', k.c);
             if vol and vol > 0:
+                flag = True;
                 Log.d('\tmarket:{0}, do:{1}, price:{2}, volume:{3} time:{4}, ext:{5}'.format(market, 'sell', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), v['result']['ext']));
-                self.exchange.doOrder(market, 'sell', k.c, vol, k.t);
+                orderresult = self.exchange.doOrder(market, 'sell', k.c, vol, k.t);
+                Log.d('\t\torder result:{0}'.format(orderresult))
             #else:
             #    print '\tmarket:%s, not enough to sell' % market;
 
@@ -226,10 +228,11 @@ class Rebot():
             market  = v['market'];
             k   = v['result']['k'];
             vol = self.user.doOrder(market, 'buy', k.c);
-            self.exchange.doOrder(market, 'buy', k.c, vol, k.t, {'sort':v['sort']});
-            flag=True;
-            if vol > 0:
+            if vol and vol > 0:
+                flag=True;
                 Log.d('\tmarket:{0}, do:{1}, price:{2}, volume:{3}, time:{4}, ext:{5}'.format(market, 'buy', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), v['result']['ext']));
+                orderresult = self.exchange.doOrder(market, 'buy', k.c, vol, k.t, {'sort':v['sort']});
+                Log.d('\t\torder result:{0}'.format(orderresult))
             else:
                 print '\tnot enough cny !!! market:{0}, do:{1}, price:{2}, volume:{3}, time:{4}'.format(market, 'buy', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
             #else:

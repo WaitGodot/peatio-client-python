@@ -1,0 +1,107 @@
+INFO:root:
+start rebot 2018-03-11 20:08:44
+INFO:root:index:0, start market:etcusdt, begin time 2018-03-10 02:30:00, current time:2018-03-11 20:05:00
+INFO:root:index:1, start market:btcusdt, begin time 2018-03-10 02:30:00, current time:2018-03-11 20:05:00
+INFO:root:index:2, start market:bchusdt, begin time 2018-03-10 02:30:00, current time:2018-03-11 20:05:00
+INFO:root:index:3, start market:ethusdt, begin time 2018-03-10 02:30:00, current time:2018-03-11 20:05:00
+INFO:root:index:4, start market:ltcusdt, begin time 2018-03-10 02:30:00, current time:2018-03-11 20:05:00
+INFO:root:
+start rebot 2018-03-11 20:12:36
+INFO:root:index:0, start market:etcusdt, begin time 2018-03-10 02:35:00, current time:2018-03-11 20:10:00
+INFO:root:index:1, start market:btcusdt, begin time 2018-03-10 02:35:00, current time:2018-03-11 20:10:00
+INFO:root:index:2, start market:bchusdt, begin time 2018-03-10 02:35:00, current time:2018-03-11 20:10:00
+INFO:root:index:3, start market:ethusdt, begin time 2018-03-10 02:35:00, current time:2018-03-11 20:10:00
+INFO:root:index:4, start market:ltcusdt, begin time 2018-03-10 02:35:00, current time:2018-03-11 20:10:00
+INFO:root:index:5, start market:eosusdt, begin time 2018-03-10 02:35:00, current time:2018-03-11 20:10:00
+INFO:root:index:6, start market:xrpusdt, begin time 2018-03-10 02:35:00, current time:2018-03-11 20:10:00
+INFO:root:index:7, start market:omgusdt, begin time 2018-03-10 02:35:00, current time:2018-03-11 20:10:00
+INFO:root:index:8, start market:dashusdt, begin time 2018-03-10 02:35:00, current time:2018-03-11 20:10:00
+INFO:root:index:9, start market:zecusdt, begin time 2018-03-10 02:35:00, current time:2018-03-11 20:10:00
+INFO:root:	market:ltcusdt, do:buy, price:186.78, volume:0.148353517507, time:2018-03-11 20:10:00, ext:{'idx': -1}
+INFO:root:		order result:False
+INFO:root:	market:xrpusdt, do:buy, price:0.805, volume:28.6847515528, time:2018-03-11 20:10:00, ext:{'idx': -1}
+INFO:root:		order result:False
+INFO:root:all scale:0.154710843373, current cny:166.25682
+
+INFO:root:	market:ltcusdt, do:buy, price:186.27, volume:0.148759703656, time:2018-03-11 20:10:00, ext:{'idx': -1}
+INFO:root:		order result:False
+INFO:root:	market:xrpusdt, do:buy, price:0.805, volume:28.6847515528, time:2018-03-11 20:10:00, ext:{'idx': -1}
+INFO:root:		order result:False
+INFO:root:all scale:0.154710843373, current cny:166.25682
+
+INFO:root:	market:eosusdt, do:buy, price:5.98, volume:4.63369063545, time:2018-03-11 20:20:00, ext:{'close': 1.787234042553199, 'voltimes': 2.2595797702252267, 'idx': -1}
+INFO:root:		order result:False
+INFO:root:all scale:0.154710843373, current cny:166.25682
+
+INFO:root:	market:dashusdt, do:buy, price:511.92, volume:0.0541285161744, time:2018-03-11 20:30:00, ext:{'close': 0.9945174292089427, 'voltimes': 3.0527776146831, 'idx': -1}
+INFO:root:		order result:False
+INFO:root:all scale:0.154710843373, current cny:166.25682
+
+INFO:root:	market:dashusdt, do:buy, price:510.43, volume:0.0542865231276, time:2018-03-11 20:30:00, ext:{'idx': -1}
+INFO:root:		order result:False
+INFO:root:	market:zecusdt, do:buy, price:302.41, volume:0.0763573459872, time:2018-03-11 20:30:00, ext:{'close': 0.8638516443199167, 'voltimes': 3.50012257042948, 'idx': -1}
+INFO:root:		order result:False
+INFO:root:all scale:0.154710843373, current cny:166.25682
+
+INFO:root:	market:zecusdt, do:buy, price:302.5, volume:0.091601553719, time:2018-03-11 20:40:00, ext:{'idx': -1}
+INFO:root:		order result:False
+INFO:root:all scale:0.154710843373, current cny:166.25682
+
+INFO:root:
+start rebot 2018-03-11 20:52:53
+INFO:root:index:0, start market:etcusdt, begin time 2018-03-10 03:15:00, current time:2018-03-11 20:50:00
+INFO:root:index:1, start market:btcusdt, begin time 2018-03-10 03:15:00, current time:2018-03-11 20:50:00
+INFO:root:index:2, start market:bchusdt, begin time 2018-03-10 03:15:00, current time:2018-03-11 20:50:00
+INFO:root:index:3, start market:ethusdt, begin time 2018-03-10 03:15:00, current time:2018-03-11 20:50:00
+INFO:root:index:4, start market:ltcusdt, begin time 2018-03-10 03:15:00, current time:2018-03-11 20:50:00
+INFO:root:index:5, start market:eosusdt, begin time 2018-03-10 03:15:00, current time:2018-03-11 20:50:00
+INFO:root:index:6, start market:xrpusdt, begin time 2018-03-10 03:15:00, current time:2018-03-11 20:50:00
+INFO:root:index:7, start market:omgusdt, begin time 2018-03-10 03:15:00, current time:2018-03-11 20:50:00
+INFO:root:index:8, start market:dashusdt, begin time 2018-03-10 03:15:00, current time:2018-03-11 20:50:00
+INFO:root:index:9, start market:zecusdt, begin time 2018-03-10 03:15:00, current time:2018-03-11 20:50:00
+INFO:root:	market:btcusdt, do:buy, price:9286.09, volume:0.00298397603297, time:2018-03-11 21:10:00, ext:{'close': 1.2975693618729587, 'voltimes': 2.6569535290103943, 'idx': -1}
+INFO:root:		order result:False
+INFO:root:all scale:0.154710843373, current cny:166.25682
+
+INFO:root:	market:btcusdt, do:buy, price:9316.96, volume:0.00297408918789, time:2018-03-11 21:10:00, ext:{'idx': -1}
+INFO:root:		order result:False
+INFO:root:	market:eosusdt, do:buy, price:6.06, volume:3.81043316832, time:2018-03-11 21:10:00, ext:{'close': 1.6778523489932826, 'voltimes': 2.247622682578534, 'idx': -1}
+INFO:root:		order result:False
+INFO:root:all scale:0.154710843373, current cny:166.25682
+
+INFO:root:	market:eosusdt, do:buy, price:6.02, volume:4.60290199336, time:2018-03-11 21:15:00, ext:{'idx': -1}
+INFO:root:		order result:False
+INFO:root:all scale:0.154710843373, current cny:166.25682
+
+INFO:root:	market:xrpusdt, do:buy, price:0.8083, volume:34.2811703575, time:2018-03-11 21:35:00, ext:{'close': 0.1983389116152282, 'voltimes': 2.4000406440596853, 'idx': -1}
+INFO:root:		order result:False
+INFO:root:all scale:0.154710843373, current cny:166.25682
+
+INFO:root:	market:xrpusdt, do:buy, price:0.8086, volume:34.2684516448, time:2018-03-11 21:35:00, ext:{'idx': -1}
+INFO:root:		order result:False
+INFO:root:all scale:0.154710843373, current cny:166.25682
+
+INFO:root:
+start rebot 2018-03-11 21:42:00
+INFO:root:index:0, start market:etcusdt, begin time 2018-03-10 04:05:00, current time:2018-03-11 21:40:00
+INFO:root:index:1, start market:btcusdt, begin time 2018-03-10 04:05:00, current time:2018-03-11 21:40:00
+INFO:root:index:2, start market:bchusdt, begin time 2018-03-10 04:05:00, current time:2018-03-11 21:40:00
+INFO:root:index:3, start market:ethusdt, begin time 2018-03-10 04:05:00, current time:2018-03-11 21:40:00
+INFO:root:index:4, start market:ltcusdt, begin time 2018-03-10 04:05:00, current time:2018-03-11 21:40:00
+INFO:root:index:5, start market:eosusdt, begin time 2018-03-10 04:05:00, current time:2018-03-11 21:40:00
+INFO:root:index:6, start market:xrpusdt, begin time 2018-03-10 04:05:00, current time:2018-03-11 21:40:00
+INFO:root:index:7, start market:omgusdt, begin time 2018-03-10 04:05:00, current time:2018-03-11 21:40:00
+INFO:root:index:8, start market:dashusdt, begin time 2018-03-10 04:05:00, current time:2018-03-11 21:40:00
+INFO:root:index:9, start market:zecusdt, begin time 2018-03-10 04:05:00, current time:2018-03-11 21:40:00
+INFO:root:
+start rebot 2018-03-11 22:29:11
+INFO:root:index:0, start market:etcusdt, begin time 2018-03-10 04:50:00, current time:2018-03-11 22:25:00
+INFO:root:index:1, start market:btcusdt, begin time 2018-03-10 04:50:00, current time:2018-03-11 22:25:00
+INFO:root:index:2, start market:bchusdt, begin time 2018-03-10 04:50:00, current time:2018-03-11 22:25:00
+INFO:root:index:3, start market:ethusdt, begin time 2018-03-10 04:50:00, current time:2018-03-11 22:25:00
+INFO:root:index:4, start market:ltcusdt, begin time 2018-03-10 04:55:00, current time:2018-03-11 22:30:00
+INFO:root:index:5, start market:eosusdt, begin time 2018-03-10 04:55:00, current time:2018-03-11 22:30:00
+INFO:root:index:6, start market:xrpusdt, begin time 2018-03-10 04:55:00, current time:2018-03-11 22:30:00
+INFO:root:index:7, start market:omgusdt, begin time 2018-03-10 04:55:00, current time:2018-03-11 22:30:00
+INFO:root:index:8, start market:dashusdt, begin time 2018-03-10 04:55:00, current time:2018-03-11 22:30:00
+INFO:root:index:9, start market:zecusdt, begin time 2018-03-10 04:55:00, current time:2018-03-11 22:30:00

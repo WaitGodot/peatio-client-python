@@ -40,7 +40,7 @@ def ConvertData(preiod1, data, period2):
     kcount = period2 / preiod1;
     datalenght = len(data);
     nk = None;
-    
+
     for key in range(1, datalenght):
         k = data[datalenght - 1 - key];
         prek = data[datalenght - key];
@@ -127,7 +127,7 @@ class huobiEX():
 
     def getServerTimestamp(self):
         return time.time();
-    
+
     def getUser(self):
         data = get_balance();
         if data['status'] != 'ok':
@@ -169,8 +169,6 @@ class huobiEX():
         datadata = data['data'];
         if period > 60 :
             datadata = ConvertData(60, datadata, period);
-
-        print "kline length", len(datadata), limit;
         return ConvertKlineData(datadata);
 
     def getOrder(self, market):
@@ -221,6 +219,8 @@ class huobiEX():
             nside = 'sell-limit';
         result = send_order(volume, 'api', market, nside, price);
         if result['status'] != 'ok':
+            print '\t\tresult {0}'.format(result);
+            exit();
             return False;
         # self.createOrder(result['data'], market, side, price, volume, time, ext);
         return True;
@@ -279,7 +279,7 @@ class huobiEXLocal():
             return;
         market = o['market'];
         currency = market[0:len(market) - len(RebotConfig.base_currency)];
-        
+
         o['remaining_volume']=0;
         o['executed_volume']=o['volume'];
         o['state']='done';
@@ -317,7 +317,7 @@ class huobiEXLocal():
 
     def getServerTimestamp(self):
         return time.time();
-        
+
     def getUser(self):
         d = {}
         accounts = [];
