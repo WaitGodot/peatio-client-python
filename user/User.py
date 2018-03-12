@@ -21,7 +21,7 @@ class User():
         self.wintimes = 0;
 
     def setHigh(self, market, high):
-        pc = self.positions[market];
+        pc = self.positions.get(market);
         if pc:
             pc['high'] = high;
 
@@ -32,13 +32,13 @@ class User():
         return s;
 
     def getCost(self, currency):
-        pc = self.positions[currency];
+        pc = self.positions.get(currency);
         if pc==None:
             return None;
         return pc['volume'] * pc['price'];
 
     def getHighCost(self, currency):
-        pc = self.positions[currency];
+        pc = self.positions.get(currency);
         if pc==None:
             return None;
         return pc['volume'] * pc['high'];

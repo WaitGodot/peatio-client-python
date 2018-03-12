@@ -52,10 +52,8 @@ class Rebot():
         # time
         Time.SetServerTime(self.exchange.getServerTimestamp())
         # data.
-        if RebotConfig.data_need_load:
-            self.exchange.loadData(period, RebotConfig.rebot_test_begin);
-        else:
-            self.exchange.prepare(period, RebotConfig.rebot_test_begin);
+        self.exchange.loadData(period, RebotConfig.rebot_test_begin);
+        self.exchange.prepare(period, RebotConfig.rebot_test_begin);
         # user.
         self.user = User();
         info = self.exchange.getUser();

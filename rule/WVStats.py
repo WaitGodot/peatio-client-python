@@ -121,16 +121,16 @@ class WVStats():
         #if prek.vol > VOLTIMES * prevolume:
         #    print prek.c, prevalue, prek.c > prevalue, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(prek.t));
         # if (prek.c > prevalue and prek.vol > VOLTIMES * prevolume * dv) or (k.c > value and k.vol > VOLTIMES * volume * dv): #and k.c > phigh :#and k.vol < 3.5 * volume:
-        if (k.c > value and k.vol > VOLTIMES * volume * dv): #and k.c > phigh :#and k.vol < 3.5 * volume:
+        if (k.c > value and k.vol > VOLTIMES * volume * dv) and self.statusdelay != self.lastidx: #and k.c > phigh :#and k.vol < 3.5 * volume:
             ret['type'] = 'buy'
             self.status = 'buy';
+            ret['ext']['close'] = (k.c - value) / value * 100
+            ret['ext']['voltimes'] = k.vol / volume;
+
             if self.statusbuycurrent == 0:
                 self.statuscost = k.c;
                 self.statusbuycurrent = k.c;
                 self.statusdelay = self.lastidx;
-
-                ret['ext']['close'] = (k.c - value) / value * 100
-                ret['ext']['voltimes'] = k.vol / volume;
             else:
                 self.statusdelay = self.lastidx + (self.lastidx - self.statusdelay) / 3;
             return  ret;

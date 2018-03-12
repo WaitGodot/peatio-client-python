@@ -97,6 +97,7 @@ class huobiEX():
         set_user_key(access, secret);
         self.orders = {};
         self.marketOrders = {};
+        self.precisions = {};
     def createOrder(self, id, market, side, time, price, volume, ext):
         o = {
             'id':id,
@@ -118,12 +119,27 @@ class huobiEX():
             d = self.marketOrders.get(market);
         d.append(o);
         return id;
+    def getPrice(self, market, price):
+        d = self.precisions[market];
+        if d != None:
+            return round(price, int(d['price-precision']));
+        else :
+            return round(price, 0);
+    def getVolume(self, market, vol):
+        d = self.precisions[market];
+        if d != None:
+            return round(vol, int(d['amount-precision']));
+        else :
+            return round(vol, 0);
     # function
     def loadData(self, period, timestamp):
         return None;
 
     def prepare(self, period, timestamp):
-        return None;
+        d = get_symbols();
+        for k,v in enumerate(d['data']):
+            if v['quote-currency'] == 'usdt':
+                self.precisions[v['base-currency'] + 'usdt'] = v;
 
     def getServerTimestamp(self):
         return time.time();
@@ -214,6 +230,10 @@ class huobiEX():
 
 
     def doOrder(self, market, side, price, volume, time=None, ext=None):
+        volume = self.getVolume(market, volume);
+        if volume <= 0:
+            Log.d("\t\tvolume in precision is nil");
+            return False;
         nside = 'buy-limit';
         if side == 'sell':
             nside = 'sell-limit';
