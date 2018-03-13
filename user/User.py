@@ -75,6 +75,7 @@ class User():
                 self.amount = vol;
 
     def updateOrder(self, orders):
+        norders = [];
         for key, value in enumerate(orders):
             id   = value['id'];
             type = value['side'];
@@ -98,6 +99,12 @@ class User():
                     o = Order(id, type, market, t, price, volume, ext);
                     self.orders[id] = o;
                     self.setHigh(market[0:len(market)-len(RebotConfig.base_currency)], 0);
+            if o:
+                if o.status == "uncompelete":
+                    norders.append(o);
+                else:
+                    del self.orders[id];
+        return norders;
 
     def doOrder(self, market, side, price, volume=None):
         if side == 'buy':

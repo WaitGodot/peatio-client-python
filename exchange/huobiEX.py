@@ -209,10 +209,12 @@ class huobiEX():
         ret = data['data'];
 
         for k, o in enumerate(data['data']):
-            o['created_at'] = o['created-at'];
+            o['id'] = int(o['id']);
+            o['created_at'] = float(o['created-at'])/1000;
             o['side'] = o['type'][0:3];
             if o['side'] != 'buy':
                 o['side'] = 'sell';
+            o['price'] = float(o['price']);
             o['market'] = o['symbol'];
             o['volume'] = float(o['amount']);
             o['remaining_volume'] = float(o['amount']) - float(o['field-amount']);
@@ -240,7 +242,6 @@ class huobiEX():
         result = send_order(volume, 'api', market, nside, price);
         if result['status'] != 'ok':
             print '\t\tresult {0}'.format(result);
-            exit();
             return False;
         # self.createOrder(result['data'], market, side, price, volume, time, ext);
         return True;

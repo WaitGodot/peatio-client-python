@@ -67,16 +67,25 @@ def http_get_request(url, params, add_to_headers=None):
     if add_to_headers:
         headers.update(add_to_headers)
     postdata = urllib.urlencode(params)
-    nurl = url + "?" + postdata;
+    nurl = url;
+    if postdata != None and postdata != "":
+        nurl = nurl + "?" + postdata;
     for k in range(0,20):
         try:
+            response = requests.get(url, postdata, headers=headers, timeout=TIMEOUT)
+            if response.status_code == 200:
+                return response.json()
+            else:
+                print 'https error, code', response.status_code;
+            '''
             resp = urllib2.urlopen(nurl, timeout=TIMEOUT)
             if resp:
                 data = resp.readlines()
                 if len(data):
                     return json.loads(data[0])
+            '''
         except Exception as e:            
-            print 'response fail, recontected time', k, nurl;
+            print 'response fail, recontected time', k, nurl, e;
     return {"status":"fail"}
 
 def http_post_request(url, params, add_to_headers=None):

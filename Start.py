@@ -25,6 +25,7 @@ from Rebot import Rebot;
 from Time import Time
 from Log import Log
 
+print time.time();
 print time.strftime("%H", time.localtime(1520411520));
 '''
 x = [311, 308.5, 304.11, 305.50, 304.51, 308.86, 305.96, 306.07, 308.1, 308.6, 310.99];
