@@ -202,11 +202,10 @@ class Rebot():
             vol = self.user.doOrder(market, 'sell', k.c);
             if vol and vol > 0:
                 flag = True;
-                Log.d('\tmarket:{0}, do:{1}, price:{2}, volume:{3} time:{4}, ext:{5}'.format(market, 'sell', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), v['result']['ext']));
-                orderresult = self.exchange.doOrder(market, 'sell', k.c, vol, k.t);
+                orderresult, price, vol = self.exchange.doOrder(market, 'sell', k.c, vol, k.t);
                 r = self.rules[market];
                 r.OrderResult(v['result'], orderresult);
-                Log.d('\t\torder result:{0}'.format(orderresult))
+                Log.d('\tmarket:{0}, do:{1}, result:{2}, price:{3}, volume:{4}, time:{5}, ext:{6}'.format(market, 'SELL', orderresult, price, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), v['result']['ext']));
             #else:
             #    print '\tmarket:%s, not enough to sell' % market;
 
@@ -236,9 +235,8 @@ class Rebot():
             vol = self.user.doOrder(market, 'buy', k.c);
             if vol and vol > 0:
                 flag=True;
-                Log.d('\tmarket:{0}, do:{1}, price:{2}, volume:{3}, time:{4}, ext:{5}'.format(market, 'buy', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), v['result']['ext']));
-                orderresult = self.exchange.doOrder(market, 'buy', k.c, vol, k.t, {'sort':v['sort']});
-                Log.d('\t\torder result:{0}'.format(orderresult))
+                orderresult, price, vol = self.exchange.doOrder(market, 'buy', k.c, vol, k.t, {'sort':v['sort']});
+                Log.d('\tmarket:{0}, do:{1}, result:{2}, price:{3}, volume:{4}, time:{5}, ext:{6}'.format(market, 'BUY', orderresult, price, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), v['result']['ext']));
             else:
                 print '\tnot enough cny !!! market:{0}, do:{1}, price:{2}, volume:{3}, time:{4}'.format(market, 'buy', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)));
             #else:

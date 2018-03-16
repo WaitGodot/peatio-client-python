@@ -28,11 +28,16 @@ from Log import Log
 print time.time();
 print time.strftime("%H", time.localtime(1520411520));
 
+def f():
+    return 1,2,3;
+
 xx = 3;
 strr = '0.'
 for i in range(0,xx-1):
     strr += '0';
 strr += '1';
+x,y,z = f();
+print x,y,z;
 print strr;
 print round(float(strr),xx);
 '''

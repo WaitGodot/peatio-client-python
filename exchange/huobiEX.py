@@ -128,15 +128,10 @@ class huobiEX():
     def getVolume(self, market, vol):
         d = self.precisions[market];
         precision = int(d['amount-precision']);
-        strr = '0.'
-        for i in range(0,precision-1):
-            strr += '0';
-        strr += '1';
-        xp = round(float(strr),precision);
         if d != None:
-            return round(vol, precision) - xp;
+            return round(vol, precision);
         else :
-            return round(vol, 0) - xp;
+            return round(vol, 0);
     # function
     def loadData(self, period, timestamp):
         return None;
@@ -145,7 +140,9 @@ class huobiEX():
         d = get_symbols();
         for k,v in enumerate(d['data']):
             if v['quote-currency'] == 'usdt':
-                self.precisions[v['base-currency'] + 'usdt'] = v;
+                key = v['base-currency'] + 'usdt';
+                self.precisions[key] = v;
+                Log.d('{0}, precision {1}'.format(key, v));
 
     def getServerTimestamp(self):
         return time.time();
@@ -250,9 +247,9 @@ class huobiEX():
         result = send_order(volume, 'api', market, nside, price);
         if result['status'] != 'ok':
             Log.d('\t\tdo order result {0}'.format(result));
-            return False;
+            return False, price, volume;
         # self.createOrder(result['data'], market, side, price, volume, time, ext);
-        return True;
+        return True, price, volume;
 
     def doOrderCancel(self, orderID, market):
         data = cancel_order(orderID);
@@ -286,12 +283,6 @@ class huobiEXLocal():
     def getVolume(self, market, vol):
         d = self.precisions[market];
         precision = int(d['amount-precision']);
-        strr = '0.'
-        for i in range(0,precision-1):
-            strr += '0';
-        strr += '1';
-        print strr;
-        print round(float(strr),precision);
         if d != None:
             return round(vol, precision);
         else :
@@ -443,6 +434,6 @@ class huobiEXLocal():
         id = self.createOrder(market, side, time, price, volume, ext)
         if id:
             self.compeleteOrder(id);
-        return True
+        return True, price, volume;
     def doOrderCancel(self, orderID, market):
         return None;
