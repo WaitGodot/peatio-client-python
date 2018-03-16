@@ -30,16 +30,14 @@ print time.strftime("%H", time.localtime(1520411520));
 
 def f():
     return 1,2,3;
-
-xx = 3;
-strr = '0.'
-for i in range(0,xx-1):
-    strr += '0';
-strr += '1';
 x,y,z = f();
 print x,y,z;
-print strr;
-print round(float(strr),xx);
+def cut(num,c):
+    c=10**(-c)
+    return (num//c)*c
+
+print '%0.2f' % (0.299);
+print cut(0.299, 2)
 '''
 x = [311, 308.5, 304.11, 305.50, 304.51, 308.86, 305.96, 306.07, 308.1, 308.6, 310.99];
 y = [];

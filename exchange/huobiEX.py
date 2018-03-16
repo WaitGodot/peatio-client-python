@@ -34,6 +34,9 @@ def CreateDefalutKline():
 
 def SortCompare(a, b):
     return a['id'] < b['id'];
+def Cut(num,c):
+    c=10**(-c)
+    return (num//c)*c
 
 def ConvertData(preiod1, data, period2):
     ndata = [];
@@ -127,11 +130,10 @@ class huobiEX():
             return round(price, 0);
     def getVolume(self, market, vol):
         d = self.precisions[market];
-        precision = int(d['amount-precision']);
         if d != None:
-            return round(vol, precision);
+            return Cut(vol, int(d['amount-precision']));
         else :
-            return round(vol, 0);
+            return Cut(vol, 0);
     # function
     def loadData(self, period, timestamp):
         return None;
@@ -282,11 +284,10 @@ class huobiEXLocal():
             return round(price, 0);
     def getVolume(self, market, vol):
         d = self.precisions[market];
-        precision = int(d['amount-precision']);
         if d != None:
-            return round(vol, precision);
+            return Cut(vol, int(d['amount-precision']));
         else :
-            return round(vol, 0);
+            return Cut(vol, 0);
 
     def createOrder(self, market, side, time, price, volume, ext):
         if volume<=0:
