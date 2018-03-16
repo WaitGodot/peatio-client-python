@@ -137,8 +137,8 @@ class Rebot():
 
             for orderkey, o in enumerate(orders):
                 if o.checkMustCancel():
-                    Log.d('\tcancel olded order {0}', o);
-                    self.exchange.doOrderCancel(o.id, market);
+                    Log.d('\tcancel olded order {0}'.format(o));
+                    # self.exchange.doOrderCancel(o.id, market);
 
             #print '\tmarket status : {1}, last k time : {2}, type : {3}'.format(market, r.status, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), type);
             if lastk and prelastk and lastk.t != prelastk.t:
@@ -203,6 +203,8 @@ class Rebot():
                 flag = True;
                 Log.d('\tmarket:{0}, do:{1}, price:{2}, volume:{3} time:{4}, ext:{5}'.format(market, 'sell', k.c, vol, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(k.t)), v['result']['ext']));
                 orderresult = self.exchange.doOrder(market, 'sell', k.c, vol, k.t);
+                r = self.rules[market];
+                r.OrderResult(v['result'], orderresult);
                 Log.d('\t\torder result:{0}'.format(orderresult))
             #else:
             #    print '\tmarket:%s, not enough to sell' % market;

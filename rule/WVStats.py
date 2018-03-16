@@ -107,12 +107,6 @@ class WVStats():
                     'scale' : scale,
                     'delay' : delay,
                 }
-
-                self.status = 'sell';
-                self.statuscost = 0;
-                self.statusdelay = 0;
-                self.statusbuycurrent = 0;
-
                 return ret;
 
             if self.statuscost < k.h :
@@ -136,3 +130,11 @@ class WVStats():
             return  ret;
 
         return ret;
+    def OrderResult(self, ret, orderresult):
+        if ret['type'] == 'self':
+            if orderresult == true:
+                self.status = 'sell';
+                self.statuscost = 0;
+                self.statusdelay = 0;
+                self.statusbuycurrent = 0;
+

@@ -241,7 +241,7 @@ class huobiEX():
             nside = 'sell-limit';
         result = send_order(volume, 'api', market, nside, price);
         if result['status'] != 'ok':
-            print '\t\tresult {0}'.format(result);
+            Log.d('\t\tdo order result {0}'.format(result));
             return False;
         # self.createOrder(result['data'], market, side, price, volume, time, ext);
         return True;
@@ -409,6 +409,6 @@ class huobiEXLocal():
         id = self.createOrder(market, side, time, price, volume, ext)
         if id:
             self.compeleteOrder(id);
-
-    def doOrderCancel(self, orderID):
+        return True
+    def doOrderCancel(self, orderID, market):
         return None;

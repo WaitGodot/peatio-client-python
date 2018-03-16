@@ -32,8 +32,8 @@ class RebotConfig():
     rebot_buy_least_angle = 5;
     rebot_trade_sure_times = 1;
     rebot_do_per_period = 10;
-    rebot_release = True;
-    rebot_is_test = False;
+    rebot_release = False;
+    rebot_is_test = True;
     rebot_test_k_count = 500;
     rebot_test_begin = time.time() - rebot_test_k_count / (24 * 60 / rebot_period) * 24*60*60; #1502006400;
 
