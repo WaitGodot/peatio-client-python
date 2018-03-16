@@ -35,6 +35,8 @@ class Order():
             self.status = status;
 
     def checkMustCancel(self):
+        if RebotConfig.rebot_is_test:
+            return False;
         return time.time() - self.time > RebotConfig.rebot_period * 60 and self.status != "compelete";
 
     def __str__(self):

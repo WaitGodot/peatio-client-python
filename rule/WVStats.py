@@ -131,8 +131,8 @@ class WVStats():
 
         return ret;
     def OrderResult(self, ret, orderresult):
-        if ret['type'] == 'self':
-            if orderresult == true:
+        if ret['type'] == 'sell':
+            if orderresult:
                 self.status = 'sell';
                 self.statuscost = 0;
                 self.statusdelay = 0;

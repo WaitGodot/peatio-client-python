@@ -27,6 +27,14 @@ from Log import Log
 
 print time.time();
 print time.strftime("%H", time.localtime(1520411520));
+
+xx = 3;
+strr = '0.'
+for i in range(0,xx-1):
+    strr += '0';
+strr += '1';
+print strr;
+print round(float(strr),xx);
 '''
 x = [311, 308.5, 304.11, 305.50, 304.51, 308.86, 305.96, 306.07, 308.1, 308.6, 310.99];
 y = [];

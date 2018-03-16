@@ -100,11 +100,11 @@ class Rebot():
         # user
         info = self.exchange.getUser();
         self.user.updatePositions(info['accounts']);
-        if True:
-            print 'positions:';
+        if RebotConfig.rebot_release:
+            Log.d('positions:');
             for k,v in (self.user.positions.items()):
                 if v['volume'] > 0:
-                    print '{0} {1}'.format(k, v);
+                    Log.d('\t{0} {1}'.format(k, v));
             # print '\n'
 
         sv  = self.user.positions[RebotConfig.base_currency]['volume'];
@@ -132,13 +132,14 @@ class Rebot():
             if dk and len(dk) > 0:
                 ret     = r.Run(dk);
                 lastk   = r.KLines.Get(-1);
-                print market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), lastk
+                if RebotConfig.rebot_release:
+                    print market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), lastk
                 type    = ret.get('type');
 
             for orderkey, o in enumerate(orders):
                 if o.checkMustCancel():
                     Log.d('\tcancel olded order {0}'.format(o));
-                    # self.exchange.doOrderCancel(o.id, market);
+                    self.exchange.doOrderCancel(o.id, market);
 
             #print '\tmarket status : {1}, last k time : {2}, type : {3}'.format(market, r.status, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), type);
             if lastk and prelastk and lastk.t != prelastk.t:
@@ -189,7 +190,7 @@ class Rebot():
                 if type == 'sell':
                     selllist.append({'market':market, 'result':ret})
 
-        print 'do orders:'
+        # print 'do orders:'
         # sell
         nselllist = [];
         for key,v in enumerate(selllist):

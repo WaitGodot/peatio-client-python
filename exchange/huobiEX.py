@@ -110,7 +110,7 @@ class huobiEX():
             'volume':volume,
             'remaining_volume':volume,
             'executed_volume':0,
-            'ext':ext
+            'ext':ext,
         }
         self.orders[id] = o;
         d = self.marketOrders.get(market);
@@ -127,10 +127,16 @@ class huobiEX():
             return round(price, 0);
     def getVolume(self, market, vol):
         d = self.precisions[market];
+        precision = int(d['amount-precision']);
+        strr = '0.'
+        for i in range(0,precision-1):
+            strr += '0';
+        strr += '1';
+        xp = round(float(strr),precision);
         if d != None:
-            return round(vol, int(d['amount-precision']));
+            return round(vol, precision) - xp;
         else :
-            return round(vol, 0);
+            return round(vol, 0) - xp;
     # function
     def loadData(self, period, timestamp):
         return None;
@@ -233,6 +239,8 @@ class huobiEX():
 
     def doOrder(self, market, side, price, volume, time=None, ext=None):
         volume = self.getVolume(market, volume);
+        price = self.getPrice(market, price);
+        
         if volume <= 0:
             Log.d("\t\tvolume in precision is nil");
             return False;
@@ -267,6 +275,27 @@ class huobiEXLocal():
         self.allMarkets = None;
         self.currentMarkets = None;
         self.poundage = 0;#0.0001;
+        self.precisions = {};
+
+    def getPrice(self, market, price):
+        d = self.precisions[market];
+        if d != None:
+            return round(price, int(d['price-precision']));
+        else :
+            return round(price, 0);
+    def getVolume(self, market, vol):
+        d = self.precisions[market];
+        precision = int(d['amount-precision']);
+        strr = '0.'
+        for i in range(0,precision-1):
+            strr += '0';
+        strr += '1';
+        print strr;
+        print round(float(strr),precision);
+        if d != None:
+            return round(vol, precision);
+        else :
+            return round(vol, 0);
 
     def createOrder(self, market, side, time, price, volume, ext):
         if volume<=0:
@@ -334,7 +363,10 @@ class huobiEXLocal():
         return None;
 
     def prepare(self, period, timestamp):
-        return None;
+        d = get_symbols();
+        for k,v in enumerate(d['data']):
+            if v['quote-currency'] == 'usdt':
+                self.precisions[v['base-currency'] + 'usdt'] = v;
 
     def getServerTimestamp(self):
         return time.time();
@@ -406,6 +438,8 @@ class huobiEXLocal():
         return ret;
 
     def doOrder(self, market, side, price, volume, time=None, ext=None):
+        price = self.getPrice(market, price);
+        volume = self.getVolume(market, volume);
         id = self.createOrder(market, side, time, price, volume, ext)
         if id:
             self.compeleteOrder(id);
