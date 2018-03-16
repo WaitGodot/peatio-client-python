@@ -109,10 +109,13 @@ class User():
     def doOrder(self, market, side, price, volume=None):
         if side == 'buy':
             if volume==None:
-                if self.amount / RebotConfig.user_asset_ratio < RebotConfig.user_asset_least:
+                if self.amount < RebotConfig.user_asset_least:
                     volume = self.amount / price;
                 else:
-                    volume = self.amount / price / RebotConfig.user_asset_ratio;
+                    cleastamount = self.amount/RebotConfig.user_asset_ratio 
+                    if cleastamount < RebotConfig.user_asset_least:
+                        cleastamount = RebotConfig.user_asset_least;
+                    volume = cleastamount / price ;
             # volume = math.floor(volume/100)*100;
             amount = price * volume;
             if amount > self.amount:
