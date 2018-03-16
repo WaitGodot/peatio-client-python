@@ -6,7 +6,7 @@ import threading
 
 from exchange.Exchange import Exchange
 from exchange.yunbiEX import yunbiEX
-
+from exchange.huobiEX import huobiEX
 from exchange.chbtcEX import chbtcEX
 
 from formula.K import KLine
@@ -33,11 +33,24 @@ def f():
 x,y,z = f();
 print x,y,z;
 def cut(num,c):
-    c=10**(-c)
-    return (num//c)*c
+    s = str(num);
+    pos = s.find('.');
+    if pos > 0:
+        print pos, s[0:pos+c+1], c, 'xxx';
+        return float(s[0:pos+c+1]);
+    else:
+        return num;
 
-print '%0.2f' % (0.299);
 print cut(0.299, 2)
+print cut(299, 2)
+print cut(0.299, 5)
+print cut('1.234567890',4);
+# '''
+exchange = Exchange(RebotConfig.access_key, RebotConfig.secret_key)
+exchange.delegate(huobiEX());
+exchange.prepare(None, None)
+print exchange.doOrder('omgusdt','sell',21,1.813)
+# '''
 '''
 x = [311, 308.5, 304.11, 305.50, 304.51, 308.86, 305.96, 306.07, 308.1, 308.6, 310.99];
 y = [];

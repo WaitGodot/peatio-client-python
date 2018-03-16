@@ -35,9 +35,13 @@ def CreateDefalutKline():
 def SortCompare(a, b):
     return a['id'] < b['id'];
 def Cut(num,c):
-    c=10**(-c)
-    return (num//c)*c
-
+    s = str(num);
+    pos = s.find('.');
+    if pos > 0:
+        print pos, s[0:pos+c+1], c, 'xxx';
+        return float(s[0:pos+c+1]);
+    else:
+        return num;
 def ConvertData(preiod1, data, period2):
     ndata = [];
     kcount = period2 / preiod1;
@@ -239,7 +243,6 @@ class huobiEX():
     def doOrder(self, market, side, price, volume, time=None, ext=None):
         volume = self.getVolume(market, volume);
         price = self.getPrice(market, price);
-        
         if volume <= 0:
             Log.d("\t\tvolume in precision is nil");
             return False;
