@@ -101,10 +101,10 @@ class Rebot():
         info = self.exchange.getUser();
         self.user.updatePositions(info['accounts']);
         if RebotConfig.rebot_release:
-            Log.d('positions:');
+            print 'positions:';
             for k,v in (self.user.positions.items()):
                 if v['volume'] > 0:
-                    Log.d('\t{0} {1}'.format(k, v));
+                    print '\t{0} {1}'.format(k, v);
             # print '\n'
 
         sv  = self.user.positions[RebotConfig.base_currency]['volume'];

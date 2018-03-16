@@ -39,8 +39,8 @@ class RebotConfig():
 
     rebot_loss_ratio = -5;
     rebot_profit_ratio = -8;
-    # rebot_trade_markets = [{'id':'etcusdt'}, {'id':'btcusdt'}, {'id':'bchusdt'},{'id':'ethusdt'},{'id':'ltcusdt'},{'id':'eosusdt'},{'id':'xrpusdt'},{'id':'omgusdt'},{'id':'dashusdt'},{'id':'zecusdt'}];#[{'id':'603688'}];#[{'id':'603998'}, {'id':'603997'}]; #[{'id':'btccny'}, {'id':'ltccny'}, {'id':'ethcny'}, {'id':'etccny'}, {'id':'btscny'}]#[{'id':'luncny'}];
-    rebot_trade_markets = [{'id':'bchusdt'}];
+    rebot_trade_markets = [{'id':'etcusdt'}, {'id':'btcusdt'}, {'id':'bchusdt'},{'id':'ethusdt'},{'id':'ltcusdt'},{'id':'eosusdt'},{'id':'xrpusdt'},{'id':'omgusdt'},{'id':'dashusdt'},{'id':'zecusdt'}];#[{'id':'603688'}];#[{'id':'603998'}, {'id':'603997'}]; #[{'id':'btccny'}, {'id':'ltccny'}, {'id':'ethcny'}, {'id':'etccny'}, {'id':'btscny'}]#[{'id':'luncny'}];
+    # rebot_trade_markets = [{'id':'bchusdt'}];
     # file
     path = ''
     log = 'log.txt';
