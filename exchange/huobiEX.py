@@ -34,11 +34,10 @@ def CreateDefalutKline():
 
 def SortCompare(a, b):
     return a['id'] < b['id'];
-def Cut(num,c):
-    s = str(num);
+def Cut(num, c):
+    s = '{:.9f}'.format(num);
     pos = s.find('.');
     if pos > 0:
-        print pos, s[0:pos+c+1], c, 'xxx';
         return float(s[0:pos+c+1]);
     else:
         return num;

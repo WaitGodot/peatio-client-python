@@ -33,10 +33,10 @@ def f():
 x,y,z = f();
 print x,y,z;
 def cut(num,c):
-    s = str(num);
+    s = '{:.9f}'.format(num);
     pos = s.find('.');
     if pos > 0:
-        print pos, s[0:pos+c+1], c, 'xxx';
+        print pos, s[0:pos+c+1], c, 'xxx', s,num;
         return float(s[0:pos+c+1]);
     else:
         return num;
@@ -44,7 +44,8 @@ def cut(num,c):
 print cut(0.299, 2)
 print cut(299, 2)
 print cut(0.299, 5)
-print cut('1.234567890',4);
+print cut(1.234567890,4);
+print cut(0.0000012345,4);
 # '''
 exchange = Exchange(RebotConfig.access_key, RebotConfig.secret_key)
 exchange.delegate(huobiEX());
