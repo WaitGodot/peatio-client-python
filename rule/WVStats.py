@@ -131,6 +131,7 @@ class WVStats():
 
         return ret;
     def OrderResult(self, ret, orderresult):
+        Log.d('\t\torder result, self status {0}, result type {1}, order result {2}'.format(self.status, ret['type'], orderresult));
         if ret['type'] == 'sell':
             if orderresult:
                 self.status = 'sell';

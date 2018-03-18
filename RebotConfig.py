@@ -1,11 +1,6 @@
 # bot config.
 # yunbi user config
 import time;
-
-'''
-huobi secret_key: f11eee28-537fc560-53f4dd12-07941
-huobi access_key: e4986d53-5ea3cb58-f96bc6c8-3e02c
-'''
 class RebotConfig():
     # access key
     access_key = "e4986d53-5ea3cb58-f96bc6c8-3e02c";
@@ -20,9 +15,9 @@ class RebotConfig():
     #data
     data_need_load = False;
     # user
-    user_asset_ratio = 6;
-    user_asset_least = 20;
-    user_initamount = 166;
+    user_asset_ratio = 10;
+    user_asset_least = 10;
+    user_initamount = 132;
     user_least_vol = 0.00001;
     # exchange
     exchange = 'huobi';#'chbtc';
