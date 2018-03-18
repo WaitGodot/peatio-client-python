@@ -244,7 +244,7 @@ class huobiEX():
         price = self.getPrice(market, price);
         if volume <= 0:
             Log.d("\t\tvolume in precision is nil");
-            return False;
+            return False, price, volume;
         nside = 'buy-limit';
         if side == 'sell':
             nside = 'sell-limit';

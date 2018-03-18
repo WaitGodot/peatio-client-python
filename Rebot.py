@@ -1,6 +1,6 @@
 import time
 import urllib2
-
+import math
 from exchange.Exchange import Exchange
 from exchange.yunbiEX import yunbiEX
 from exchange.yunbiEX import yunbiEXLocal
@@ -126,7 +126,10 @@ class Rebot():
             # print 'do market : %s' % market;
             dk=None;
             if lastk:
-                dk = self.exchange.getK(market, 2, self.period, lastk.t);
+                kcount = int(math.floor((time.time()-lastk.t)/(self.period*60)) + 2);
+                if kcount < 2:
+                    kcount = 2;
+                dk = self.exchange.getK(market, kcount, self.period, lastk.t);
             #    print dk
             type = None;
             if dk and len(dk) > 0:

@@ -124,6 +124,8 @@ class User():
                 # volume = math.floor(volume/100)*100;
             if volume < RebotConfig.user_least_vol:
                 return 0;
+            if self.amount < 6:
+                return 0;
             self.amount = self.amount - amount;
             return volume;
         if side == 'sell':

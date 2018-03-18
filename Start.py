@@ -46,12 +46,13 @@ print cut(299, 2)
 print cut(0.299, 5)
 print cut(1.234567890,4);
 print cut(0.0000012345,4);
-# '''
+print (time.time()-time.time()+1 )/(60*5), time.time()
+'''
 exchange = Exchange(RebotConfig.access_key, RebotConfig.secret_key)
 exchange.delegate(huobiEX());
 exchange.prepare(None, None)
 print exchange.doOrder('omgusdt','sell',21,1.813)
-# '''
+'''
 '''
 x = [311, 308.5, 304.11, 305.50, 304.51, 308.86, 305.96, 306.07, 308.1, 308.6, 310.99];
 y = [];
