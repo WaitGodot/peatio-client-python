@@ -7,6 +7,7 @@ from rule.WaveKline import WaveKline
 from rule.WavePoint import WavePoint
 from rule.WaveKline import Direction
 
+from Log import Log
 from formula.Formula import *
 
 import time
