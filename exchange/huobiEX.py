@@ -147,17 +147,17 @@ class huobiEX():
             if v['quote-currency'] == 'usdt':
                 key = v['base-currency'] + 'usdt';
                 self.precisions[key] = v;
-                Log.d('{0}, precision {1}'.format(key, v));
 
     def getServerTimestamp(self):
         return time.time();
 
     def getUser(self):
         data = get_balance();
+        nndata = [];
         if data['status'] != 'ok':
-            return None;
+            return {'accounts':nndata};
         if data['data']['state'] != 'working':
-            return None;
+            return {'accounts':nndata};
         listdata = data['data']['list'];
         ndata = {};
         for k,v in enumerate(listdata):
@@ -170,7 +170,6 @@ class huobiEX():
                 c['balance'] = float(v['balance']);
             if v['type'] == 'frozen':
                 c['locked'] = float(v['balance']);
-        nndata = [];
         for k,v in enumerate(ndata):
             d = ndata.get(v);
             if d['balance'] > 0 or d['locked'] > 0:

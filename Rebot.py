@@ -136,7 +136,7 @@ class Rebot():
                 ret     = r.Run(dk);
                 lastk   = r.KLines.Get(-1);
                 if RebotConfig.rebot_release:
-                    print market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), lastk
+                    print market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), lastk
                 type    = ret.get('type');
 
             for orderkey, o in enumerate(orders):

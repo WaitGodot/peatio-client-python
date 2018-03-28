@@ -23,10 +23,10 @@ class RebotConfig():
     exchange = 'huobi';#'chbtc';
     base_currency = 'usdt';
     # rebot
-    rebot_period = 5; # min
+    rebot_period = 120; # min
     rebot_buy_least_angle = 5;
     rebot_trade_sure_times = 1;
-    rebot_do_per_period = 10;
+    rebot_do_per_period = 120;
     rebot_release = True;
     rebot_is_test = False;
     rebot_test_k_count = 500;
@@ -34,7 +34,7 @@ class RebotConfig():
 
     rebot_loss_ratio = -5;
     rebot_profit_ratio = -8;
-    rebot_trade_markets = [{'id':'etcusdt'}, {'id':'btcusdt'}, {'id':'bchusdt'},{'id':'ethusdt'},{'id':'ltcusdt'},{'id':'eosusdt'},{'id':'xrpusdt'},{'id':'omgusdt'},{'id':'dashusdt'},{'id':'zecusdt'}];#[{'id':'603688'}];#[{'id':'603998'}, {'id':'603997'}]; #[{'id':'btccny'}, {'id':'ltccny'}, {'id':'ethcny'}, {'id':'etccny'}, {'id':'btscny'}]#[{'id':'luncny'}];
+    rebot_trade_markets = [{'id':'etcusdt'}, {'id':'btcusdt'}, {'id':'bchusdt'},{'id':'ethusdt'},{'id':'ltcusdt'},{'id':'eosusdt'},{'id':'xrpusdt'},{'id':'omgusdt'},{'id':'dashusdt'},{'id':'zecusdt'},{'id':'htusdt'}];#[{'id':'603688'}];#[{'id':'603998'}, {'id':'603997'}]; #[{'id':'btccny'}, {'id':'ltccny'}, {'id':'ethcny'}, {'id':'etccny'}, {'id':'btscny'}]#[{'id':'luncny'}];
     # rebot_trade_markets = [{'id':'bchusdt'}];
     # file
     path = ''
