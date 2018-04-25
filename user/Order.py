@@ -37,7 +37,7 @@ class Order():
     def checkMustCancel(self):
         if RebotConfig.rebot_is_test:
             return False;
-        return time.time() - self.time > RebotConfig.rebot_period * 60 and self.status != "compelete";
+        return time.time() - self.time > RebotConfig.rebot_period * 60/4 and self.status != "compelete";
 
     def __str__(self):
         return "orderid:{0}, id:{1}, type:{2}, market:{3}, time:{4}, user price:{5}, average price:{6}, volume:{7}, left volume:{8}, status:{9}, ext:{10}".format(self.orderid, self.id, self.type, self.market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(self.time)), self.userprice, self.averageprice, self.volume, self.leftvolume, self.status, self.ext);

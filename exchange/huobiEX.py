@@ -237,17 +237,17 @@ class huobiEX():
                 o['state'] = 'compelete';
         return ret;
 
-
     def doOrder(self, market, side, price, volume, time=None, ext=None):
         volume = self.getVolume(market, volume);
         price = self.getPrice(market, price);
         if volume <= 0:
             Log.d("\t\tvolume in precision is nil");
             return True, price, volume;
-        nside = 'buy-limit';
+        nside = 'buy-market';
         if side == 'sell':
-            nside = 'sell-limit';
-        result = send_order(volume, 'api', market, nside, price);
+            nside = 'sell-market';
+        # result = send_order(volume, 'api', market, nside, price);
+        result = send_order(volume, 'api', market, nside);
         if result['status'] != 'ok':
             Log.d('\t\tdo order result {0}'.format(result));
             return False, price, volume;
