@@ -17,7 +17,7 @@ class RebotConfig():
     # user
     user_asset_ratio = 5;
     user_asset_least = 250;
-    user_initamount = 2400;
+    user_initamount = 2490;
     user_least_vol = 0.00001;
     # exchange
     exchange = 'huobi';#'chbtc';
