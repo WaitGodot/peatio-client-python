@@ -15,7 +15,7 @@ class RebotConfig():
     #data
     data_need_load = False;
     # user
-    user_asset_ratio = 5;
+    user_asset_ratio = 6;
     user_asset_least = 250;
     user_initamount = 2490;
     user_least_vol = 0.00001;
@@ -34,7 +34,7 @@ class RebotConfig():
 
     rebot_loss_ratio = -5;
     rebot_profit_ratio = -8;
-    rebot_trade_markets = [{'id':'etcusdt'}, {'id':'btcusdt'}, {'id':'bchusdt'},{'id':'ethusdt'},{'id':'ltcusdt'},{'id':'eosusdt'},{'id':'xrpusdt'},{'id':'omgusdt'},{'id':'dashusdt'},{'id':'zecusdt'},{'id':'htusdt'}];#[{'id':'603688'}];#[{'id':'603998'}, {'id':'603997'}]; #[{'id':'btccny'}, {'id':'ltccny'}, {'id':'ethcny'}, {'id':'etccny'}, {'id':'btscny'}]#[{'id':'luncny'}];
+    rebot_trade_markets = []#[{'id':'etcusdt'}, {'id':'btcusdt'}, {'id':'bchusdt'},{'id':'ethusdt'},{'id':'ltcusdt'},{'id':'eosusdt'},{'id':'xrpusdt'},{'id':'omgusdt'},{'id':'dashusdt'},{'id':'zecusdt'},{'id':'htusdt'}];#[{'id':'603688'}];#[{'id':'603998'}, {'id':'603997'}]; #[{'id':'btccny'}, {'id':'ltccny'}, {'id':'ethcny'}, {'id':'etccny'}, {'id':'btscny'}]#[{'id':'luncny'}];
     # rebot_trade_markets = [{'id':'bchusdt'}];
     # file
     path = ''

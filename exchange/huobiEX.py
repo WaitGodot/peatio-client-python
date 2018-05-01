@@ -143,11 +143,13 @@ class huobiEX():
 
     def prepare(self, period, timestamp):
         d = get_symbols();
+        markets = [];
         for k,v in enumerate(d['data']):
             if v['quote-currency'] == 'usdt':
                 key = v['base-currency'] + 'usdt';
                 self.precisions[key] = v;
-
+                markets.append({'id':key});
+        self.markets = markets;    
     def getServerTimestamp(self):
         return time.time();
 
@@ -179,7 +181,7 @@ class huobiEX():
     def getMarkets(self):
         if  len(RebotConfig.rebot_trade_markets) > 0:
             return RebotConfig.rebot_trade_markets;
-        return [];
+        return self.markets;
 
     def getK(self, market, limit, period, timestamp=None):
         data = None;
