@@ -30,7 +30,8 @@ def CreateDefalutKline():
         'high'  : 0,
         'low'   : 999999999,
         'close' : 0,
-        'vol'   : 0, }
+        'amount': 0,
+        'vol'   : 0,  }
 
 def SortCompare(a, b):
     return a['id'] < b['id'];
@@ -50,7 +51,6 @@ def ConvertData(preiod1, data, period2):
     for key in range(1, datalenght):
         k = data[datalenght - 1 - key];
         prek = data[datalenght - key];
-
         h = TIMEHOUR(k['id']);
         idx = h % kcount;
 
@@ -59,12 +59,14 @@ def ConvertData(preiod1, data, period2):
                 nk['close'] = prek['close'];
                 nk['high']  = max(nk['high'], prek['high']);
                 nk['low']   = min(nk['low'], prek['low']);
+                nk['amount']= nk['amount'] + nk['preamount'];
                 nk['vol']   = nk['vol'] + nk['prevol'];
 
             nk = CreateDefalutKline();
             ndata.append(nk);
             nk['id']    = k['id'];
             nk['open']  = k['open'];
+            nk['preamount'] = 0;
             nk['prevol'] = 0;
             nk['idx'] = idx;
 
@@ -73,8 +75,10 @@ def ConvertData(preiod1, data, period2):
             nk['high']  = max(nk['high'], k['high']);
             nk['low']   = min(nk['low'], k['low']);
             if nk['idx'] != idx:
+                nk['preamount'] += prek['amount'];
                 nk['prevol'] += prek['vol'];
                 nk['idx'] = idx;
+            nk['amount'] = nk['preamount'] + k['amount'];
             nk['vol'] = nk['prevol'] + k['vol'];
 
     ndata.reverse();
@@ -87,13 +91,15 @@ def ConvertKlineData(data):
     lendatadata = len(data);
     for k in range(0, lendatadata):
         v = data[lendatadata - 1 - k];
-        d = [0,1,2,3,4,5];
+        d = [0,1,2,3,4,5,6];
         d[0] = v['id'];
         d[1] = v['open'];
         d[2] = v['high'];
         d[3] = v['low'];
         d[4] = v['close'];
-        d[5] = v['vol'];
+        d[5] = v['amount'];
+        d[6] = v['vol'];
+
         ndata.append(d);
     return ndata;
 
@@ -328,7 +334,7 @@ class huobiEXLocal():
         o['remaining_volume']=0;
         o['executed_volume']=o['volume'];
         o['state']='done';
-
+        
         if o['side'] == 'sell':
             c = self.accounts.get(currency);
             balance = float(c['balance']);
@@ -359,9 +365,13 @@ class huobiEXLocal():
 
     def prepare(self, period, timestamp):
         d = get_symbols();
+        markets = []
         for k,v in enumerate(d['data']):
             if v['quote-currency'] == 'usdt':
+                key = v['base-currency'] + 'usdt';
                 self.precisions[v['base-currency'] + 'usdt'] = v;
+                markets.append({'id':key});
+        self.markets = markets;    
 
     def getServerTimestamp(self):
         return time.time();
@@ -377,9 +387,7 @@ class huobiEXLocal():
     def getMarkets(self):
         if  len(RebotConfig.rebot_trade_markets) > 0:
             return RebotConfig.rebot_trade_markets;
-
-        data = get_symbols();
-        return data;
+        return self.markets;
         #return [{'id':'anscny'},{'id':'btccny'}, {'id':'ethcny'}, {'id':'zeccny'}, {'id':'qtumcny'}, {'id':'gxscny'}, {'id':'eoscny'}, {'id':'sccny'}, {'id':'dgdcny'}, {'id':'1stcny'}, {'id':'btscny'}, {'id':'gntcny'}, {'id':'repcny'}, {'id':'etccny'}];
         #return [{'id':'anscny'}];
 
@@ -408,11 +416,11 @@ class huobiEXLocal():
             if period > 60 :
                 datadata = ConvertData(60, datadata, period);
 
-            print "kline length", len(datadata), RebotConfig.rebot_test_k_count;
+            # print "kline length", len(datadata), RebotConfig.rebot_test_k_count * period / 60, 'xxxxxxxxxxxxxxxxx';
             self.kss[market] = ConvertKlineData(datadata);
             ks = self.kss.get(market);
             # time.sleep(0.01);
-        # print timestamp, len(ks), ks[-1][0]
+        # print timestamp, len(ks), ks[-1][0], limit
         if ks == None or len(ks) == 0:
             print '%s do not find kline' % market
         if timestamp > ks[-1][0]:

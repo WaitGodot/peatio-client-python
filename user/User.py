@@ -89,6 +89,7 @@ class User():
             ext = value.get('ext');
 
             o = self.orders.get(id);
+            # print o, averageprice, leftvolume, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaa';
             if o:
                 if state == 'cancel':
                     o.update(averageprice, leftvolume, 'cancel');
@@ -97,13 +98,14 @@ class User():
             else:
                 if state != 'cancel' and state != 'compelete':
                     o = Order(id, type, market, t, price, volume, ext);
+                    o.update(averageprice, leftvolume);
                     self.orders[id] = o;
                     self.setHigh(market[0:len(market)-len(RebotConfig.base_currency)], 0);
             if o:
                 if o.status == "uncompelete":
                     norders.append(o);
-                else:
-                    del self.orders[id];
+                #else:
+                #    del self.orders[id];
         return norders;
 
     def doOrder(self, market, side, price, volume=None):

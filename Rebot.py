@@ -58,7 +58,7 @@ class Rebot():
         self.user = User();
         info = self.exchange.getUser();
         print info
-        print '-----------------------------------'
+        # print '-----------------------------------'
         self.user.updatePositions(info['accounts']);
         # markets
         self.markets = self.exchange.getMarkets();
@@ -92,7 +92,7 @@ class Rebot():
         self.scales = [];
 
     def run(self):
-        # print '-----------------------------------------------------------------'
+        #print '-----------------------------------------------------------------'
         # markets
         nmarkets = self.exchange.getMarkets()
         if nmarkets:
@@ -108,8 +108,8 @@ class Rebot():
             # print '\n'
 
         sv  = self.user.positions[RebotConfig.base_currency]['volume'];
-        flag=False;
-        stop=True;
+        flag = False;
+        stop = True;
         buylist     = [];
         selllist    = [];
         for k,v in enumerate(self.markets):
@@ -119,32 +119,38 @@ class Rebot():
             orders = self.user.updateOrder(self.exchange.getOrder(market));
             # rule
             r = self.rules[market];
-            lastk=r.KLines.Get(-1);
-            prelastk=lastk;
+            lastk = r.KLines.Get(-1);
+            prelastk = lastk;
             # k line.
             # dk = self.exchange.getK(market, 500, self.period, lastk.t);
             # print 'do market : %s' % market;
-            dk=None;
+            dk = None;
             if lastk:
-                kcount = int(math.floor((time.time()-lastk.t)/(self.period*60)) + 2);
+                kcount = 2;
+                if RebotConfig.rebot_is_test == False:
+                    kcount = int(math.floor((time.time()-lastk.t)/(self.period*60)) + 2);
                 if kcount < 2:
                     kcount = 2;
                 dk = self.exchange.getK(market, kcount, self.period, lastk.t);
-            #    print dk
+            #print dk
             type = None;
             if dk and len(dk) > 0:
                 ret     = r.Run(dk);
                 lastk   = r.KLines.Get(-1);
                 if RebotConfig.rebot_release:
                     print market, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())), lastk
-                type    = ret.get('type');
+                type = ret.get('type');
 
             for orderkey, o in enumerate(orders):
                 if o.checkMustCancel():
                     Log.d('\tcancel olded order {0}'.format(o));
-                    self.exchange.doOrderCancel(o.id, market);
+                    if( self.exchange.doOrderCancel(o.id, market) and o.type == 'sell' ):
+                        try:
+                            self.exchange.doOrder(market, 'sell', last.c, o.leftvolume);
+                        except:
+                            Log.d('repeat order failed!');
 
-            #print '\tmarket status : {1}, last k time : {2}, type : {3}'.format(market, r.status, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), type);
+            # print '\tmarket status : {1}, last k time : {2}, type : {3}'.format(market, r.status, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), type);
             if lastk and prelastk and lastk.t != prelastk.t:
                 stop = False;
             currency = market[0:len(market) - len(RebotConfig.base_currency)];

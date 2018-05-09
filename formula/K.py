@@ -28,7 +28,9 @@ class K():
         self.l = data[3];
         self.c = data[4];
         self.vol = data[5];
-
+        self.m = 0;
+        if len(data) >= 7:
+            self.m = data[6];
         self.rmbvolume = self.vol * (self.h + self.l) / 2;
         self.increase = 0;
         if self.o > 0:
@@ -59,6 +61,8 @@ class K():
             return self.increase;
         if k == 'amplitude':
             return self.amplitude;
+        if k == 'm':
+            return self.m;
 
     def __str__(self):
         return 't = {0}, o = {1}, h = {2}, l = {3}, c = {4}, vol = {5}, increase = {6}, amplitude = {7}'.format(self.t, self.o, self.h, self.l, self.c, self.vol, self.increase, self.amplitude);
@@ -94,6 +98,14 @@ class KLine():
             self.rmbvolumes.append(nk.rmbvolume);
             self.idx += 1;
         return self.idx;
+    def Sum(self, count, key = 'm'):
+        if len(self.data) < count:
+            count = len(self.data);
+        s = 0;
+        for idx in range(0, count):
+            k = self.data[-1 - idx];
+            s += k[key];
+        return s; 
 
     def ToList(self, key, N=None):
         ret = [];

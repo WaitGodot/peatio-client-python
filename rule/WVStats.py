@@ -66,6 +66,7 @@ class WVStats():
         return {'type':None};
 
     def Do(self, idx=-1, ignore=False):
+        summ = self.KLines.Sum(12);
         prek = self.KLines.Get(idx - 1);
         prevolume = self.Volume[idx - 1];
         prevalue = self.Value[idx - 1];
@@ -116,7 +117,8 @@ class WVStats():
         #if prek.vol > VOLTIMES * prevolume:
         #    print prek.c, prevalue, prek.c > prevalue, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(prek.t));
         # if (prek.c > prevalue and prek.vol > VOLTIMES * prevolume * dv) or (k.c > value and k.vol > VOLTIMES * volume * dv): #and k.c > phigh :#and k.vol < 3.5 * volume:
-        if (k.c > value and k.vol > VOLTIMES * volume * dv) and self.statusdelay != self.lastidx: #and k.c > phigh :#and k.vol < 3.5 * volume:
+        if summ >= 5000000 and (k.c > value and k.vol > VOLTIMES * volume * dv) and self.statusdelay != self.lastidx: #and k.c > phigh :#and k.vol < 3.5 * volume:
+        # if (k.c > value and k.vol > VOLTIMES * volume * dv and k.vol < 8 * VOLTIMES * volume * dv ) and self.statusdelay != self.lastidx: #and k.c > phigh :#and k.vol < 3.5 * volume:
             ret['type'] = 'buy'
             self.status = 'buy';
             ret['ext']['close'] = (k.c - value) / value * 100
