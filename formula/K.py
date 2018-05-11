@@ -98,14 +98,25 @@ class KLine():
             self.rmbvolumes.append(nk.rmbvolume);
             self.idx += 1;
         return self.idx;
-    def Sum(self, count, key = 'm'):
-        if len(self.data) < count:
+    def Sum(self, count, key = 'm', begin = -1):
+        if len(self.data) < count :
             count = len(self.data);
+        if begin >= 0 and count > begin:
+            count = begin;
+        if begin < 0 and count > len(self.data) + begin:
+            count = begin;
         s = 0;
         for idx in range(0, count):
-            k = self.data[-1 - idx];
+            k = self.data[begin - idx];
             s += k[key];
-        return s; 
+        return s, count; 
+    def Ref(self, count, key = 'c', begin = -1):
+        sumvol, count = self.Sum(count, 'vol', begin);
+        r = 0;
+        for idx in range(0, count):
+            k = self.data[begin - idx];
+            r += k[key] * k['vol']/sumvol;
+        return r;
 
     def ToList(self, key, N=None):
         ret = [];

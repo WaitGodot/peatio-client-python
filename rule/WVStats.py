@@ -66,7 +66,9 @@ class WVStats():
         return {'type':None};
 
     def Do(self, idx=-1, ignore=False):
-        summ = self.KLines.Sum(12);
+        summ, ccount = self.KLines.Sum(12);
+        summb = round(summ/5000000, 2);
+        avgp = self.KLines.Ref(12, 'c', -2);
         prek = self.KLines.Get(idx - 1);
         prevolume = self.Volume[idx - 1];
         prevalue = self.Value[idx - 1];
@@ -78,12 +80,11 @@ class WVStats():
         plow = self.Low[-2];
 
         ret = {};
-
         ret['type'] = None;
         ret['k']    = k;
         ret['sort'] = 1;
         ret['angle'] = 10;
-        ret['ext'] = {'idx':idx}
+        ret['ext'] = {'summ' : summb}
 
         statslen = len(self.stats)
         for i in range(0, statslen):
@@ -95,20 +96,24 @@ class WVStats():
         self.stats.append([]);
 
         dv = 1;
+        avgpp = round((k.c - avgp) / avgp *100, 2);
         # print "xxxx", self.lastidx, self.statusbuycurrent, self.statusdelay, self.status;
         if self.status == 'buy':
             dv = (self.statuscost - self.statusbuycurrent)/self.statuscost * 2 + 1;
+            dv = round(dv,2);
             scale = (self.statuscost - k.c)/self.statuscost > MAXBETA * dv;
             delay = (self.lastidx - self.statusdelay) > MAXKCOUNT * dv;
             # print (self.statuscost - k.c)/self.statuscost, MAXBETA * dv, dv, self.statusdelay, MAXKCOUNT * dv, prek.c > prevalue, prek.vol / (VOLTIMES * prevolume);
-            if scale or delay:
+            avgscale = (k.c - self.statusbuycurrent)/self.statuscost*100;
+            avgscale = round(avgscale,2);
+            # delayw =  avgpp < 0 or avgpp > 5 * summ / 5000000;
+            delayw =  False; #avgpp < 0 ;# or avgscale < 5*summ/5000000;
+            if scale or delayw or delay or avgscale < -7:
                 ret['type'] = 'sell';
-                ret['ext'] = {
-                    'idx'   : idx,
-                    'dv'    : dv,
-                    'scale' : scale,
-                    'delay' : delay,
-                }
+                ret['ext']['dv'] = dv;
+                ret['ext']['scale'] = scale;
+                ret['ext']['delay'] = delay;
+                ret['ext']['avgpp'] = avgpp;
                 return ret;
 
             if self.statuscost < k.h :
@@ -117,13 +122,15 @@ class WVStats():
         #if prek.vol > VOLTIMES * prevolume:
         #    print prek.c, prevalue, prek.c > prevalue, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(prek.t));
         # if (prek.c > prevalue and prek.vol > VOLTIMES * prevolume * dv) or (k.c > value and k.vol > VOLTIMES * volume * dv): #and k.c > phigh :#and k.vol < 3.5 * volume:
-        if summ >= 5000000 and (k.c > value and k.vol > VOLTIMES * volume * dv) and self.statusdelay != self.lastidx: #and k.c > phigh :#and k.vol < 3.5 * volume:
+        closev = round((k.c - value)/value*100,2);
+        if summb >= 1 and closev > 1 and closev <= 10 and avgpp/closev > 0.5 and avgpp <= 10 and k.vol > VOLTIMES * volume * dv and self.statusdelay != self.lastidx: #and k.c > phigh :#and k.vol < 3.5 * volume:
         # if (k.c > value and k.vol > VOLTIMES * volume * dv and k.vol < 8 * VOLTIMES * volume * dv ) and self.statusdelay != self.lastidx: #and k.c > phigh :#and k.vol < 3.5 * volume:
             ret['type'] = 'buy'
             self.status = 'buy';
-            ret['ext']['close'] = (k.c - value) / value * 100
-            ret['ext']['voltimes'] = k.vol / volume;
-
+            ret['ext']['close'] = closev;
+            ret['ext']['voltimes'] = round(k.vol / volume,2);
+            ret['ext']['avgpp'] = avgpp;
+            ret['ext']['ss'] = round(avgpp/closev, 2);
             if self.statusbuycurrent == 0:
                 self.statuscost = k.c;
                 self.statusbuycurrent = k.c;

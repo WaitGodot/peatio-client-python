@@ -137,7 +137,7 @@ class User():
                 return;
             v = pc['volume'];
             if pc == None or v <= 0:
-                print "\t\tnot enough positions, market : {0}".format(currency);
+                # print "\t\tnot enough positions, market : {0}".format(currency);
                 return 0;
             if volume==None:
                 volume = v;

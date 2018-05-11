@@ -17,7 +17,7 @@ class RebotConfig():
     # user
     user_asset_ratio = 6;
     user_asset_least = 250;
-    user_initamount = 2580;
+    user_initamount = 2400;
     user_least_vol = 0.00001;
     # exchange
     exchange = 'huobi';#'chbtc';
@@ -32,10 +32,10 @@ class RebotConfig():
     rebot_test_k_count = 1000;
     rebot_test_begin = time.time() - rebot_test_k_count * 2 / (24 * 60 / rebot_period) * 24*60*60; #1502006400;
 
-    rebot_loss_ratio = -5;
-    rebot_profit_ratio = -8;
+    rebot_loss_ratio = -7;
+    rebot_profit_ratio = -10;
     rebot_trade_markets = []#[{'id':'etcusdt'}, {'id':'btcusdt'}, {'id':'bchusdt'},{'id':'ethusdt'},{'id':'ltcusdt'},{'id':'eosusdt'},{'id':'xrpusdt'},{'id':'omgusdt'},{'id':'dashusdt'},{'id':'zecusdt'},{'id':'htusdt'}];#[{'id':'603688'}];#[{'id':'603998'}, {'id':'603997'}]; #[{'id':'btccny'}, {'id':'ltccny'}, {'id':'ethcny'}, {'id':'etccny'}, {'id':'btscny'}]#[{'id':'luncny'}];
-    # rebot_trade_markets = [{'id':'cvcusdt'}];
+    # rebot_trade_markets = [{'id':'ltcusdt'}];
     # file
     path = ''
     log = 'log.txt';

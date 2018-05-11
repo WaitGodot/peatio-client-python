@@ -69,11 +69,11 @@ def Exoprt():
                 if v.type == 'sell':
                     WriteOrder('\t%s' % v);
                     for bk, bv in enumerate(buys):
-                        scale = (v.averageprice - bv.averageprice)/bv.averageprice * 100;
+                        scale = round((v.averageprice - bv.averageprice)/bv.averageprice * 100, 2);
                         if scale > 0:
                             wintimes += 1;
                             allwintimes += 1;
-                        WriteOrder('\t\tscale:%s, order:%s' % (scale, bv.__str__()));
+                        WriteOrder('\t\tscale:%s, %s' % (scale, bv.__str__()));
                         key = k;
                     buys = [];
             if len(buys) > 0:
@@ -108,19 +108,20 @@ def Done():
         if STATUS == 'stop':
             break;
         t += 1;
-        print "rebot status %s, do %d, time : %s" % (STATUS, t, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(Time.Time())));
+        # print "rebot status %s, do %d, time : %s" % (STATUS, t, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(Time.Time())));
         stop = r.run();
         # print '------------------------------------------------------------------------'
         if RebotConfig.rebot_is_test:
             if t > RebotConfig.rebot_test_k_count or stop == True:
                 break;
-        if t % 100 == 0:
+        if t % 10 == 0:
             Exoprt();
        #  else:
        #     print 'sleep time', 6; #RebotConfig.rebot_period*60/RebotConfig.rebot_do_per_period;
        #     time.sleep(6);
             # time.sleep(RebotConfig.rebot_period*60/RebotConfig.rebot_do_per_period);
 Done();
+Exoprt();
 '''
 nr = threading.Thread(target=Done);
 nr.start();
