@@ -1,22 +1,17 @@
 # wave from point
 # we can found a set of point
 from formula.K import K;
+from formula.Direction import Direction
 import csv
 
 SegmentMinCount = 3;
 
-class Direction():
-    UP = 1;
-    FLAT = 2;
-    DOWN = 3;
-'''
 self.t = data[0];
 self.o = data[1];
 self.h = data[2];
 self.l = data[3];
 self.c = data[4];
 self.vol = data[5];
-'''
 
 def ToStringDir(dir):
     if dir == Direction.UP:
