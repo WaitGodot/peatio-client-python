@@ -32,6 +32,7 @@ class WVStats():
         self.High = [];
         self.Low = [];
         self.lastidx = 0;
+        self.lastbuyidx = 0;
 
     def Export(self, path):
         f = open(path, 'wb');
@@ -96,9 +97,15 @@ class WVStats():
         self.stats.append([]);
 
         dv = 1;
-        avgpp = round((k.c - avgp) / avgp *100, 2);
+        avgpp = 0;
+        if avgp > 0:
+            avgpp = round((k.c - avgp) / avgp *100, 2);
+        else:
+            print '\t\tavgp is eq 0', avgp;
         # print "xxxx", self.lastidx, self.statusbuycurrent, self.statusdelay, self.status;
         if self.status == 'buy':
+            bk = self.KLines.Get(self.lastbuyidx);
+            
             dv = (self.statuscost - self.statusbuycurrent)/self.statuscost * 2 + 1;
             dv = round(dv,2);
             scale = (self.statuscost - k.c)/self.statuscost > MAXBETA * dv;
@@ -106,18 +113,23 @@ class WVStats():
             # print (self.statuscost - k.c)/self.statuscost, MAXBETA * dv, dv, self.statusdelay, MAXKCOUNT * dv, prek.c > prevalue, prek.vol / (VOLTIMES * prevolume);
             avgscale = (k.c - self.statusbuycurrent)/self.statuscost*100;
             avgscale = round(avgscale,2);
+            
             # delayw =  avgpp < 0 or avgpp > 5 * summ / 5000000;
             delayw =  False; #avgpp < 0 ;# or avgscale < 5*summ/5000000;
+            if bk.increase * 100 > 15 * dv:
+                delayw = True;
+                print 'buy k increase'. bk.increase;
             if scale or delayw or delay or avgscale < -7:
                 ret['type'] = 'sell';
                 ret['ext']['dv'] = dv;
                 ret['ext']['scale'] = scale;
+                ret['ext']['avgscale'] = avgscale;
                 ret['ext']['delay'] = delay;
                 ret['ext']['avgpp'] = avgpp;
                 return ret;
 
-            if self.statuscost < k.h :
-                self.statuscost = k.h;
+            if self.statuscost < k.c :
+                self.statuscost = k.c;
 
         #if prek.vol > VOLTIMES * prevolume:
         #    print prek.c, prevalue, prek.c > prevalue, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(prek.t));
@@ -137,6 +149,7 @@ class WVStats():
                 self.statusdelay = self.lastidx;
             else:
                 self.statusdelay = self.lastidx + (self.lastidx - self.statusdelay) / 3;
+            self.lastbuyidx = self.lastidx;
             return  ret;
 
         return ret;

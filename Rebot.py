@@ -145,6 +145,7 @@ class Rebot():
                 if o.checkMustCancel():
                     Log.d('\tcancel olded order {0}'.format(o));
                     if( self.exchange.doOrderCancel(o.id, market) and o.type == 'sell' ):
+                        time.sleep(1);
                         try:
                             self.exchange.doOrder(market, 'sell', last.c, o.leftvolume);
                         except:

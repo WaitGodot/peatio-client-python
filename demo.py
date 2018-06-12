@@ -60,8 +60,6 @@ def Exoprt():
             WriteOrder('market:%s' % market);
             key=0;
             for k,v in enumerate(ods):
-                if v.status == "uncompelete":
-                    continue;
                 if v.type == 'buy':
                     tradetimes += 1;
                     alltradetimes += 1;
@@ -69,7 +67,9 @@ def Exoprt():
                 if v.type == 'sell':
                     WriteOrder('\t%s' % v);
                     for bk, bv in enumerate(buys):
-                        scale = round((v.averageprice - bv.averageprice)/bv.averageprice * 100, 2);
+                        scale = 0;
+                        if bv.averageprice > 0 :
+                            scale = round((v.averageprice - bv.averageprice)/bv.averageprice * 100, 2);
                         if scale > 0:
                             wintimes += 1;
                             allwintimes += 1;

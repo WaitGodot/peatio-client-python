@@ -220,7 +220,7 @@ class huobiEX():
         '''
         data = orders_list(market, "pre-submitted,submitted,partial-filled,partial-canceled,filled,canceled");
         if data['status'] != 'ok':
-            return None;
+            return [];
         ret = data['data'];
 
         for k, o in enumerate(data['data']):
