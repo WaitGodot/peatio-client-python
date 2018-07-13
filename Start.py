@@ -51,7 +51,15 @@ print (time.time()-time.time()+1 )/(60*5), time.time()
 exchange = Exchange(RebotConfig.access_key, RebotConfig.secret_key)
 exchange.delegate(huobiEX());
 exchange.prepare(None, None)
-print exchange.doOrder('etcusdt','buy', 30, 0.2000)
+market='eosusdt';
+ret1 = exchange.doOrder(market, 'sell', '30', 0.9980);
+print ret1;
+ret2 = exchange.doOrderCancel(ret1['data'], market);
+print ret2;
+ret3 = exchange.doOrder(market, 'sell', '30', 0.9980);
+print ret3;
+ret4 = exchange.doOrderCancel(ret3['data'], market);
+print ret4
 #'''
 '''
 x = [311, 308.5, 304.11, 305.50, 304.51, 308.86, 305.96, 306.07, 308.1, 308.6, 310.99];
