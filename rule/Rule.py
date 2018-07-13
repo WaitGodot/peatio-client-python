@@ -54,6 +54,7 @@ class Rule():
             return Direction.UP;
 
         return Direction.DOWN;
+
     def Do(self):
         d = self.Trend();
         kc = self.WaveKline.Get(-1);

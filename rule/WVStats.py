@@ -149,7 +149,7 @@ class WVStats():
                 self.statusdelay = self.lastidx;
             else:
                 self.statusdelay = self.lastidx + (self.lastidx - self.statusdelay) / 3;
-            self.lastbuyidx = self.lastidx;
+            self.lastbuyidx = self.lastidx - 1;
             return  ret;
 
         return ret;

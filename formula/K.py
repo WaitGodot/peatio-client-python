@@ -7,6 +7,7 @@
 # vol
 # increase
 # amplitude
+from formula.Direction import Direction
 
 def ct(t):
     if t > 1000000000000:
@@ -43,6 +44,26 @@ class K():
         if self.h >= ohterk.h and self.l <= ohterk.l :
             return True;
         return False;
+
+    def Dir(self):
+        if self.o > self.c:
+            return Direction.DOWN;
+        if self.o < self.c:
+            return Direction.UP;
+        return Direction.FLAT;
+
+    def Entity(self):
+        e = abs(self.c - self.o);
+        es = e / (self.h - self.l) * 100;
+        return es;
+
+    # 0 ~ 100
+    def ShadowUp(self):
+        return (self.h - max(self.c, self.o))/(self.h - self.l) * 100;
+
+    # 0 ~ 100
+    def ShadowDown(self):
+        return (self.l - min(self.c, self.o))/(self.h - self.l) * 100;
 
     def __getitem__(self, k):
         if k == 't':
@@ -109,7 +130,7 @@ class KLine():
         for idx in range(0, count):
             k = self.data[begin - idx];
             s += k[key];
-        return s, count; 
+        return s, count;
     def Ref(self, count, key = 'c', begin = -1):
         sumvol, count = self.Sum(count, 'vol', begin);
         r = 0;
