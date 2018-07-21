@@ -147,9 +147,9 @@ class Rebot():
                     if( self.exchange.doOrderCancel(o.id, market) and o.type == 'sell' ):
                         time.sleep(1);
                         try:
-                            self.exchange.doOrder(market, 'sell', last.c, o.leftvolume);
-                        except:
-                            Log.d('repeat order failed!');
+                            self.exchange.doOrder(market, 'sell', lastk.c, o.leftvolume);
+                        except Exception as e:
+                            Log.d('\trepeat order failed! e:%s' % e);
             # print '\tmarket status : {1}, last k time : {2}, type : {3}'.format(market, r.status, time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(lastk.t)), type);
             if lastk and prelastk and lastk.t != prelastk.t:
                 stop = False;
