@@ -135,7 +135,7 @@ class KLine():
     def Ref(self, count, key = 'c', begin = -1):
         r = 0;
         sumvol, count = self.Sum(count, 'vol', begin);
-        if sumvol >= 0:
+        if sumvol <= 0:
             return r;
         for idx in range(0, count):
             k = self.data[begin - idx];
