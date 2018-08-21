@@ -131,9 +131,12 @@ class KLine():
             k = self.data[begin - idx];
             s += k[key];
         return s, count;
+
     def Ref(self, count, key = 'c', begin = -1):
-        sumvol, count = self.Sum(count, 'vol', begin);
         r = 0;
+        sumvol, count = self.Sum(count, 'vol', begin);
+        if sumvol >= 0:
+            return r;
         for idx in range(0, count):
             k = self.data[begin - idx];
             r += k[key] * k['vol']/sumvol;
