@@ -76,7 +76,7 @@ def http_get_request(url, params, add_to_headers=None):
             if response.status_code == 200:
                 return response.json()
             else:
-                print 'https error, code', response.status_code;
+                print 'https error, code', response.status_code, url, postdata;
             '''
             resp = urllib2.urlopen(nurl, timeout=TIMEOUT)
             if resp:

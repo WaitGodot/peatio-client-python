@@ -3,9 +3,9 @@
 import time;
 class RebotConfig():
     # access key
-    access_key = "79f3d530-3daa36ab-b3386432-9e8e9";
+    access_key = "3fc30d76-816a9502-5cbb933f-fd3f8";
     # secret key
-    secret_key = "c6e56a49-003ca075-6c66e19e-b3385";
+    secret_key = "c587548c-0c1bf226-a45d8913-1de46";
 
     # mysql config
     mysql_address = "localhost";

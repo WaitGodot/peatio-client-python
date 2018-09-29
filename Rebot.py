@@ -103,7 +103,7 @@ class Rebot():
         if RebotConfig.rebot_release:
             print 'positions:';
             for k,v in (self.user.positions.items()):
-                if v['volume'] > 0:
+                if v['volume'] * v['high']> 10:
                     print '\t{0} {1}'.format(k, v);
             # print '\n'
 

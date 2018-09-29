@@ -153,8 +153,9 @@ class huobiEX():
         for k,v in enumerate(d['data']):
             if v['quote-currency'] == 'usdt':
                 key = v['base-currency'] + 'usdt';
-                self.precisions[key] = v;
-                markets.append({'id':key});
+                if key != 'venusdt':
+                    self.precisions[key] = v;
+                    markets.append({'id':key});
         self.markets = markets;    
     def getServerTimestamp(self):
         return time.time();
